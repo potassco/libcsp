@@ -1,0 +1,7 @@
+include_directories(test)
+include_directories(${CMAKE_SOURCE_DIR}/liborder/)
+include_directories(${CMAKE_SOURCE_DIR}/libclingcon/clingcon/)
+file(GLOB SOURCES src/*.cpp)
+add_executable(testlibclingcon ${SOURCES})
+find_package(CppUnit)
+target_link_libraries(testlibclingcon libclingcon order libclasp ${CPPUNIT_LIBRARY} dl)
