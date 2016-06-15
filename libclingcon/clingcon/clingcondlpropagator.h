@@ -1,8 +1,8 @@
 #pragma once
-#include "clasp/constraint.h"
-#include "order/dlpropagator.h"
-#include "order/constraint.h"
-#include "order/config.h"
+#include <clasp/constraint.h>
+#include <order/dlpropagator.h>
+#include <order/constraint.h>
+#include <order/config.h>
 
 
 //#include <memory>

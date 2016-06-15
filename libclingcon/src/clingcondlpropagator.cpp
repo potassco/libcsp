@@ -1,6 +1,6 @@
-#include "clingcon/clingcondlpropagator.h"
-#include "clasp/solver.h"
-#include "clingcon/solver.h"
+#include <clingcon/clingcondlpropagator.h>
+#include <clasp/solver.h>
+#include <clingcon/solver.h>
 
 
 

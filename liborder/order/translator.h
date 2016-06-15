@@ -1,8 +1,8 @@
 #pragma once
 #include <cstddef>
 #include <limits>
-#include "linearpropagator.h"
-#include "config.h"
+#include <order/linearpropagator.h>
+#include <order/config.h>
 
 
 

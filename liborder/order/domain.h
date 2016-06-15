@@ -1,6 +1,6 @@
 #pragma once
-#include "solver.h"
-#include "types.h"
+#include <order/solver.h>
+#include <order/types.h>
 
 #include <vector>
 #include <cassert>

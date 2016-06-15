@@ -2,8 +2,8 @@
 #include <vector>
 #include <ostream>
 #include <cassert>
-#include "platform.h"
-#include "variable.h"
+#include <order/platform.h>
+#include <order/variable.h>
 
 namespace order
 {

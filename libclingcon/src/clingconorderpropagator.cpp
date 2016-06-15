@@ -1,5 +1,5 @@
-#include "clingcon/clingconorderpropagator.h"
-#include "order/variable.h"
+#include <clingcon/clingconorderpropagator.h>
+#include <order/variable.h>
 
 
 namespace clingcon

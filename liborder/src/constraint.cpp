@@ -1,6 +1,6 @@
-#include "order/constraint.h"
-#include "order/types.h"
-#include "order/helper.h"
+#include <order/constraint.h>
+#include <order/types.h>
+#include <order/helper.h>
 
 namespace order
 {
@@ -13,8 +13,6 @@ void LinearConstraint::times(int32 x)
     constant_*=x;
     if (x<0)
         invert();
-
-
 }
 
 Domain LinearConstraint::lhsDomain(const CreatingSolver& s, const VariableCreator& vc, const Config& conf)

@@ -1,6 +1,6 @@
-#include "clingcon/theoryparser.h"
-#include "clasp/logic_program.h"
-#include "clingcon/clingconorderpropagator.h"
+#include <clingcon/theoryparser.h>
+#include <clasp/logic_program.h>
+#include <clingcon/clingconorderpropagator.h>
 
 
 

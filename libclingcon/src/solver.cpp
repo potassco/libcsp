@@ -1,4 +1,4 @@
-#include "clingcon/solver.h"
+#include <clingcon/solver.h>
 
 
 

@@ -205,7 +205,7 @@ orderEnv = env.Clone()
 orderEnv.Append(CPPPATH = LIBORDER_HEADERS)
 
 orderLib  = orderEnv.StaticLibrary('liborder', LIBORDER_SOURCES)
-orderLibS = orderEnv.StaticLibrary('libgringo_shared', shared(orderEnv, LIBORDER_SOURCES))
+orderLibS = orderEnv.StaticLibrary('liborder_shared', shared(orderEnv, LIBORDER_SOURCES))
 
 # {{{1 Clingcon: Library
 

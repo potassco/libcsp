@@ -1,9 +1,9 @@
 #pragma once
-#include "storage.h"
-#include "constraint.h"
-#include "linearpropagator.h"
-#include "config.h"
-#include "equality.h"
+#include <order/storage.h>
+#include <order/constraint.h>
+#include <order/linearpropagator.h>
+#include <order/config.h>
+#include <order/equality.h>
 #include <map>
 
 namespace order

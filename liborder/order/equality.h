@@ -1,6 +1,6 @@
 #pragma once
-#include "types.h"
-#include "constraint.h"
+#include <order/types.h>
+#include <order/constraint.h>
 
 namespace order
 {

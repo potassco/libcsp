@@ -1,9 +1,9 @@
 #pragma once
-#include "variable.h"
-#include "storage.h"
-#include "solver.h"
-#include "types.h"
-#include "config.h"
+#include <order/variable.h>
+#include <order/storage.h>
+#include <order/solver.h>
+#include <order/types.h>
+#include <order/config.h>
 
 #include <vector>
 #include <algorithm>

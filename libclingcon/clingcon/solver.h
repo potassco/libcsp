@@ -1,8 +1,8 @@
 #pragma once
-#include "clasp/solver.h"
-#include "clasp/clause.h"
-#include "clasp/weight_constraint.h"
-#include "order/solver.h"
+#include <clasp/solver.h>
+#include <clasp/clause.h>
+#include <clasp/weight_constraint.h>
+#include <order/solver.h>
 #include <iostream>
 #include <sstream>
 

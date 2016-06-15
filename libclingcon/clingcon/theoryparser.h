@@ -1,7 +1,7 @@
 #pragma once
-#include "solver.h"
-#include "order/normalizer.h"
-#include "potassco/theory_data.h"
+#include <clingcon/solver.h>
+#include <order/normalizer.h>
+#include <potassco/theory_data.h>
 #include <unordered_map>
 #include <sstream>
 

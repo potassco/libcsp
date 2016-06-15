@@ -1,9 +1,9 @@
 #pragma once
-#include "clasp/constraint.h"
-#include "order/linearpropagator.h"
-#include "solver.h"
-#include "order/equality.h"
-#include "theoryparser.h"
+#include <clasp/constraint.h>
+#include <order/linearpropagator.h>
+#include <clingcon/solver.h>
+#include <order/equality.h>
+#include <clingcon/theoryparser.h>
 #include <memory>
 #include <cstdint>
 #include <unordered_map>

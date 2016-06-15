@@ -1,7 +1,6 @@
-#include "order/translator.h"
-#include "order/solver.h"
+#include <order/translator.h>
+#include <order/solver.h>
 
-///TODO: how does gringo get the names !
 namespace order
 {
 

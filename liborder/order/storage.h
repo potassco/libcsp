@@ -1,8 +1,8 @@
 #pragma once
 
-#include "variable.h"
-#include "domain.h"
-#include "config.h"
+#include <order/variable.h>
+#include <order/domain.h>
+#include <order/config.h>
 
 
 #include <set>
