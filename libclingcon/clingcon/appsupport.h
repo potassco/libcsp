@@ -132,10 +132,33 @@ private:
 };
 
 
-void addOptions(ProgramOptions::OptionContext& root, order::Config& conf);
+class Helper
+{
+public:
+    Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfig, Clasp::Asp::LogicProgram* lp, order::Config& conf);
+    static void addOptions(ProgramOptions::OptionContext& root, order::Config& conf);
+
+    void postRead();
+    bool postEnd();
+    void postSolve();
+
+private:
+
+    void simplifyMinimize();
+
+    Clasp::SharedContext& ctx_;
+    Potassco::TheoryData& td_;
+    Clasp::Asp::LogicProgram* lp_;
+    MySharedContext mctx_;
+    std::unique_ptr<order::Normalizer> n_;
+    order::Config conf_;
+    TheoryOutput to_;
+    Configurator configurator_;
+    clingcon::TheoryParser tp_;
 
 
-void simplifyMinimize(order::Normalizer& n, clingcon::TheoryParser& tp, MySharedContext& s);
+
+};
 
 }
 

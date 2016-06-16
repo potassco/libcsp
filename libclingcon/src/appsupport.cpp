@@ -1,12 +1,21 @@
 #include <clingcon/appsupport.h>
-#include <program_opts/value.h>
+#include <program_opts/program_options.h>
+#include <program_opts/typed_value.h>
 
 
 namespace clingcon
 {
 
+Helper::Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfig, Clasp::Asp::LogicProgram* lp, order::Config& conf) : ctx_(ctx), td_(lp->theoryData()),
+                                                                          lp_(lp), mctx_(ctx), n_(new order::Normalizer(mctx_,conf_)),
+                                                                          conf_(conf), configurator_(conf_,*n_.get(),to_),
+                                                                          tp_(*n_.get(),td_,lp,mctx_.trueLit())
+{
+    claspConfig.addConfigurator(&configurator_,Clasp::Ownership_t::Type::Retain, false);
 
-void addOptions(ProgramOptions::OptionContext& root, order::Config& conf)
+}
+
+void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf)
 {
     ProgramOptions::OptionGroup cspconf("Constraint Processing Options");
     cspconf.addOptions()
@@ -42,19 +51,79 @@ void addOptions(ProgramOptions::OptionContext& root, order::Config& conf)
 }
 
 
-void simplifyMinimize(order::Normalizer& n, clingcon::TheoryParser& tp, MySharedContext& s)
+void Helper::postRead()
 {
-    for (unsigned int level = 0; level < tp.minimize().size(); ++level)
-        for (auto i : tp.minimize()[level])
+    for (auto i = td_.currBegin(); i != td_.end(); ++i)
+        if ((*i)->atom()!=0)
+            lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+}
+
+bool Helper::postEnd()
+{
+    bool conflict = false;
+    conflict = !ctx_.master()->propagate();
+    if (!conflict)
+    {
+
+        for (auto i = td_.currBegin(); i != td_.end(); ++i)
+        {
+            if (!tp_.readConstraint(i))
+                throw std::runtime_error("Unknown theory atom detected, cowardly refusing to continue");
+        }
+        to_.names_ = tp_.postProcess();
+        ctx_.output.theory = &to_;
+        simplifyMinimize();
+        conflict = !n_->prepare();
+    }
+
+
+    if (!conflict)
+    {
+        do
+        {
+            conflict = !ctx_.master()->propagate();
+            if (!conflict)
+                conflict = !n_->propagate();
+        }while(!conflict && !n_->atFixPoint());
+    }
+
+    if (!conflict)
+        conflict = !n_->finalize();
+
+    if (conflict && !ctx_.master()->hasConflict())
+        ctx_.master()->force(Clasp::Literal(0,true));
+
+     tp_.reset();
+     return conflict;
+}
+
+void Helper::postSolve()
+{
+    std::vector<const order::VolatileVariableStorage*> vvs;
+    for (unsigned int thread = 0; thread < std::min(conf_.convertLazy.first,64u); ++thread)
+    {
+        if (to_.props_[thread]==nullptr)
+            break;
+        vvs.emplace_back(&to_.props_[thread]->getVVS());
+    }
+
+    n_->convertAuxLiterals(vvs, ctx_.numVars());
+}
+
+
+void Helper::simplifyMinimize()
+{
+    for (unsigned int level = 0; level < tp_.minimize().size(); ++level)
+        for (auto i : tp_.minimize()[level])
         {
             std::vector<order::View> mini;
             mini.emplace_back(i.second);
-            if (n.getConfig().optimizeOptimize) // optimize away equality and minimize variable
+            if (n_->getConfig().optimizeOptimize) // optimize away equality and minimize variable
             {
                 if (abs(i.second.a)==1)
-                for (auto rlin = n.linearConstraints_.begin(); rlin != n.linearConstraints_.end(); ++rlin)
+                for (auto rlin = n_->linearConstraints_.begin(); rlin != n_->linearConstraints_.end(); ++rlin)
                 {
-                    if (s.isTrue(rlin->v) && rlin->l.getRelation()==order::LinearConstraint::Relation::EQ && rlin->l.getConstViews().size()>1)
+                    if (mctx_.isTrue(rlin->v) && rlin->l.getRelation()==order::LinearConstraint::Relation::EQ && rlin->l.getConstViews().size()>1)
                     {
                         auto& views = rlin->l.getConstViews();
                         bool hit = false;
@@ -84,7 +153,7 @@ void simplifyMinimize(order::Normalizer& n, clingcon::TheoryParser& tp, MyShared
 
             }
             for (auto& j : mini)
-                n.addMinimize(j,level);
+                n_->addMinimize(j,level);
         }
 }
 
