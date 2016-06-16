@@ -42,7 +42,7 @@ public:
     virtual PropResult propagate(Clasp::Solver& s, Clasp::Literal p, uint32& data);
     virtual void reason(Clasp::Solver& s, Clasp::Literal p, Clasp::LitVec& lits);
     virtual void undoLevel(Clasp::Solver& s);
-    virtual bool simplify(Clasp::Solver& s, bool reinit = false) { return false; }
+    virtual bool simplify(Clasp::Solver& , bool) { return false; }
 
     ///TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DESTROY MUSS ÜBERLADEN WERDEN, und watches removed
 

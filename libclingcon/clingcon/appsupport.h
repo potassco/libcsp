@@ -1,0 +1,143 @@
+#ifndef APPSUPPORT_HH
+#define APPSUPPORT_HH
+
+#include <clasp/constraint.h>
+#include <order/linearpropagator.h>
+#include <clingcon/solver.h>
+#include <order/equality.h>
+#include <clingcon/theoryparser.h>
+#include <clingcon/clingconorderpropagator.h>
+#include <clingcon/clingcondlpropagator.h>
+#include <clingcon/theoryparser.h>
+#include <clasp/enumerator.h>
+#include <clasp/cli/clasp_options.h>
+
+#include <memory>
+#include <cstdint>
+#include <unordered_map>
+
+namespace clingcon
+{
+
+class TheoryOutput : public Clasp::OutputTable::Theory
+{
+public:
+    TheoryOutput() { for (auto& i : props_) i = nullptr; }
+    //! Called once on new model m. Shall return 0 to indicate no output.
+    virtual const char* first(const Clasp::Model& m)
+    {
+        curr_ = names_.begin();
+        currentSolverId_ = m.sId;
+        return next();
+    }
+
+    //! Shall return 0 to indicate no output.
+    virtual const char* next()
+    {
+        while (curr_ != names_.end())
+        {
+            const char* ret = props_[currentSolverId_]->printModel(curr_->first,curr_->second.first);
+            if (ret)
+            {
+            ++curr_;
+            return ret;
+            }
+            ++curr_;
+        }
+        return 0;        
+    }
+    clingcon::NameList::iterator curr_;
+    unsigned int currentSolverId_;
+    clingcon::NameList names_; /// order::Variable to name + condition
+    static const int numThreads = 64;
+    clingcon::ClingconOrderPropagator* props_[numThreads];
+
+};
+
+class Configurator : public Clasp::Cli::ClaspCliConfig::Configurator
+{
+public:
+    
+    Configurator(order::Config conf, order::Normalizer& n, TheoryOutput& to) : conf_(conf), n_(n), to_(to), cp_(0)
+    {}
+    
+    ~Configurator()
+    { 
+        for (unsigned int i = 0; i < to_.numThreads; ++i)
+            if (to_.props_[i] != nullptr)
+            {
+                to_.props_[i]->solver().removePost(to_.props_[i]);
+                delete to_.props_[i];
+                to_.props_[i] = 0;
+            }
+    }
+    
+    virtual bool addPost(Clasp::Solver& s)
+    {
+        /// there can be some propagation in clasp::prepare
+        /// here is the latest point to get the actual view
+        if (!n_.getVariableCreator().restrictDomainsAccordingToLiterals())
+            return false;
+        //if (conf_.dlprop==2)
+        //    if (!addDLProp(s,n_.constraints()))
+        //        return false;
+
+        
+        if (to_.props_[s.id()])
+        {
+            s.removePost(to_.props_[s.id()]);
+            delete to_.props_[s.id()];
+            to_.props_[s.id()] = 0;
+        }
+        
+        
+        //std::vector<order::ReifiedLinearConstraint> constraints;
+        //if (conf_.dlprop==1)
+        //{
+        //    constraints = n_.constraints();
+        //}
+        
+        ///solver takes ownership of propagator
+        clingcon::ClingconOrderPropagator* test = new clingcon::ClingconOrderPropagator(s, n_.getVariableCreator(), conf_,
+                                                                                      n_.constraints(),n_.getEqualities(),
+                                                                                      &(to_.names_));
+        to_.props_[s.id()] = test;
+        if (!s.addPost(to_.props_[s.id()]))
+           return false;
+        
+//        if (conf_.dlprop==1)
+//            if (!addDLProp(s, constraints))
+//                return false;
+        return true;
+    }
+    
+private:
+    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints)
+    {
+        clingcon::ClingconDLPropagator* dlp = new clingcon::ClingconDLPropagator(s, conf_);
+        for (const auto&i : constraints)
+        {
+            if (dlp->isValidConstraint(i))
+                dlp->addValidConstraint(i);
+        }
+        if (!s.addPost(dlp))
+            return false;
+        return true;        
+    }
+
+    order::Config conf_;
+    order::Normalizer& n_;
+    TheoryOutput& to_;
+    clingcon::ClingconOrderPropagator* cp_;
+};
+
+
+void addOptions(ProgramOptions::OptionContext& root, order::Config& conf);
+
+
+void simplifyMinimize(order::Normalizer& n, clingcon::TheoryParser& tp, MySharedContext& s);
+
+}
+
+#endif // APPSUPPORT_HH
+
