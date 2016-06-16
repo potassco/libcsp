@@ -53,6 +53,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
 
 void Helper::postRead()
 {
+    ///TODO: ensure its csp theory ;-)
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
         if ((*i)->atom()!=0)
             lp_->startChoiceRule().addHead((*i)->atom()).endRule();
@@ -60,41 +61,43 @@ void Helper::postRead()
 
 bool Helper::postEnd()
 {
-    bool conflict = false;
-    conflict = !ctx_.master()->propagate();
-    if (!conflict)
+    if (lp_->end() && ctx_.master()->propagate())
     {
-
-        for (auto i = td_.currBegin(); i != td_.end(); ++i)
+        bool conflict = false;
+        conflict = !ctx_.master()->propagate();
+        if (!conflict)
         {
-            if (!tp_.readConstraint(i))
-                throw std::runtime_error("Unknown theory atom detected, cowardly refusing to continue");
+
+            for (auto i = td_.currBegin(); i != td_.end(); ++i)
+            {
+                if (!tp_.readConstraint(i))
+                    throw std::runtime_error("Unknown theory atom detected, cowardly refusing to continue");
+            }
+            to_.names_ = tp_.postProcess();
+            ctx_.output.theory = &to_;
+            simplifyMinimize();
+            conflict = !n_->prepare();
         }
-        to_.names_ = tp_.postProcess();
-        ctx_.output.theory = &to_;
-        simplifyMinimize();
-        conflict = !n_->prepare();
-    }
 
 
-    if (!conflict)
-    {
-        do
+        if (!conflict)
         {
-            conflict = !ctx_.master()->propagate();
-            if (!conflict)
-                conflict = !n_->propagate();
-        }while(!conflict && !n_->atFixPoint());
-    }
+            do
+            {
+                conflict = !ctx_.master()->propagate();
+                if (!conflict)
+                    conflict = !n_->propagate();
+            }while(!conflict && !n_->atFixPoint());
+        }
 
-    if (!conflict)
-        conflict = !n_->finalize();
+        if (!conflict)
+            conflict = !n_->finalize();
 
-    if (conflict && !ctx_.master()->hasConflict())
-        ctx_.master()->force(Clasp::Literal(0,true));
-
+        if (conflict && !ctx_.master()->hasConflict())
+            ctx_.master()->force(Clasp::Literal(0,true));
+     }
      tp_.reset();
-     return conflict;
+     return true;
 }
 
 void Helper::postSolve()
