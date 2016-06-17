@@ -1,4 +1,4 @@
-#include <order/dlpropagator.h>
+/*#include <order/dlpropagator.h>
 
 #include <set>
 #include <unordered_set>
@@ -956,5 +956,5 @@ bool DLPropagator::hasNegativeCycle() const
 
 }
 
-
+*/
 

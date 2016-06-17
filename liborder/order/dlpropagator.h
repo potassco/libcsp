@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <cassert>
 #include <unordered_map>
@@ -118,23 +118,6 @@ private:
           Weight weight;
           Variable out;
     };
-    
-    
-    
-    
-   
-    
-   /* struct Edgehash
-    {
-      inline size_t operator()(const InternalEdge & v) const
-      {
-        size_t seed = 0;
-        ::hash_combine(seed, v.in);
-        ::hash_combine(seed, v.out);
-        ::hash_combine(seed,v.weight);
-        return seed;
-      }
-    };*/
 
     struct HalfEdge
     {
@@ -205,11 +188,6 @@ private:
 };
 
 
-
-/*
- * 
- * How to handle negative edges,  "a - b <= c" and a-b>c ==-a+b<-c== b-a <=-c-1
- * 
- * */
-
 }
+
+*/

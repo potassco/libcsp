@@ -1,4 +1,4 @@
-#include <clingcon/clingcondlpropagator.h>
+/*#include <clingcon/clingcondlpropagator.h>
 #include <clasp/solver.h>
 #include <clingcon/solver.h>
 
@@ -217,3 +217,4 @@ bool ClingconDLPropagator::isModel(Clasp::Solver& s)
 
 }
 
+*/
