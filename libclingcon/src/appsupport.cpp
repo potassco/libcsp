@@ -7,7 +7,7 @@ namespace clingcon
 {
 
 Helper::Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfig, Clasp::Asp::LogicProgram* lp, order::Config& conf) : ctx_(ctx), td_(lp->theoryData()),
-                                                                          lp_(lp), mctx_(ctx), n_(new order::Normalizer(mctx_,conf_)),
+                                                                          lp_(lp), mctx_(ctx), n_(new order::Normalizer(mctx_,conf)),
                                                                           conf_(conf), configurator_(conf_,*n_.get(),to_),
                                                                           tp_(*n_.get(),td_,lp,mctx_.trueLit())
 {
