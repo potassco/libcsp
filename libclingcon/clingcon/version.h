@@ -1,6 +1,6 @@
 // {{{ GPL License
 
-// This file is part of libclingcon - a library for handling linear constraints.
+// This file is part of libcsp - a library for handling linear constraints.
 // Copyright (C) 2016  Max Ostrowski
 
 // This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // }}}
+
+// {{{ GPL License
 
 #ifndef _LIBCLIGNCON_VERSION_H
 #define _LIBCLINGCON_VERSION_H
