@@ -127,8 +127,6 @@ if not conf.CheckMyFun('std::to_string', 'std::to_string(10);', "#include <strin
     DEFS['MISSING_STD_TO_STRING']=1
 
 
-conf.CheckWithPkgConfig("cppunit", ["cppunit"])
-
 env = conf.Finish()
 env.PrependUnique(LIBPATH=[Dir('.')])
 env.Append(CPPDEFINES=DEFS)
@@ -225,8 +223,8 @@ clingconSharedEnv.Alias('libclingcon', clingconSharedLib)
 
 # {{{1 liborder: Tests
 
-TEST_LIBORDER_SOURCES = find_files(env, 'testliborder/src')
-TEST_LIBORDER_HEADERS = [Dir('#testliborder')] + LIBORDER_HEADERS + LIBCLASP_HEADERS
+TEST_LIBORDER_SOURCES = find_files(env, 'tests/testliborder/src')
+TEST_LIBORDER_HEADERS = [Dir('#tests/testliborder')] + LIBORDER_HEADERS + LIBCLASP_HEADERS
 
 orderTestEnv                = claspEnv.Clone()
 orderTestEnv.Append(CPPPATH = TEST_LIBORDER_HEADERS)
@@ -239,8 +237,8 @@ if 'liborder' in env['TESTS']:
 
 # {{{1 libclingcon: Tests
 
-TEST_LIBCLINGCON_SOURCES  = find_files(env, 'testlibclingcon/src')
-TEST_LIBCLINGCON_HEADERS = [Dir('#testlibclingcon')] + LIBORDER_HEADERS + LIBCLINGCON_HEADERS + LIBCLASP_HEADERS + LIBLP_HEADERS
+TEST_LIBCLINGCON_SOURCES  = find_files(env, 'tests/testlibclingcon/src')
+TEST_LIBCLINGCON_HEADERS = [Dir('#tests/testlibclingcon')] + LIBORDER_HEADERS + LIBCLINGCON_HEADERS + LIBCLASP_HEADERS + LIBLP_HEADERS
 
 clingconTestEnv                = claspEnv.Clone()
 clingconTestEnv.Append(CPPPATH = TEST_LIBCLINGCON_HEADERS)

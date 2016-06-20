@@ -18,30 +18,16 @@
 
 // }}}
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "catch.hpp"
 #include "order/constraint.h"
 #include "test/mysolver.h"
 #include "order/configs.h"
 #include <iostream>
 
 using namespace order;
-class ConstraintTest : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE( ConstraintTest );
-    CPPUNIT_TEST( testAddition );
-    CPPUNIT_TEST( testNormalize );
-    CPPUNIT_TEST_SUITE_END();
-private:
-public:
-    void setUp()
-    {
-    }
 
-    void tearDown()
-    {
-    }
 
-    void testAddition()
+    TEST_CASE("TestAddition", "[split]")
     {
         Config conf = lazySolveConfigProp4;
         MySolver s;
@@ -70,13 +56,13 @@ public:
         //std::cout << l << std::endl;
         std::stringstream ss;
         ss << l;
-        CPPUNIT_ASSERT(ss.str()=="v1 * -3	+	v2 * 5	+	v4 * 17	+	v5 * 1	+	v6 * 1000	<= -45");
+        REQUIRE(ss.str()=="v1 * -3	+	v2 * 5	+	v4 * 17	+	v5 * 1	+	v6 * 1000	<= -45");
 
         l.sort(vc,conf);
         ss.str("");
         ss << l;
         //std::cout << ss.str() << std::endl;
-        CPPUNIT_ASSERT(ss.str()=="v4 * 17	+	v6 * 1000	+	v5 * 1	+	v1 * -3	+	v2 * 5	<= -45");
+        REQUIRE(ss.str()=="v4 * 17	+	v6 * 1000	+	v5 * 1	+	v1 * -3	+	v2 * 5	<= -45");
         //conf.break_symmetries
         Config c2 = translateConfig;
         c2.break_symmetries=false;
@@ -90,11 +76,11 @@ public:
             ss.str("");
             ss << v[i];
             //std::cout << v[i] << std::endl;
-            CPPUNIT_ASSERT(ss.str()==results[i]);
+            REQUIRE(ss.str()==results[i]);
         }
     }
     
-    void testNormalize()
+    TEST_CASE("Linear Constraint normalize", "[lc]")
     {
         MySolver s;
         VariableCreator vc(s, translateConfig);
@@ -119,17 +105,15 @@ public:
         //std::cout << std::endl << l << std::endl;
         l.normalize();
         
-        CPPUNIT_ASSERT(l.getViews()[0].v==v0);
-        CPPUNIT_ASSERT(l.getViews()[1].v==v1);
+        REQUIRE(l.getViews()[0].v==v0);
+        REQUIRE(l.getViews()[1].v==v1);
         //l.getViews()[2].v=v2;
         
-        CPPUNIT_ASSERT(l.getViews()[0].a==-3);
-        CPPUNIT_ASSERT(l.getViews()[1].a==14);
+        REQUIRE(l.getViews()[0].a==-3);
+        REQUIRE(l.getViews()[1].a==14);
         //l.getViews()[0].a=0
-        CPPUNIT_ASSERT(l.getViews().size()==2);
+        REQUIRE(l.getViews().size()==2);
         
     }
-};
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ConstraintTest);
 

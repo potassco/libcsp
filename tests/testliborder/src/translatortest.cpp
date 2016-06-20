@@ -18,7 +18,7 @@
 
 // }}}
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "catch.hpp"
 #include "test/mysolver.h"
 #include "order/normalizer.h"
 #include "clasp/clasp_facade.h"
@@ -90,41 +90,6 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 //order::Literal toOrderFormat(Clasp::Literal l) { return order::Literal::fromRep(l.asUint()); }
 
 
-class TranslatorTest : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE( TranslatorTest );
-    CPPUNIT_TEST( testOutOfRange );
-    CPPUNIT_TEST( testTranslation );
-    CPPUNIT_TEST( equal1 );
-    CPPUNIT_TEST( less12 );
-    CPPUNIT_TEST( sendMoreTest1 );
-    CPPUNIT_TEST( sendMoreTest2 );
-    CPPUNIT_TEST( sendMoreTest3 );
-    CPPUNIT_TEST( sendMoreMoney );
-    CPPUNIT_TEST( sendMoreMoney2 );
-    CPPUNIT_TEST( nQueens );
-    CPPUNIT_TEST( nQueensdirect );
-    CPPUNIT_TEST( crypt112 );
-    CPPUNIT_TEST( crypt224 );
-    CPPUNIT_TEST( crypt145 );
-    CPPUNIT_TEST( alldiff  );
-    //CPPUNIT_TEST( alldiff5  ); //takes too long to enumerate
-    CPPUNIT_TEST( domainC1  );
-    //    CPPUNIT_TEST( testLiteralReuse ); // needs private members of normalize (also goto function and comment it in)
-    CPPUNIT_TEST( testAllDiffSplitting );
-    CPPUNIT_TEST( disjoint1 );
-    CPPUNIT_TEST( disjoint1direct );
-    CPPUNIT_TEST_SUITE_END();
-private:
-public:
-    void setUp()
-    {
-    }
-
-    void tearDown()
-    {
-    }
-
     std::size_t expectedModels(MySolver& s)
     {
         Clasp::ClaspFacade f;
@@ -153,7 +118,7 @@ public:
         return f.summary().enumerated();
     }
     
-    void testOutOfRange()
+    TEST_CASE("testOutOfRange", "translatortest")
     {
 
         {
@@ -180,14 +145,14 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
           
             //Now every iterator on end can give back a literal (true for LE, false for GE,EQ)
             //s.printDimacs(std::cout); std::cout << std::endl; // expected 10 solutions
             //std::cout << "NumModels:"  << expectedModels(s) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(s)==27);
+            REQUIRE(expectedModels(s)==27);
         }
         
         {
@@ -222,11 +187,11 @@ public:
                 
                 return;
             }
-            CPPUNIT_ASSERT(false);
+            REQUIRE(false);
         }
     }
 
-    void testTranslation()
+    TEST_CASE("testTranslation1", "translatortest")
     {
 
         {
@@ -250,7 +215,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({        -2, 3, 0,
@@ -264,11 +229,11 @@ public:
                                                 3, 6, 0,
                                                 3, 4, 0});
 
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //std::cout << s.clauses() << std::endl;
             //s.printDimacs(std::cout); std::cout << std::endl; // expected 10 solutions
             //std::cout << "NumModels:"  << expectedModels(s) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(s)==10);
+            REQUIRE(expectedModels(s)==10);
 
         }
 
@@ -296,7 +261,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -318,7 +283,7 @@ public:
                                         2, -3, -5, 0
                                         
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
 
         }
 
@@ -346,7 +311,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -362,8 +327,8 @@ public:
                                            2, 5,     0,
                                            3, 6, 0,
                                            3, 4, 0});
-            CPPUNIT_ASSERT(s.clauses()==clauses);
-            CPPUNIT_ASSERT(expectedModels(s)==10);
+            REQUIRE(s.clauses()==clauses);
+            REQUIRE(expectedModels(s)==10);
 
         }
 
@@ -389,7 +354,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -400,9 +365,9 @@ public:
                                         -6, 7, 0,
                                         3, 7, 0,
                                         5, 6, 0});
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout); // 11 solutions
-            CPPUNIT_ASSERT(expectedModels(s)==11);
+            REQUIRE(expectedModels(s)==11);
 
         }
 
@@ -430,7 +395,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-2, 3, 0,
@@ -451,9 +416,9 @@ public:
                                         6, 9, -12, 0,
                                         6, 10, -13, 0,
                                         6, 11, -14, 0});
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout); // 206 solutions
-            CPPUNIT_ASSERT(expectedModels(s)==206);
+            REQUIRE(expectedModels(s)==206);
 
         }
 
@@ -482,7 +447,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -515,11 +480,11 @@ public:
                                         2, 7, 11, -14, 0,
                                         2, 7, 12, -15, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
 
 
             //s.printDimacs(std::cout); // 216 solutions
-            CPPUNIT_ASSERT(expectedModels(s)==216);
+            REQUIRE(expectedModels(s)==216);
 
         }
 
@@ -549,7 +514,7 @@ public:
             
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -578,9 +543,9 @@ public:
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
 
-            CPPUNIT_ASSERT(expectedModels(s)==10);
+            REQUIRE(expectedModels(s)==10);
 
         }
 
@@ -609,7 +574,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-2, 3, 0,
@@ -631,9 +596,9 @@ public:
                                         6, 10, -13, 0,
                                         6, 11, -14, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout); // 206
-            CPPUNIT_ASSERT(expectedModels(s)==206);
+            REQUIRE(expectedModels(s)==206);
 
         }
 
@@ -661,7 +626,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-2, 3, 0,
@@ -683,9 +648,9 @@ public:
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout);//20
-            CPPUNIT_ASSERT(expectedModels(s)==20);
+            REQUIRE(expectedModels(s)==20);
         }
 
         {
@@ -712,7 +677,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-2, 3, 0,
@@ -740,10 +705,10 @@ public:
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
 
             //s.printDimacs(std::cout);//10
-            CPPUNIT_ASSERT(expectedModels(s)==10);
+            REQUIRE(expectedModels(s)==10);
         }
 
 
@@ -775,7 +740,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-3, 4, 0,
@@ -807,9 +772,9 @@ public:
                                         2, -6, -12, 0,
                                         2, -5, 0,
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout); // 216, 206, 10
-            CPPUNIT_ASSERT(expectedModels(s)==216);
+            REQUIRE(expectedModels(s)==216);
         }
 
         {
@@ -836,7 +801,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-3, 4, 0,
@@ -877,9 +842,9 @@ public:
                                         2, 7, 11, -15, 0,
                                         2, 7, 12, -16, 0
                                        });
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
             //s.printDimacs(std::cout);//216, 20, 196
-            CPPUNIT_ASSERT(expectedModels(s)==216);
+            REQUIRE(expectedModels(s)==216);
         }
 
         {
@@ -906,7 +871,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -967,11 +932,11 @@ public:
                                         -4, -8, 15, 0,
                                         -4, -8, -14, 0,
                                         -4, -7, 0});
-            CPPUNIT_ASSERT(s.clauses()==clauses);
+            REQUIRE(s.clauses()==clauses);
 
             //s.printDimacs(std::cout); // 216 solutions, 10, 206
             //std::cout << std::endl;
-            CPPUNIT_ASSERT(expectedModels(s)==216);
+            REQUIRE(expectedModels(s)==216);
 
         }
 
@@ -994,7 +959,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -1003,7 +968,7 @@ public:
 
             //s.printDimacs(std::cout); std::cout << std::endl;//24 solutions (low=0, high=3)
             //std::cout << "NumModels: " << expectedModels(s) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(s)==24);
+            REQUIRE(expectedModels(s)==24);
         }
 
         {
@@ -1025,7 +990,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -1034,7 +999,7 @@ public:
 
             //s.printDimacs(std::cout); //21 solutions
             //std::cout << expectedModels(s) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(s)==21);
+            REQUIRE(expectedModels(s)==21);
         }
 
         {
@@ -1056,7 +1021,7 @@ public:
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
@@ -1064,11 +1029,11 @@ public:
             //assert(s.clauses()==clauses);
 
             //s.printDimacs(std::cout);  // 27 (6+21)
-            CPPUNIT_ASSERT(expectedModels(s)==27);
+            REQUIRE(expectedModels(s)==27);
         }
     }
 
-    void equal1()
+    TEST_CASE("testEqual1", "translatortest")
     {
         {
             MySolver solver;
@@ -1083,10 +1048,10 @@ public:
             l.add(norm.createView()*-1);
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -1094,12 +1059,12 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==10);
+            REQUIRE(expectedModels(solver)==10);
         }
 
     }
 
-    void less12()
+    TEST_CASE("testLess12", "translatortest")
     {
         {
             MySolver solver;
@@ -1113,10 +1078,10 @@ public:
             l.addRhs(12);
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -1124,14 +1089,14 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==79);
+            REQUIRE(expectedModels(solver)==79);
         }
 
     }
 
 
 
-    void sendMoreTest1()
+    TEST_CASE("SendMoreTest1", "translatortest")
     {
         MySolver solver;
         Normalizer norm(solver, translateConfig);
@@ -1163,10 +1128,10 @@ public:
             norm.addConstraint(std::move(i));
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -1175,10 +1140,10 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==2);
+        REQUIRE(expectedModels(solver)==2);
     }
 
-    void sendMoreTest2()
+    TEST_CASE("SendMoreTest2", "translatortest")
     {
         MySolver solver;
         Normalizer norm(solver, translateConfig);
@@ -1218,10 +1183,10 @@ public:
             norm.addConstraint(std::move(i));
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -1230,11 +1195,11 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==3);
+        REQUIRE(expectedModels(solver)==3);
     }
 
 
-    void sendMoreTest3()
+    TEST_CASE("SendMoreTest3", "translatortest")
     {
         MySolver solver;
         Normalizer norm(solver, translateConfig);
@@ -1302,10 +1267,10 @@ public:
             norm.addConstraint(std::move(i));
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -1314,10 +1279,10 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==5040);
+        REQUIRE(expectedModels(solver)==5040);
     }
 
-    void sendMoreMoney()
+    TEST_CASE("SendMoreMoneyTranslate", "translatortest")
     {
         //std::cout << "sendMoreMoney1" << std::endl;
         MySolver solver;
@@ -1582,10 +1547,10 @@ public:
             norm.addConstraint(std::move(i));
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -1595,10 +1560,10 @@ public:
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << std::count(solver.clauses().begin(), solver.clauses().end(),Literal::fromRep(0)) << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==1);
+        REQUIRE(expectedModels(solver)==1);
     }
 
-    void sendMoreMoney2()
+    TEST_CASE("SendMoreMoneyTranslate2", "translatortest")
     {
         //std::cout << "sendMoreMoney2" << std::endl;
         MySolver solver;
@@ -1669,10 +1634,10 @@ public:
 
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
 
@@ -1683,11 +1648,11 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==1);
+        REQUIRE(expectedModels(solver)==1);
     }
 
 
-    void nQueens()
+    TEST_CASE("nQueensTranslate", "translatortest")
     {
         //std::cout << "sendMoreMoney2" << std::endl;
         MySolver solver;
@@ -1774,10 +1739,10 @@ public:
 
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
 
@@ -1788,10 +1753,10 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==724);
+        REQUIRE(expectedModels(solver)==724);
     }
     
-    void nQueensdirect()
+    TEST_CASE("nQueensDirectTranslate", "translatortest")
     {
         //std::cout << "sendMoreMoney2" << std::endl;
         MySolver solver;
@@ -1864,10 +1829,10 @@ public:
 
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
 
@@ -1878,15 +1843,9 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==724);
+        REQUIRE(expectedModels(solver)==724);
     }
-
-    void crypt112()
-    {
-        for (auto i : stdconfs)
-            crypt112_aux(i);
-    }
-
+    
     void crypt112_aux(order::Config conf)
     {
         MySolver solver;
@@ -1934,10 +1893,10 @@ public:
 
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -1946,10 +1905,18 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==12);
+        REQUIRE(expectedModels(solver)==12);
     }
 
-    void crypt224()
+    TEST_CASE("Crypt112Translate", "translatortest")
+    {
+        for (auto i : stdconfs)
+            crypt112_aux(i);
+    }
+
+    
+
+    TEST_CASE("Crypt224Translate", "translatortest")
     {
         MySolver solver;
         Normalizer norm(solver, translateConfig);
@@ -2002,10 +1969,10 @@ public:
 
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -2014,11 +1981,11 @@ public:
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==12);
-        //CPPUNIT_ASSERT(false);
+        REQUIRE(expectedModels(solver)==12);
+        //REQUIRE(false);
     }
 
-    void crypt145()
+    TEST_CASE("crypt145Translate", "translatortest")
     {
         MySolver solver;
         Normalizer norm(solver, translateConfig);
@@ -2085,20 +2052,20 @@ public:
             norm.addConstraint(std::move(i));
 
 
-        CPPUNIT_ASSERT(norm.prepare());
+        REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
         
 
         LitVec clauses = cnfToLits({});
         //assert(s.clauses()==clauses);
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
-        CPPUNIT_ASSERT(expectedModels(solver)==24);
+        REQUIRE(expectedModels(solver)==24);
     }
 
-    void alldiff()
+    TEST_CASE("allDiffTranslate1", "translatortest")
     {
         {
             MySolver solver;
@@ -2122,10 +2089,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2133,7 +2100,7 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==1);
+            REQUIRE(expectedModels(solver)==1);
         }
 
         {
@@ -2145,10 +2112,10 @@ public:
 
             norm.addConstraint(ReifiedAllDistinct({e,i},solver.trueLit(),false));
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2156,7 +2123,7 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==3);
+            REQUIRE(expectedModels(solver)==3);
         }
 
         {
@@ -2179,10 +2146,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2190,11 +2157,11 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==2227);
+            REQUIRE(expectedModels(solver)==2227);
         }
     }
 
-
+/*
     void alldiff5()
     {
         {
@@ -2219,10 +2186,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2230,13 +2197,13 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==1814400);
+            REQUIRE(expectedModels(solver)==1814400);
         }
 
     }
 
-
-    void domainC1()
+*/
+    TEST_CASE("domainC1", "translatortest")
     {
         {
             MySolver solver;
@@ -2251,10 +2218,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2262,7 +2229,7 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==10);
+            REQUIRE(expectedModels(solver)==10);
         }
 
         {
@@ -2296,10 +2263,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({-5,-3,0,
@@ -2321,11 +2288,11 @@ public:
                                         3,-13,12,0,
                                         -3,-12,0,
                                         -3,13,0});
-            CPPUNIT_ASSERT(solver.clauses()==clauses);
+            REQUIRE(solver.clauses()==clauses);
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==10);
+            REQUIRE(expectedModels(solver)==10);
         }
 
         {
@@ -2359,16 +2326,16 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==0);
+            REQUIRE(expectedModels(solver)==0);
         }
 
 
@@ -2387,10 +2354,10 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             
-            CPPUNIT_ASSERT(norm.finalize());
+            REQUIRE(norm.finalize());
 
 
             LitVec clauses = cnfToLits({});
@@ -2398,7 +2365,7 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==100);
+            REQUIRE(expectedModels(solver)==100);
         }
     }
     void testLiteralReuse()
@@ -2489,7 +2456,7 @@ public:
                     }*/
     }
 
-    void testAllDiffSplitting()
+    TEST_CASE("testAllDiffSplitting", "translatortest")
     {
 
         MySolver s;
@@ -2509,7 +2476,7 @@ public:
         norm.prepare();
         //s.createNewLiterals(norm.estimateVariables());
         
-        CPPUNIT_ASSERT(norm.finalize());
+        REQUIRE(norm.finalize());
 
 
 
@@ -2522,7 +2489,7 @@ public:
     }
 
 
-    void disjoint1()
+    TEST_CASE("disjoint1Translate", "translatortest")
     {
         {
             MySolver solver;
@@ -2581,11 +2548,11 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             /// I can not create cardinality constraints for sat solver
             /*
-            CPPUNIT_ASSERT(norm.createClauses());
+            REQUIRE(norm.createClauses());
 
             translate(solver, norm.getVariableCreator(), norm.removeConstraints(), norm.getConfig());
             LitVec clauses = cnfToLits({});
@@ -2593,12 +2560,12 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==724);*/
+            REQUIRE(expectedModels(solver)==724);*/
         }
 
     }
     
-    void disjoint1direct()
+    TEST_CASE("disjoint1DirectTranslate", "translatortest")
     {
         {
             MySolver solver;
@@ -2658,11 +2625,11 @@ public:
 
 
 
-            CPPUNIT_ASSERT(norm.prepare());
+            REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
             /// I can not create cardinality constraints for sat solver
             /*
-            CPPUNIT_ASSERT(norm.createClauses());
+            REQUIRE(norm.createClauses());
 
             translate(solver, norm.getVariableCreator(), norm.removeConstraints(), norm.getConfig());
             LitVec clauses = cnfToLits({});
@@ -2670,13 +2637,10 @@ public:
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
-            CPPUNIT_ASSERT(expectedModels(solver)==724);*/
+            REQUIRE(expectedModels(solver)==724);*/
         }
 
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION (TranslatorTest);
 
 
 

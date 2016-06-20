@@ -18,7 +18,7 @@
 
 // }}}
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "catch.hpp"
 #include "test/mysolver.h"
 #include "order/normalizer.h"
 #include "clasp/clasp_facade.h"
@@ -27,38 +27,8 @@
 #include <iostream>
 
 using namespace order;
-
-namespace
-{
-
-}
-class EqualityTest : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE( EqualityTest );
-    CPPUNIT_TEST( test1 );
-    CPPUNIT_TEST( test2 );
-    CPPUNIT_TEST( test3 );
-    CPPUNIT_TEST( test4 );
-    CPPUNIT_TEST( test5 );
-    CPPUNIT_TEST( test6 );
-    CPPUNIT_TEST( test7 );
-    CPPUNIT_TEST( test8 );
-    CPPUNIT_TEST( test9 );
-    CPPUNIT_TEST( test10 );
-    CPPUNIT_TEST_SUITE_END();
-private:
-public:
-    void setUp()
-    {
-    }
-
-    void tearDown()
-    {
-    }
-
-
-    
-    void test1()
+   
+    TEST_CASE("EqualityProcessor1", "1")
     {
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
@@ -74,12 +44,12 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(p.process(lc));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(lc.size()==0);
+        REQUIRE(p.process(lc));
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(lc.size()==0);
     }
 
-    void test2()
+    TEST_CASE("EqualityProcessor2", "2")
     {
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
@@ -94,12 +64,12 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(p.process(lc));
-        CPPUNIT_ASSERT(lc.size()==0);
+        REQUIRE(p.process(lc));
+        REQUIRE(lc.size()==0);
     }
 
 
-    void test3()
+    TEST_CASE("EqualityProcessor3", "3")
     {
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
@@ -112,10 +82,10 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(!p.process(lc));
+        REQUIRE(!p.process(lc));
     }
 
-    void test4()
+    TEST_CASE("EqualityProcessor4", "4")
     {
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
@@ -133,15 +103,15 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(p.process(lc));
+        REQUIRE(p.process(lc));
 
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-3);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-3);
     }
 
 
-    void test5()
+    TEST_CASE("EqualityProcessor5", "5")
     {
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
@@ -181,27 +151,27 @@ public:
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
 
-        CPPUNIT_ASSERT(p.process(lc));
+        REQUIRE(p.process(lc));
 
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(b.v)==p.getEqualities(c.v));
-        CPPUNIT_ASSERT(p.getEqualities(c.v)==p.getEqualities(d.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==1);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==1);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-1);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(b.v)==p.getEqualities(c.v));
+        REQUIRE(p.getEqualities(c.v)==p.getEqualities(d.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-1);
 
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).firstCoef==1);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).secondCoef==2);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).constant==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).firstCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).secondCoef==2);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).constant==1);
 
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).firstCoef==1);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==4);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).constant==3);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).firstCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==4);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).constant==3);
     }
     
     
-    void test6()
+    TEST_CASE("EqualityProcessor6", "6")
     {
         /// 2 times a = b + 3
         MySolver s;
@@ -229,14 +199,14 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(p.process(lc));
+        REQUIRE(p.process(lc));
 
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-3);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-3);
     }
     
-    void test7()
+    TEST_CASE("EqualityProcessor7", "7")
     {
         // a = b + 3
         // a = b + 4
@@ -266,11 +236,11 @@ public:
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
-        CPPUNIT_ASSERT(!p.process(lc));
+        REQUIRE(!p.process(lc));
     }
     
     
-    void test8()
+    TEST_CASE("EqualityProcessor8", "8")
     {
         // 3*a = 2*b
         // 3*a = 4*b
@@ -300,23 +270,23 @@ public:
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
         
-        CPPUNIT_ASSERT(p.process(lc));
-        CPPUNIT_ASSERT(lc.size()==0);
+        REQUIRE(p.process(lc));
+        REQUIRE(lc.size()==0);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
         
-        CPPUNIT_ASSERT(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
-        CPPUNIT_ASSERT(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
+        REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
+        REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
         
     }
     
             // 7*a = 18*b
     
-    void test9()
+    TEST_CASE("EqualityProcessor9", "9")
     {
         // 3*a = 2*b
         // 3*a = 4*b
@@ -356,22 +326,22 @@ public:
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
         
-        CPPUNIT_ASSERT(p.process(lc));
-        CPPUNIT_ASSERT(lc.size()==0);
+        REQUIRE(p.process(lc));
+        REQUIRE(lc.size()==0);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
         
-        CPPUNIT_ASSERT(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
-        CPPUNIT_ASSERT(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
+        REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
+        REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
         
     }
     
     
-    void test10()
+    TEST_CASE("EqualityProcessor10", "10")
     {
         // a = 2*b
         // b = 2*c
@@ -462,52 +432,49 @@ public:
         lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
         }
         
-        CPPUNIT_ASSERT(p.process(lc));
-        CPPUNIT_ASSERT(lc.size()==1);
+        REQUIRE(p.process(lc));
+        REQUIRE(lc.size()==1);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)==p.getEqualities(b.v));
-        CPPUNIT_ASSERT(p.getEqualities(b.v)==p.getEqualities(c.v));
-        CPPUNIT_ASSERT(p.getEqualities(c.v)==p.getEqualities(d.v));
-        CPPUNIT_ASSERT(p.getEqualities(d.v)==p.getEqualities(e.v));
-        CPPUNIT_ASSERT(p.getEqualities(e.v)==p.getEqualities(f.v));
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->top()==a.v);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(e.v).constant==0);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(f.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
+        REQUIRE(p.getEqualities(b.v)==p.getEqualities(c.v));
+        REQUIRE(p.getEqualities(c.v)==p.getEqualities(d.v));
+        REQUIRE(p.getEqualities(d.v)==p.getEqualities(e.v));
+        REQUIRE(p.getEqualities(e.v)==p.getEqualities(f.v));
+        REQUIRE(p.getEqualities(a.v)->top()==a.v);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).constant==0);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).constant==0);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==1);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).firstCoef==4);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(c.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).firstCoef==4);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).secondCoef==1);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).firstCoef==8);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).firstCoef==8);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==1);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(e.v).firstCoef==16);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(e.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).firstCoef==16);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).secondCoef==1);
         
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(f.v).firstCoef==32);
-        CPPUNIT_ASSERT(p.getEqualities(a.v)->getConstraints().at(f.v).secondCoef==1);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).firstCoef==32);
+        REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).secondCoef==1);
         
         for (auto& i : lc)
             p.substitute(i.l);
         
         const LinearConstraint& l = lc.back().l;
-        CPPUNIT_ASSERT(l.getViews()[0].v==a);
-        CPPUNIT_ASSERT(l.getViews()[0].a==101);
-        CPPUNIT_ASSERT(l.getViews()[1].v==g);
-        CPPUNIT_ASSERT(l.getViews()[1].a==32);
-        CPPUNIT_ASSERT(l.getViews().size()==2);
+        REQUIRE(l.getViews()[0].v==a);
+        REQUIRE(l.getViews()[0].a==101);
+        REQUIRE(l.getViews()[1].v==g);
+        REQUIRE(l.getViews()[1].a==32);
+        REQUIRE(l.getViews().size()==2);
         
         ReifiedAllDistinct rd({a*3,b+7,c,d,e,f,g},Literal(0,false),false);
         p.substitute(rd);
     }
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION (EqualityTest);
 
 
 

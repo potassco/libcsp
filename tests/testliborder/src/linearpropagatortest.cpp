@@ -18,7 +18,7 @@
 
 // }}}
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "catch.hpp"
 #include "order/linearpropagator.h"
 #include "test/mysolver.h"
 #include "order/normalizer.h"
@@ -28,25 +28,8 @@
 using namespace order;
 
 
-class LinearPropagatorTest : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE( LinearPropagatorTest );
-    CPPUNIT_TEST( testUnique );
-    CPPUNIT_TEST( testPropagation );
-    CPPUNIT_TEST( testPropagation2 );
-    CPPUNIT_TEST( testPropagation3 );
-    CPPUNIT_TEST_SUITE_END();
-private:
-public:
-    void setUp()
-    {
-    }
 
-    void tearDown()
-    {
-    }
-
-    void testUnique()
+    TEST_CASE("TestUnique", "[linearPropagator]")
     {
         MySolver s;
         Normalizer n(s, translateConfig);
@@ -65,7 +48,7 @@ public:
             l.addRhs(17);
             //std::cout << std::endl << l << std::endl;
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
             //p.propagate_true(p,l);
             auto x= s.getNewLiteral(true);
             n.addConstraint(ReifiedLinearConstraint(std::move(l),x,true));
@@ -83,7 +66,7 @@ public:
         }
     }
 
-    void testPropagation()
+    TEST_CASE("TestPropagation1", "[linearPropagator]")
     {
 
         MySolver s;
@@ -103,7 +86,7 @@ public:
             l.addRhs(17);
             //std::cout << std::endl << l << std::endl;
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
             //p.propagate_true(p,l);
             n.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
             n.prepare();
@@ -114,24 +97,24 @@ public:
 
             //std::cout << p << std::endl;
 
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1).upper()==7);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v2).upper()==7);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v3).upper()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v1).upper()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v2).upper()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v3).upper()==7);
 
 
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
 
             //auto r = n.getVariableCreator().getViewDomain(v1);
             //n.getVariableCreator().constrainVariable(v1,Restrictor(r.begin()+2,r.end()));
             //r = n.getVariableCreator().getViewDomain(v2);
             //n.getVariableCreator().constrainVariable(v2,Restrictor(r.begin()+2,r.end()));
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::FALSE);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::FALSE);
 
             //r = n.getVariableCreator().getViewDomain(v2);
             //n.getVariableCreator().constrainVariable(v2,Restrictor(r.begin()+1,r.end()));
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v2).isEmpty());
+            //REQUIRE(n.getVariableCreator().getViewDomain(v2).isEmpty());
 
 
             View v11 = n.createView(Domain(5,10));
@@ -144,21 +127,21 @@ public:
             l2.addRhs(27);
             //std::cout << std::endl << l << std::endl;
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
             //p.propagate_true(p,l2);
             n.addConstraint(ReifiedLinearConstraint(std::move(l2),s.trueLit(),false));
             n.prepare();
             //s.createNewLiterals(n.estimateVariables());
             
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v11).upper()==10);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v12).upper()==10);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v13).upper()==10);
+            REQUIRE(n.getVariableCreator().getViewDomain(v11).upper()==10);
+            REQUIRE(n.getVariableCreator().getViewDomain(v12).upper()==10);
+            REQUIRE(n.getVariableCreator().getViewDomain(v13).upper()==10);
 
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v11).lower()==7);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v12).lower()==7);
-            CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v13).lower()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v11).lower()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v12).lower()==7);
+            REQUIRE(n.getVariableCreator().getViewDomain(v13).lower()==7);
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l2)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l2)==Propagator::value::UNKNOWN);
             //std::cout << p << std::endl;
 
 
@@ -174,14 +157,14 @@ public:
             //std::cout << std::endl << l << std::endl;
 
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l3)==Propagator::value::TRUE);
+            //REQUIRE(p.propagate_reified(p,l3)==Propagator::value::TRUE);
 
 
             //Variable v114 = vc.createVariable(Domain(5,7));
             //l3.normalize();
             //l3.add(v114,-4);
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l3)==Propagator::value::FALSE);
+            //REQUIRE(p.propagate_reified(p,l3)==Propagator::value::FALSE);
 
             View v1111 = n.createView(Domain(5,10));
             View v1112 = n.createView(Domain(5,10));
@@ -194,18 +177,18 @@ public:
             //std::cout << std::endl << l << std::endl;
 
 
-            //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
             n.addConstraint(ReifiedLinearConstraint(std::move(l4),s.trueLit(),false));
             //p.propagate_false(p,l4);
             //std::cout << p << std::endl;
 
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1111).getUpper()==10);
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1112).getUpper()==10);
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1113).getUpper()==10);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1111).getUpper()==10);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1112).getUpper()==10);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1113).getUpper()==10);
 
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1111).getLower()()==8);
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1112).getLower()()==8);
-            //CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1113).getLower()()==8);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1111).getLower()()==8);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1112).getLower()()==8);
+            //REQUIRE(n.getVariableCreator().getViewDomain(v1113).getLower()()==8);
 
         }
 
@@ -224,7 +207,7 @@ public:
             //std::cout << std::endl << l << std::endl;
 
 
-            //CPPUNIT_ASSERT(p2propagate_reified(p2,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p2propagate_reified(p2,l)==Propagator::value::UNKNOWN);
             //p.propagate_true(p2,l);
             n2.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),false));
             n2.prepare();
@@ -232,24 +215,24 @@ public:
             
             //std::cout << p2 << std::endl;
 
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1).upper()==7);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v2).upper()==7);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v3).upper()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v1).upper()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v2).upper()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v3).upper()==7);
 
 
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
 
             //auto r = n2.getVariableCreator().getViewDomain(v1);
             //n2.getVariableCreator().constrainVariable(v1,Restrictor(r.begin()+2,r.end()));
             //r = n2.getVariableCreator().getViewDomain(v2);
             //n2.getVariableCreator().constrainVariable(v2,Restrictor(r.begin()+2,r.end()));
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l)==Propagator::value::FALSE);
+            //REQUIRE(p2.propagate_reified(p2,l)==Propagator::value::FALSE);
 
             //r = n2.getVariableCreator().getViewDomain(v2);
             //n2.getVariableCreator().constrainVariable(v2,Restrictor(r.begin()+1,r.end()));
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v2).isEmpty());
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v2).isEmpty());
 
 
             View v11 = n2.createView(Domain(5,10));
@@ -263,21 +246,21 @@ public:
             //std::cout << std::endl << l << std::endl;
 
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
             //p2.propagate_true(p2,l2);
             n2.addConstraint(ReifiedLinearConstraint(std::move(l2),s.trueLit(),false));
             n2.prepare();
             //s.createNewLiterals(n2.estimateVariables());
             
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v11).upper()==10);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v12).upper()==10);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v13).upper()==10);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v11).upper()==10);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v12).upper()==10);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v13).upper()==10);
 
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v11).lower()==7);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v12).lower()==7);
-            CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v13).lower()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v11).lower()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v12).lower()==7);
+            REQUIRE(n2.getVariableCreator().getViewDomain(v13).lower()==7);
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l2)==Propagator::value::UNKNOWN);
+            //REQUIRE(p2.propagate_reified(p2,l2)==Propagator::value::UNKNOWN);
             //std::cout << p2 << std::endl;
 
 
@@ -292,13 +275,13 @@ public:
             l3.addRhs(0);
             //std::cout << std::endl << l << std::endl;
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l3)==Propagator::value::TRUE);
+            //REQUIRE(p2.propagate_reified(p2,l3)==Propagator::value::TRUE);
 
 
             //View v114 = vc2.createView(Domain(5,7));
             //l3.normalize();
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l3)==Propagator::value::FALSE);
+            //REQUIRE(p2.propagate_reified(p2,l3)==Propagator::value::FALSE);
 
             View v1111 = n2.createView(Domain(5,10));
             View v1112 = n2.createView(Domain(5,10));
@@ -310,7 +293,7 @@ public:
             l4.addRhs(-27-1);
             //std::cout << std::endl << l << std::endl;
 
-            //CPPUNIT_ASSERT(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
+            //REQUIRE(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
             n2.addConstraint(ReifiedLinearConstraint(std::move(l4),s.falseLit(),false));
             n2.prepare();
             //s.createNewLiterals(n2.estimateVariables());
@@ -318,13 +301,13 @@ public:
             //p2.propagate_false(p2,l4);
             //std::cout << p2 << std::endl;
 
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1111).getUpper()==10);
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1112).getUpper()==10);
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1113).getUpper()==10);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1111).getUpper()==10);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1112).getUpper()==10);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1113).getUpper()==10);
 
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1111).getLower()()==8);
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1112).getLower()()==8);
-            //CPPUNIT_ASSERT(n2.getVariableCreator().getViewDomain(v1113).getLower()()==8);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1111).getLower()()==8);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1112).getLower()()==8);
+            //REQUIRE(n2.getVariableCreator().getViewDomain(v1113).getLower()()==8);
 
 
 
@@ -335,11 +318,11 @@ public:
             auto r1 = n.getVariableCreator().getViewDomain(i);
             auto r2 = n2.getVariableCreator().getViewDomain(i);
 
-            CPPUNIT_ASSERT(r1.empty()==r2.empty());
+            REQUIRE(r1.empty()==r2.empty());
             if (!r1.empty())
             {
-                CPPUNIT_ASSERT(r1.lower()==r2.lower());
-                CPPUNIT_ASSERT(r1.upper()==r2.upper());
+                REQUIRE(r1.lower()==r2.lower());
+                REQUIRE(r1.upper()==r2.upper());
             }
         }
 
@@ -361,16 +344,16 @@ public:
             //std::cout << std::endl << l << std::endl;
 
             /*Normalizer newn(s,n2.getVariableCreator());
-        //CPPUNIT_ASSERT(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
+        //REQUIRE(p2.propagate_reified(p2,l)==Propagator::value::UNKNOWN);
         newn.addConstraint(ReifiedLinearConstraint(std::move(l5),s.falseLit()));
         newn.addConstraint(ReifiedLinearConstraint(std::move(l6),s.falseLit()));
-        CPPUNIT_ASSERT(newn.createClauses());*/
+        REQUIRE(newn.createClauses());*/
         }
 
     }
 
 
-    void testPropagation2()
+    TEST_CASE("TestPropagation2", "[linearPropagator]")
     {
 
         MySolver s;
@@ -388,7 +371,7 @@ public:
         l.addRhs(10);
         //std::cout << std::endl << l << std::endl;
 
-        //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+        //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
         //p.propagate_true(p,l);
         n.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),false));
         n.prepare();
@@ -399,12 +382,12 @@ public:
 
         //std::cout << p << std::endl;
 
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1).lower()==3);
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v2).lower()==3);
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v3).lower()==3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v1).lower()==3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v2).lower()==3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v3).lower()==3);
     }
 
-    void testPropagation3()
+    TEST_CASE("TestPropagation3", "[linearPropagator]")
     {
 
         MySolver s;
@@ -422,7 +405,7 @@ public:
         l.addRhs(10);
         //std::cout << std::endl << l << std::endl;
 
-        //CPPUNIT_ASSERT(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
+        //REQUIRE(p.propagate_reified(p,l)==Propagator::value::UNKNOWN);
         //p.propagate_true(p,l);
         n.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),false));
         n.prepare();
@@ -433,10 +416,8 @@ public:
 
         //std::cout << p << std::endl;
 
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v1).upper()==-3);
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v2).upper()==-3);
-        CPPUNIT_ASSERT(n.getVariableCreator().getViewDomain(v3).upper()==-3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v1).upper()==-3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v2).upper()==-3);
+        REQUIRE(n.getVariableCreator().getViewDomain(v3).upper()==-3);
     }
-};
 
-CPPUNIT_TEST_SUITE_REGISTRATION (LinearPropagatorTest);

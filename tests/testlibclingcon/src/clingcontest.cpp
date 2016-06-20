@@ -18,7 +18,7 @@
 
 // }}}
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "catch.hpp"
 #include "clasp/clasp_facade.h"
 #include "clasp/solver.h"
 #include "clasp/cli/clasp_output.h"
@@ -101,70 +101,8 @@ public:
 using namespace order;
 
 
-class ClingconTest : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE( ClingconTest );
-    CPPUNIT_TEST( test00 );
-    CPPUNIT_TEST( test0 );
-    CPPUNIT_TEST( test1 );
-    //CPPUNIT_TEST( test2 ); /// currently removed -> incremental does not work with lazyLiteralCreation
-    CPPUNIT_TEST( test3 );
-    CPPUNIT_TEST( test4 );
-    CPPUNIT_TEST( test5 );
-    CPPUNIT_TEST( test6 );
-    CPPUNIT_TEST( sendMoreMoney );
-    CPPUNIT_TEST( sendMoreMoney2 );
     
-    CPPUNIT_TEST( nQueens );
-    CPPUNIT_TEST( nQueensEx );
-    
-    CPPUNIT_TEST( crypt112 );
-    CPPUNIT_TEST( crypt224 );
-    CPPUNIT_TEST( crypt145 );
-    
-    CPPUNIT_TEST( allDiff1 );
-    CPPUNIT_TEST( allDiff2 );
-    CPPUNIT_TEST( allDiff3 );
-    CPPUNIT_TEST( allDiff4 );
-    //CPPUNIT_TEST( allDiff5 );
-    CPPUNIT_TEST( sendMoreMoney3 );
-    CPPUNIT_TEST( sendMoreMoney4 );
-    CPPUNIT_TEST(unsat1);
-    CPPUNIT_TEST(unsat2);
-    //CPPUNIT_TEST( disjoint0 );
-    //CPPUNIT_TEST( disjoint0Ex );
-    
-    CPPUNIT_TEST( disjoint1 );
-    CPPUNIT_TEST( disjoint1Ex );
-    
-    CPPUNIT_TEST( disjoint2 );
-    CPPUNIT_TEST( disjoint2Ex );
-    CPPUNIT_TEST( big1 );
-    CPPUNIT_TEST( bigger1 );
-    CPPUNIT_TEST( bigger2 );
-    CPPUNIT_TEST( bigger3 );
-    CPPUNIT_TEST( bigger4 );
-    //CPPUNIT_TEST( bigger5 ); /// why do single propagation steps take so long (my propagation interleaved with clasps propagation,
-    /// without choices)?
-    CPPUNIT_TEST( bigger6 );
-    
-    CPPUNIT_TEST( testEquality1 );
-    CPPUNIT_TEST( testEquality2 );
-    CPPUNIT_TEST( testPidgeon );
-    
-    CPPUNIT_TEST( testDomain );
-    CPPUNIT_TEST_SUITE_END();
-private:
-public:
-    void setUp()
-    {
-    }
-    
-    void tearDown()
-    {
-    }
-    
-    void test00()
+    TEST_CASE("Empty", "1")
     {
         Clasp::ClaspFacade f;
         ClingconConfig conf(f.ctx, lazySolveConfigProp4);
@@ -183,7 +121,7 @@ public:
     }
     
     
-    void test0()
+    TEST_CASE("Simple logic", "1")
     {
         
         //std::cout << "start test 0 " << std::endl;
@@ -201,7 +139,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -248,9 +186,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
             {
@@ -288,24 +226,18 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==79);
+            REQUIRE(f.summary().enumerated()==79);
             //TODO: compare with translation based approach
             
             
             
         }
-    }
-    
-    void test1()
-    {
-        for (auto i : conf1)
-            test1aux(i);
     }
     
     void test1aux(order::Config c)
@@ -354,7 +286,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         
         auto ia = conf.n_.createView(order::Domain(5,10));
         auto ib = conf.n_.createView(order::Domain(5,10));
@@ -371,18 +303,18 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());            
+        REQUIRE(conf.n_.finalize());            
             
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to); /// 442 solutions
         f.solve();
-        CPPUNIT_ASSERT(f.summary().enumerated()==442);
+        REQUIRE(f.summary().enumerated()==442);
         //f.solve();
         
         /// first thing in next incremental step is
@@ -396,177 +328,11 @@ public:
          */
     }
     
-    void test2()
+    TEST_CASE("Simple ASP", "1")
     {
         for (auto i : conf1)
-            test2aux(i);
-    }
-    
-    void test2aux(order::Config c)
-    {
-        
-        Clasp::ClaspFacade f;
-        ClingconConfig conf(f.ctx, c);
-        conf.solve.numModels = 0;
-        //conf.solve.project =  1;
-        
-        Clasp::Asp::LogicProgram& lp = f.startAsp(conf, true); // true for incremental
-        //lp.start(f.ctx);
-        
-        std::vector<order::ReifiedLinearConstraint> linearConstraints;
-        
-        
-        
-        /// {a,b}.
-        /// :- a, b.
-        /// :- not a, not b.
-        auto a = lp.newAtom();
-        lp.addOutput("a",a);
-        auto b = lp.newAtom();
-        lp.addOutput("b",b);
-        
-        
-        {
-            lp.startChoiceRule().addHead(a).addHead(b).endRule();
-        }
-        
-        {
-            lp.startRule().addToBody(a,true).addToBody(b,true).endRule();
-        }
-        
-        {
-            lp.startRule().addToBody(a,false).addToBody(b,false).endRule();
-        }
-        
-        //lp.freeze(a,Clasp::value_free);
-        //lp.freeze(b,Clasp::value_free);
-        
-        auto constraint1 = lp.newAtom();
-        lp.addOutput("a+b+c<=17",constraint1);
-        {
-            lp.startRule().addToBody(a,true).addToBody(constraint1,false).endRule();
-        }
-        
-        {
-            lp.startRule().addToBody(b,true).addToBody(constraint1,true).endRule();
-        }
-        
-        //r.reset();
-        //r.setType(Clasp::Asp::BASICRULE);
-        //r.addToBody(b, false);
-        //r.addHead(False);
-        //lp.addRule(r);
-        
-        //// ADDITIONAL STUFF
-        {
-            lp.startChoiceRule().addHead(constraint1).endRule();
-        }
-        
-        CPPUNIT_ASSERT(lp.end()); /// SAT
-        
-        auto ia = conf.n_.createView(order::Domain(5,10));
-        auto ib = conf.n_.createView(order::Domain(5,10));
-        auto ic = conf.n_.createView(order::Domain(5,10));
-        order::LinearConstraint l(order::LinearConstraint::Relation::LE);
-        l.addRhs(17);
-        l.add(ia);
-        l.add(ib);
-        l.add(ic);
-        //// at least getting the literal from the View has to take place after lp.end() has been called
-        linearConstraints.emplace_back(order::ReifiedLinearConstraint(std::move(l),toOrderFormat(lp.getLiteral(constraint1)),false));
-        ////
-        f.ctx.unfreeze();
-        for (auto &i : linearConstraints)
-            conf.n_.addConstraint(std::move(i));
-        
-        CPPUNIT_ASSERT(conf.n_.prepare());
-        
-        CPPUNIT_ASSERT(conf.n_.finalize());
-        
-        
-        
-        if (conf.n_.getConfig().minLitsPerVar == -1)
-        {
-            ///name the order lits
-            /// i just use free id's for this.
-            /// in the next incremental step these id's need to be
-            /// made false variables
-            
-            Clasp::OutputTable& st = f.ctx.output;
-            
-            for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-            {
-                std::string varname;
-                switch(i)
-                {
-                case 0: varname="a"; break;
-                case 1: varname="b"; break;
-                case 2: varname="c"; break;
-                }
-                
-                auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                {
-                    std::stringstream ss;
-                    ss << varname << "<=" << *litresit;
-                    st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                }
-            }
-            
-            
-        }
-        //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
-        
-        
-        f.prepare();
-        
-        //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-        //f.solve(&to);
-        f.solve();
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==216);
-        
-        f.update(); /// PROBLEMS HERE with auxVars added during search
-        f.prepare();
-        
-        
-        Clasp::LitVec assume;
-        assume.push_back(lp.getLiteral(a));
-        
-        //f.solve(&to,assume);
-        f.solve(0,assume);
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==10);
-        
-        f.update();
-        f.prepare();
-        
-        assume.clear();
-        assume.push_back(lp.getLiteral(b));
-        
-        
-        //f.solve(&to,assume);
-        f.solve(0,assume);
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==206);
-        
-        /// first thing in next incremental step is
-        /*
-         *r.reset();
-        r.setType(Clasp::Asp::BASICRULE);
-        r.addToBody(atomId, false);
-        r.addHead(False);
-        lp.addRule(r);
-         *
-         */
-    }
-    
-    void test3()
-    {
-        for (auto i : conf1)
-            test3aux(i);
-    }
+            test1aux(i);
+    } 
     
     void test3aux(order::Config c)
     {
@@ -583,7 +349,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -641,9 +407,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             
@@ -683,14 +449,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==2);
+            REQUIRE(f.summary().enumerated()==2);
             //TODO: compare with translation based approach
             
             
@@ -698,10 +464,10 @@ public:
         }
     }
     
-    void test4()
+    TEST_CASE("Equality Translation", "3")
     {
         for (auto i : conf1)
-            test4aux(i);
+            test3aux(i);
     }
     
     void test4aux(order::Config c)
@@ -719,7 +485,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -759,9 +525,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             
@@ -801,13 +567,13 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==3);
+            REQUIRE(f.summary().enumerated()==3);
             //TODO: compare with translation based approach
             
             
@@ -815,12 +581,12 @@ public:
         }
     }
     
-    
-    void test5()
+    TEST_CASE("Domain Constraint Propagation", "4")
     {
         for (auto i : conf1)
-            test5aux(i);
+            test4aux(i);
     }
+    
     
     void test5aux(order::Config c)
     {
@@ -837,7 +603,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -857,9 +623,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             
@@ -899,14 +665,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
             //f.solve();
             // std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==30);
+            REQUIRE(f.summary().enumerated()==30);
             //TODO: compare with translation based approach
             
             
@@ -915,12 +681,12 @@ public:
     }
     
     
-    
-    void test6()
+    TEST_CASE("Eq Propagation", "5")
     {
         for (auto i : conf1)
-            test6aux(i);
+            test5aux(i);
     }
+    
     
     void test6aux(order::Config c)
     {
@@ -937,7 +703,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -1041,9 +807,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             
@@ -1083,14 +849,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==5040);
+            REQUIRE(f.summary().enumerated()==5040);
             //TODO: compare with translation based approach
             
             
@@ -1099,12 +865,12 @@ public:
     }
     
     
-    
-    void sendMoreMoney()
+    TEST_CASE("Send", "6")
     {
         for (auto i : conf1)
-            sendMoreMoneyaux(i);
+            test6aux(i);
     }
+    
     
     void sendMoreMoneyaux(order::Config c)
     {
@@ -1121,7 +887,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -1375,9 +1141,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             
@@ -1417,14 +1183,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
             //TODO: compare with translation based approach
             
             
@@ -1432,11 +1198,12 @@ public:
         }
     }
     
-    void sendMoreMoney2()
+    TEST_CASE("SendMoreMoney1", "1")
     {
         for (auto i : conf1)
-            sendMoreMoney2aux(i);
+            sendMoreMoneyaux(i);
     }
+    
     
     void sendMoreMoney2aux(order::Config c)
     {
@@ -1454,7 +1221,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -1708,9 +1475,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -1749,14 +1516,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
             //TODO: compare with translation based approach
             
             
@@ -1764,11 +1531,10 @@ public:
         }
     }
     
-    
-    void nQueens()
+    TEST_CASE("SendMoreMoney2", "2")
     {
         for (auto i : conf1)
-            nQueensaux(i);
+            sendMoreMoney2aux(i);
     }
     
     void nQueensaux(order::Config c)
@@ -1787,7 +1553,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -1868,9 +1634,9 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -1911,7 +1677,7 @@ public:
             
         }
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         //std::cout << "constraints: " << f.ctx.stats().numConstraints() << std::endl;
         //std::cout << "variables:   " << f.ctx.stats().vars << std::endl;
@@ -1922,18 +1688,19 @@ public:
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==724);
+        REQUIRE(f.summary().enumerated()==724);
         //TODO: compare with translation based approach
         
     }
     
     
-    void nQueensEx()
+    TEST_CASE("nQueens", "1")
     {
         for (auto i : conf1)
-            nQueensExaux(i);
+            nQueensaux(i);
     }
     
+
     void nQueensExaux(order::Config c)
     {
         
@@ -1950,7 +1717,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -2033,9 +1800,9 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2076,7 +1843,7 @@ public:
             
         }
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         //std::cout << "constraints: " << f.ctx.stats().numConstraints() << std::endl;
         //std::cout << "variables:   " << f.ctx.stats().vars << std::endl;
@@ -2087,18 +1854,19 @@ public:
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==724);
+        REQUIRE(f.summary().enumerated()==724);
         //TODO: compare with translation based approach
         
     }
     
     
-    void crypt112()
+    
+    TEST_CASE("nQueensEx", "1")
     {
         for (auto i : conf1)
-            crypt112aux(i);
-        //crypt112aux(nonlazySolveConfig);
+            nQueensExaux(i);
     }
+        
     
     void crypt112aux(order::Config c)
     {
@@ -2116,7 +1884,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         
         
         MySharedContext& solver = conf.creator_;
@@ -2160,9 +1928,9 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2203,23 +1971,26 @@ public:
             
         }
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==12);
+        REQUIRE(f.summary().enumerated()==12);
         //TODO: compare with translation based approach
         
     }
     
-    void crypt224()
+    
+    TEST_CASE("Crypt112", "1")
     {
         for (auto i : conf1)
-            crypt224aux(i);
+            crypt112aux(i);
+        //crypt112aux(nonlazySolveConfig);
     }
+    
     
     void crypt224aux(order::Config c)
     {
@@ -2237,7 +2008,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         
         
         MySharedContext& solver = conf.creator_;
@@ -2290,9 +2061,9 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2333,24 +2104,23 @@ public:
             
         }
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==12);
+        REQUIRE(f.summary().enumerated()==12);
         //TODO: compare with translation based approach
         
     }
     
     
-    
-    void crypt145()
+    TEST_CASE("Crypt224", "1")
     {
         for (auto i : conf1)
-            crypt145aux(i);
+            crypt224aux(i);
     }
     
     void crypt145aux(order::Config c)
@@ -2369,7 +2139,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         
         
         MySharedContext& solver = conf.creator_;
@@ -2435,9 +2205,9 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2476,116 +2246,119 @@ public:
             
         }
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==24);
+        REQUIRE(f.summary().enumerated()==24);
         //TODO: compare with translation based approach
         
     }
     
     
     
-    void allDiff1()
+   TEST_CASE("Crypt145", "1")
+    {
+        for (auto i : conf1)
+            crypt145aux(i);
+    }
+    
+   void allDiff1aux(order::Config c)
+   {
+       
+       Clasp::ClaspFacade f;
+       ClingconConfig conf(f.ctx, c);
+       conf.solve.numModels = 0;
+       //conf.solve.project =  1;
+       //conf.n_.getConfig().pidgeon=false;
+       
+       Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+       //lp.start(f.ctx);
+       
+       std::vector<order::ReifiedLinearConstraint> linearConstraints;
+       
+       
+       
+       REQUIRE(lp.end()); /// UNSAT
+       {
+           
+           View s = conf.n_.createView(Domain(0,2));
+           View e = conf.n_.createView(Domain(0,1));
+           
+           conf.n_.addConstraint(ReifiedAllDistinct({s,e},conf.creator_.trueLit(),false));
+           
+           
+           for (auto &i : linearConstraints)
+               conf.n_.addConstraint(std::move(i));
+           
+           REQUIRE(conf.n_.prepare());
+           
+           
+           REQUIRE(conf.n_.finalize());
+           
+           if (conf.n_.getConfig().minLitsPerVar == -1)
+           {
+               ///name the order lits
+               /// i just use free id's for this.
+               /// in the next incremental step these id's need to be
+               /// made false variables
+               
+               Clasp::OutputTable& st = f.ctx.output;
+               
+               for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
+               {
+                   std::string varname;
+                   switch(i)
+                   {
+                   case 0: varname="s"; break;
+                   case 1: varname="e"; break;
+                   case 2: varname="n"; break;
+                   case 3: varname="d"; break;
+                   case 4: varname="m"; break;
+                   case 5: varname="o"; break;
+                   case 6: varname="r"; break;
+                   case 7: varname="y"; break;
+                   }
+                   
+                   auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
+                   for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
+                   {
+                       std::stringstream ss;
+                       ss << varname << "<=" << *litresit;
+                       st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
+                   }
+               }
+               
+               
+           }
+           
+           //f.ctx.startAddConstraints(1000);
+           //REQUIRE(conf.n_.createClauses()); /// UNSAT
+           f.prepare();
+           
+           Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+           //f.solve(&to);
+           f.solve();
+           //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+           REQUIRE(f.summary().enumerated()==4);
+           //TODO: compare with translation based approach
+           
+           
+           
+       }
+   }
+    
+    
+    
+    TEST_CASE("AllDiff1", "1")
     {
         for (auto i : conf1)
             allDiff1aux(i);
     }
     
-    void allDiff1aux(order::Config c)
-    {
-        
-        Clasp::ClaspFacade f;
-        ClingconConfig conf(f.ctx, c);
-        conf.solve.numModels = 0;
-        //conf.solve.project =  1;
-        //conf.n_.getConfig().pidgeon=false;
-        
-        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
-        //lp.start(f.ctx);
-        
-        std::vector<order::ReifiedLinearConstraint> linearConstraints;
-        
-        
-        
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
-        {
-            
-            View s = conf.n_.createView(Domain(0,2));
-            View e = conf.n_.createView(Domain(0,1));
-            
-            conf.n_.addConstraint(ReifiedAllDistinct({s,e},conf.creator_.trueLit(),false));
-            
-            
-            for (auto &i : linearConstraints)
-                conf.n_.addConstraint(std::move(i));
-            
-            CPPUNIT_ASSERT(conf.n_.prepare());
-            
-            
-            CPPUNIT_ASSERT(conf.n_.finalize());
-            
-            if (conf.n_.getConfig().minLitsPerVar == -1)
-            {
-                ///name the order lits
-                /// i just use free id's for this.
-                /// in the next incremental step these id's need to be
-                /// made false variables
-                
-                Clasp::OutputTable& st = f.ctx.output;
-                
-                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-                {
-                    std::string varname;
-                    switch(i)
-                    {
-                    case 0: varname="s"; break;
-                    case 1: varname="e"; break;
-                    case 2: varname="n"; break;
-                    case 3: varname="d"; break;
-                    case 4: varname="m"; break;
-                    case 5: varname="o"; break;
-                    case 6: varname="r"; break;
-                    case 7: varname="y"; break;
-                    }
-                    
-                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                    {
-                        std::stringstream ss;
-                        ss << varname << "<=" << *litresit;
-                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                    }
-                }
-                
-                
-            }
-            
-            //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
-            f.prepare();
-            
-            Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-            //f.solve(&to);
-            f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==4);
-            //TODO: compare with translation based approach
-            
-            
-            
-        }
-    }
-    
-    void allDiff2()
-    {
-        //allDiff2aux(lazySolveConfig);
-        allDiff2aux(nonlazySolveConfig);        
-    }
     
     void allDiff2aux(order::Config c)
     {
@@ -2602,7 +2375,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             
@@ -2618,9 +2391,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2659,14 +2432,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==2);
+            REQUIRE(f.summary().enumerated()==2);
             //TODO: compare with translation based approach
             
             
@@ -2675,12 +2448,13 @@ public:
     }
     
     
-    void allDiff3()
-    {
-        for (auto i : conf1)
-            allDiff3aux(i);
-    }
     
+    TEST_CASE("AllDiff2", "2")
+    {
+        //allDiff2aux(lazySolveConfig);
+        allDiff2aux(nonlazySolveConfig);        
+    }
+
     void allDiff3aux(order::Config c)
     {
         
@@ -2697,7 +2471,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             View s = conf.n_.createView(Domain(0,1));
@@ -2711,15 +2485,15 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(!conf.n_.prepare());
+            REQUIRE_FALSE(conf.n_.prepare());
         }
     }
     
-    
-    void allDiff4()
+        
+    TEST_CASE("AllDiff3", "3")
     {
         for (auto i : conf1)
-            allDiff4aux(i);
+            allDiff3aux(i);
     }
     
     void allDiff4aux(order::Config c)
@@ -2737,7 +2511,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -2753,9 +2527,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -2794,14 +2568,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==6);
+            REQUIRE(f.summary().enumerated()==6);
             //TODO: compare with translation based approach
             
             
@@ -2809,111 +2583,14 @@ public:
         }
     }
     
+
     
-    void allDiff5()
+    TEST_CASE("AllDiff4", "4")
     {
         for (auto i : conf1)
-            allDiff5aux(i);
+            allDiff4aux(i);
     }
-    
-    void allDiff5aux(order::Config c)
-    {
-        
-        Clasp::ClaspFacade f;
-        ClingconConfig conf(f.ctx, c);
-        conf.solve.numModels = 0;
-        //conf.solve.project =  1;
-        
-        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
-        //lp.start(f.ctx);
-        
-        std::vector<order::ReifiedLinearConstraint> linearConstraints;
-        
-        
-        
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
-        {
-            
-            MySharedContext& solver = conf.creator_;
-            
-            View s = conf.n_.createView(Domain(0,9));
-            View e = conf.n_.createView(Domain(0,9));
-            View n = conf.n_.createView(Domain(0,9));
-            View d = conf.n_.createView(Domain(0,9));
-            View m = conf.n_.createView(Domain(0,9));
-            View o = conf.n_.createView(Domain(0,9));
-            View r = conf.n_.createView(Domain(0,9));
-            View y = conf.n_.createView(Domain(0,9));
-            
-            conf.n_.addConstraint(ReifiedAllDistinct({s,e,n,d,m,o,r,y},solver.trueLit(),false));
-            
-            
-            for (auto &i : linearConstraints)
-                conf.n_.addConstraint(std::move(i));
-            
-            CPPUNIT_ASSERT(conf.n_.prepare());
-            
-            CPPUNIT_ASSERT(conf.n_.finalize());
-            
-            
-            if (conf.n_.getConfig().minLitsPerVar == -1)
-            {
-                ///name the order lits
-                /// i just use free id's for this.
-                /// in the next incremental step these id's need to be
-                /// made false variables
-                
-                Clasp::OutputTable& st = f.ctx.output;
-                
-                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-                {
-                    std::string varname;
-                    switch(i)
-                    {
-                    case 0: varname="s"; break;
-                    case 1: varname="e"; break;
-                    case 2: varname="n"; break;
-                    case 3: varname="d"; break;
-                    case 4: varname="m"; break;
-                    case 5: varname="o"; break;
-                    case 6: varname="r"; break;
-                    case 7: varname="y"; break;
-                    }
-                    
-                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                    {
-                        std::stringstream ss;
-                        ss << varname << "<=" << *litresit;
-                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                    }
-                }
-                
-                
-            }
-            //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
-            f.prepare();
-            
-            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-            //f.solve(&to);
-            f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1814400);
-            //TODO: compare with translation based approach
-            
-            
-            
-        }
-    }
-    
-    
-    void sendMoreMoney3()
-    {
-        for (auto i : conf1)
-            sendMoreMoney3aux(i);
-    }
-    
+
     void sendMoreMoney3aux(order::Config c)
     {
         
@@ -2929,7 +2606,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -2991,9 +2668,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -3032,14 +2709,14 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
             //TODO: compare with translation based approach
             
             
@@ -3047,12 +2724,15 @@ public:
         }
     }
     
-    void sendMoreMoney4()
+        
+    
+    TEST_CASE("SendMoreMoney3", "3")
     {
         for (auto i : conf1)
-            sendMoreMoney4aux(i);
+            sendMoreMoney3aux(i);
     }
-    
+
+
     void sendMoreMoney4aux(order::Config c)
     {
         
@@ -3068,7 +2748,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -3129,9 +2809,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -3177,7 +2857,7 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             
@@ -3185,17 +2865,18 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
         }
     }
     
     
-    void unsat1()
+    TEST_CASE("SendMoreMoney4", "1")
     {
         for (auto i : conf1)
-            unsat1aux(i);
+            sendMoreMoney4aux(i);
     }
-    
+
+
     void unsat1aux(order::Config c)
     {
         {
@@ -3213,7 +2894,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -3257,16 +2938,18 @@ public:
             
             
             
-            CPPUNIT_ASSERT(!conf.n_.prepare());            
+            REQUIRE_FALSE(conf.n_.prepare());            
         }
-    }
+    }    
     
-    void unsat2()
+    
+    TEST_CASE("unsat1", "1")
     {
         for (auto i : conf1)
-            unsat2aux(i);
+            unsat1aux(i);
     }
     
+
     void unsat2aux(order::Config c)
     {
         {
@@ -3284,7 +2967,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -3329,9 +3012,9 @@ public:
             
             
             solver.makeRestFalse();
-            CPPUNIT_ASSERT(conf.n_.prepare()); 
+            REQUIRE(conf.n_.prepare()); 
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -3372,314 +3055,317 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==450);
+            REQUIRE(f.summary().enumerated()==450);
             //TODO: compare with translation based approach
         }
     }
     
-    
-    void disjoint0()
+    TEST_CASE("Unsat2", "1")
     {
         for (auto i : conf1)
-            disjoint0aux(i);
+            unsat2aux(i);
     }
     
-    void disjoint0aux(order::Config c)
-    {
-        {
-            //std::cout << "start SMM3 " << std::endl;
-            Clasp::ClaspFacade f;
-            auto myconf =  c;
-            myconf.dlprop = 2; // dlprop comes after
-            ClingconConfig conf(f.ctx, myconf);
-            unsigned int numM = 999;
-            //std::cout << "dl prop "<<myconf.dlprop << ",   " << numM << " models " << std::endl;
-            conf.solve.numModels = numM;
-            //conf.solve.project =  1;
+    
+    
+    
+//    void disjoint0()
+//    {
+//        for (auto i : conf1)
+//            disjoint0aux(i);
+//    }
+    
+//    void disjoint0aux(order::Config c)
+//    {
+//        {
+//            //std::cout << "start SMM3 " << std::endl;
+//            Clasp::ClaspFacade f;
+//            auto myconf =  c;
+//            myconf.dlprop = 2; // dlprop comes after
+//            ClingconConfig conf(f.ctx, myconf);
+//            unsigned int numM = 999;
+//            //std::cout << "dl prop "<<myconf.dlprop << ",   " << numM << " models " << std::endl;
+//            conf.solve.numModels = numM;
+//            //conf.solve.project =  1;
             
-            Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
-            //lp.start(f.ctx);
-            
-            
-            
-            
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
-            
-            MySharedContext& solver = conf.creator_;
-            
-            
-            const int n = 10;
-            
-            std::vector<View> views;
-            for (int i = 1; i <= n; ++i)
-                views.emplace_back(conf.n_.createView(Domain(1,n)));
-            
-            std::vector<View> ldiag;
-            for (int i = 1; i <= n; ++i)
-            {
-                LinearConstraint l(LinearConstraint::Relation::EQ);
-                l.add(views[i-1]*1);
-                l.addRhs(-i);
-                ldiag.emplace_back(conf.n_.createView());
-                l.add(ldiag.back()*-1);
-                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
-            }
-            
-            std::vector<View> rdiag;
-            for (int i = 1; i <= n; ++i)
-            {
-                LinearConstraint l(LinearConstraint::Relation::EQ);
-                l.add(views[i-1]*1);
-                l.addRhs(i);
-                rdiag.emplace_back(conf.n_.createView());
-                l.add(rdiag.back()*-1);
-                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
-            }
+//            Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+//            //lp.start(f.ctx);
             
             
             
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : views)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : ldiag)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : rdiag)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
+            
+//            REQUIRE(lp.end()); /// UNSAT
+            
+//            MySharedContext& solver = conf.creator_;
+            
+            
+//            const int n = 10;
+            
+//            std::vector<View> views;
+//            for (int i = 1; i <= n; ++i)
+//                views.emplace_back(conf.n_.createView(Domain(1,n)));
+            
+//            std::vector<View> ldiag;
+//            for (int i = 1; i <= n; ++i)
+//            {
+//                LinearConstraint l(LinearConstraint::Relation::EQ);
+//                l.add(views[i-1]*1);
+//                l.addRhs(-i);
+//                ldiag.emplace_back(conf.n_.createView());
+//                l.add(ldiag.back()*-1);
+//                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+//            }
+            
+//            std::vector<View> rdiag;
+//            for (int i = 1; i <= n; ++i)
+//            {
+//                LinearConstraint l(LinearConstraint::Relation::EQ);
+//                l.add(views[i-1]*1);
+//                l.addRhs(i);
+//                rdiag.emplace_back(conf.n_.createView());
+//                l.add(rdiag.back()*-1);
+//                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+//            }
             
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : views)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : ldiag)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : rdiag)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
             
             
-            if (conf.n_.getConfig().minLitsPerVar == -1)
-            {
-                ///name the order lits
-                /// i just use free id's for this.
-                /// in the next incremental step these id's need to be
-                /// made false variables
+//            REQUIRE(conf.n_.prepare());
+            
+//            REQUIRE(conf.n_.finalize());
+            
+            
+//            if (conf.n_.getConfig().minLitsPerVar == -1)
+//            {
+//                ///name the order lits
+//                /// i just use free id's for this.
+//                /// in the next incremental step these id's need to be
+//                /// made false variables
                 
-                Clasp::OutputTable& st = f.ctx.output;
+//                Clasp::OutputTable& st = f.ctx.output;
                 
-                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-                {
-                    std::string varname;
-                    switch(i)
-                    {
-                    case 0: varname="q(1)"; break;
-                    case 1: varname="q(2)"; break;
-                    case 2: varname="q(3)"; break;
-                    case 3: varname="q(4)"; break;
-                    case 4: varname="q(5)"; break;
-                    case 5: varname="q(6)"; break;
-                    case 6: varname="q(7)"; break;
-                    case 7: varname="q(8)"; break;
-                    case 8: varname="q(9)"; break;
-                    case 9: varname="q(10)"; break;
-                    }
+//                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
+//                {
+//                    std::string varname;
+//                    switch(i)
+//                    {
+//                    case 0: varname="q(1)"; break;
+//                    case 1: varname="q(2)"; break;
+//                    case 2: varname="q(3)"; break;
+//                    case 3: varname="q(4)"; break;
+//                    case 4: varname="q(5)"; break;
+//                    case 5: varname="q(6)"; break;
+//                    case 6: varname="q(7)"; break;
+//                    case 7: varname="q(8)"; break;
+//                    case 8: varname="q(9)"; break;
+//                    case 9: varname="q(10)"; break;
+//                    }
                     
-                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                    {
-                        std::stringstream ss;
-                        ss << varname << "<=" << *litresit;
-                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                    }
-                }
+//                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
+//                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
+//                    {
+//                        std::stringstream ss;
+//                        ss << varname << "<=" << *litresit;
+//                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
+//                    }
+//                }
                 
                 
-            }
-            //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
-            f.prepare();
+//            }
+//            //f.ctx.startAddConstraints(1000);
+//            //REQUIRE(conf.n_.createClauses()); /// UNSAT
+//            f.prepare();
             
-            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-            //f.solve(&to);
-            f.solve();
-            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
-            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            /// THIS IS THE NUMBER FOR n=10
-            CPPUNIT_ASSERT(f.summary().enumerated()==std::min((unsigned int)(724),numM));
-            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            //            std::cout << "Printing took "
-            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-            //                      << "s.\n";
-        }
-    }
+//            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+//            //f.solve(&to);
+//            f.solve();
+//            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
+//            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
+//            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+//            /// THIS IS THE NUMBER FOR n=10
+//            REQUIRE(f.summary().enumerated()==std::min((unsigned int)(724),numM));
+//            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//            //            std::cout << "Printing took "
+//            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
+//            //                      << "s.\n";
+//        }
+//    }
     
     
-    void disjoint0Ex()
-    {
-        for (auto i : conf1)
-            disjoint0Exaux(i);
-    }
+//    void disjoint0Ex()
+//    {
+//        for (auto i : conf1)
+//            disjoint0Exaux(i);
+//    }
     
-    void disjoint0Exaux(order::Config c)
-    {
-        {
-            //std::cout << "start SMM3 " << std::endl;
-            Clasp::ClaspFacade f;
-            auto myconf =  c;
-            myconf.dlprop = 2; // dlprop comes after
-            ClingconConfig conf(f.ctx, myconf);
-            unsigned int numM = 999;
-            //std::cout << "dl prop "<<myconf.dlprop << ",   " << numM << " models " << std::endl;
-            conf.solve.numModels = numM;
-            //conf.solve.project =  1;
+//    void disjoint0Exaux(order::Config c)
+//    {
+//        {
+//            //std::cout << "start SMM3 " << std::endl;
+//            Clasp::ClaspFacade f;
+//            auto myconf =  c;
+//            myconf.dlprop = 2; // dlprop comes after
+//            ClingconConfig conf(f.ctx, myconf);
+//            unsigned int numM = 999;
+//            //std::cout << "dl prop "<<myconf.dlprop << ",   " << numM << " models " << std::endl;
+//            conf.solve.numModels = numM;
+//            //conf.solve.project =  1;
             
-            Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
-            //lp.start(f.ctx);
-            
-            
-            
-            
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
-            
-            MySharedContext& solver = conf.creator_;
-            
-            
-            const int n = 10;
-            
-            std::vector<View> views;
-            for (int i = 1; i <= n; ++i)
-                views.emplace_back(conf.n_.createView(Domain(1,n)));
-            
-            std::vector<View> ldiag;
-            for (int i = 1; i <= n; ++i)
-            {
-                /*LinearConstraint l(LinearConstraint::Relation::EQ);
-                l.add(views[i-1]*1);
-                l.addRhs(-i);
-                ldiag.emplace_back(conf.n_.createView());
-                l.add(ldiag.back()*-1);
-                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
-                */
-                ldiag.emplace_back(views[i-1].v,1,i);
-            }
-            
-            std::vector<View> rdiag;
-            for (int i = 1; i <= n; ++i)
-            {
-                /*LinearConstraint l(LinearConstraint::Relation::EQ);
-                l.add(views[i-1]*1);
-                l.addRhs(i);
-                rdiag.emplace_back(conf.n_.createView());
-                l.add(rdiag.back()*-1);
-                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));*/
-                rdiag.emplace_back(views[i-1].v,1,-i);
-            }
+//            Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+//            //lp.start(f.ctx);
             
             
             
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : views)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : ldiag)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
-            {
-                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
-                for (auto i : rdiag)
-                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
-            }
+            
+//            REQUIRE(lp.end()); /// UNSAT
+            
+//            MySharedContext& solver = conf.creator_;
+            
+            
+//            const int n = 10;
+            
+//            std::vector<View> views;
+//            for (int i = 1; i <= n; ++i)
+//                views.emplace_back(conf.n_.createView(Domain(1,n)));
+            
+//            std::vector<View> ldiag;
+//            for (int i = 1; i <= n; ++i)
+//            {
+//                /*LinearConstraint l(LinearConstraint::Relation::EQ);
+//                l.add(views[i-1]*1);
+//                l.addRhs(-i);
+//                ldiag.emplace_back(conf.n_.createView());
+//                l.add(ldiag.back()*-1);
+//                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+//                */
+//                ldiag.emplace_back(views[i-1].v,1,i);
+//            }
+            
+//            std::vector<View> rdiag;
+//            for (int i = 1; i <= n; ++i)
+//            {
+//                /*LinearConstraint l(LinearConstraint::Relation::EQ);
+//                l.add(views[i-1]*1);
+//                l.addRhs(i);
+//                rdiag.emplace_back(conf.n_.createView());
+//                l.add(rdiag.back()*-1);
+//                conf.n_.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));*/
+//                rdiag.emplace_back(views[i-1].v,1,-i);
+//            }
             
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : views)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : ldiag)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
+//            {
+//                std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
+//                for (auto i : rdiag)
+//                    disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
+//                conf.n_.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+//            }
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
             
             
-            if (conf.n_.getConfig().minLitsPerVar == -1)
-            {
-                ///name the order lits
-                /// i just use free id's for this.
-                /// in the next incremental step these id's need to be
-                /// made false variables
+//            REQUIRE(conf.n_.prepare());
+            
+//            REQUIRE(conf.n_.finalize());
+            
+            
+//            if (conf.n_.getConfig().minLitsPerVar == -1)
+//            {
+//                ///name the order lits
+//                /// i just use free id's for this.
+//                /// in the next incremental step these id's need to be
+//                /// made false variables
                 
-                Clasp::OutputTable& st = f.ctx.output;
+//                Clasp::OutputTable& st = f.ctx.output;
                 
-                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-                {
-                    std::string varname;
-                    switch(i)
-                    {
-                    case 0: varname="q(1)"; break;
-                    case 1: varname="q(2)"; break;
-                    case 2: varname="q(3)"; break;
-                    case 3: varname="q(4)"; break;
-                    case 4: varname="q(5)"; break;
-                    case 5: varname="q(6)"; break;
-                    case 6: varname="q(7)"; break;
-                    case 7: varname="q(8)"; break;
-                    case 8: varname="q(9)"; break;
-                    case 9: varname="q(10)"; break;
-                    }
+//                for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
+//                {
+//                    std::string varname;
+//                    switch(i)
+//                    {
+//                    case 0: varname="q(1)"; break;
+//                    case 1: varname="q(2)"; break;
+//                    case 2: varname="q(3)"; break;
+//                    case 3: varname="q(4)"; break;
+//                    case 4: varname="q(5)"; break;
+//                    case 5: varname="q(6)"; break;
+//                    case 6: varname="q(7)"; break;
+//                    case 7: varname="q(8)"; break;
+//                    case 8: varname="q(9)"; break;
+//                    case 9: varname="q(10)"; break;
+//                    }
                     
-                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                    {
-                        std::stringstream ss;
-                        ss << varname << "<=" << *litresit;
-                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                    }
-                }
+//                    auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
+//                    for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
+//                    {
+//                        std::stringstream ss;
+//                        ss << varname << "<=" << *litresit;
+//                        st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
+//                    }
+//                }
                 
                 
-            }
-            //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
-            f.prepare();
+//            }
+//            //f.ctx.startAddConstraints(1000);
+//            //REQUIRE(conf.n_.createClauses()); /// UNSAT
+//            f.prepare();
             
-            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-            //f.solve(&to);
-            f.solve();
-            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
-            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            /// THIS IS THE NUMBER FOR n=10
-            CPPUNIT_ASSERT(f.summary().enumerated()==std::min((unsigned int)(724),numM));
-            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            //            std::cout << "Printing took "
-            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-            //                      << "s.\n";
-        }
-    }
+//            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+//            //f.solve(&to);
+//            f.solve();
+//            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
+//            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
+//            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+//            /// THIS IS THE NUMBER FOR n=10
+//            REQUIRE(f.summary().enumerated()==std::min((unsigned int)(724),numM));
+//            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//            //            std::cout << "Printing took "
+//            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
+//            //                      << "s.\n";
+//        }
+//    }
     
     
     
-    void disjoint1()
-    {
-        for (auto i : conf1)
-            disjoint1aux(i);
-    }
     
     void disjoint1aux(order::Config c)
     {
@@ -3698,7 +3384,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -3754,9 +3440,9 @@ public:
             
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -3798,7 +3484,7 @@ public:
             }
             
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
@@ -3806,17 +3492,18 @@ public:
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
             /// THIS IS THE NUMBER FOR n=10
-            CPPUNIT_ASSERT(f.summary().enumerated()==92);
+            REQUIRE(f.summary().enumerated()==92);
             //TODO: compare with translation based approach
         }
     }
-    
-    
-    void disjoint1Ex()
+
+    TEST_CASE("Disjoint1", "1")
     {
         for (auto i : conf1)
-            disjoint1Exaux(i);
+            disjoint1aux(i);
     }
+    
+    
     
     void disjoint1Exaux(order::Config c)
     {
@@ -3835,7 +3522,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -3893,9 +3580,9 @@ public:
             
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -3937,7 +3624,7 @@ public:
             }
             
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
@@ -3945,12 +3632,20 @@ public:
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
             /// THIS IS THE NUMBER FOR n=10
-            CPPUNIT_ASSERT(f.summary().enumerated()==92);
+            REQUIRE(f.summary().enumerated()==92);
             //TODO: compare with translation based approach
         }
     }
     
-    void disjoint2()
+    
+    TEST_CASE("Disjoint1Ex", "1")
+    {
+        for (auto i : conf1)
+            disjoint1Exaux(i);
+    }
+    
+    
+    TEST_CASE("Disjoint2", "1")
     {
         {
             //std::cout << "start SMM3 " << std::endl;
@@ -3967,7 +3662,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -4053,52 +3748,52 @@ public:
                         ~conf.n_.getEqualLit(q5,3),
                         ~conf.n_.getEqualLit(q6,5)};
             // exclude sol 3
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q1,5),
                  ~conf.n_.getEqualLit(q2,3),
                  ~conf.n_.getEqualLit(q3,1),
                  ~conf.n_.getEqualLit(q4,6),
                  ~conf.n_.getEqualLit(q5,4),
                  ~conf.n_.getEqualLit(q6,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             // enforce sol 2
             v = {conf.n_.getEqualLit(q2,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q1,5)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q1,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q3,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q3,5)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q3,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q4,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q4,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q5,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q5,3)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q5,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q5,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q6,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q6,3)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q6,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             
             
@@ -4106,10 +3801,10 @@ public:
             
             
             solver.makeRestFalse();            
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4193,20 +3888,20 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
             //TODO: compare with translation based approach
         }
     }
     
     
-    void disjoint2Ex()
+    TEST_CASE("Disjoint2Ex", "1")
     {
         {
             //std::cout << "start SMM3 " << std::endl;
@@ -4223,7 +3918,7 @@ public:
             
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             
             MySharedContext& solver = conf.creator_;
             
@@ -4295,64 +3990,58 @@ public:
                         ~conf.n_.getEqualLit(q5,3),
                         ~conf.n_.getEqualLit(q6,5)};
             // exclude sol 3
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q1,5),
                  ~conf.n_.getEqualLit(q2,3),
                  ~conf.n_.getEqualLit(q3,1),
                  ~conf.n_.getEqualLit(q4,6),
                  ~conf.n_.getEqualLit(q5,4),
                  ~conf.n_.getEqualLit(q6,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             // enforce sol 2
             v = {conf.n_.getEqualLit(q2,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q1,5)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q1,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q3,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q3,5)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q3,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q4,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q4,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q5,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q5,3)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q5,4)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q5,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             
             v = {~conf.n_.getEqualLit(q6,2)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q6,3)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
+            REQUIRE(conf.creator_.createClause(v));
             v = {~conf.n_.getEqualLit(q6,6)};
-            CPPUNIT_ASSERT(conf.creator_.createClause(v));
-            
-            
-            
-            
-            
-            
+            REQUIRE(conf.creator_.createClause(v));
             
             solver.makeRestFalse();
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4393,20 +4082,20 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==1);
+            REQUIRE(f.summary().enumerated()==1);
             //TODO: compare with translation based approach
         }
     }
     
     
-    void big1()
+    TEST_CASE("Big1", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4422,7 +4111,7 @@ public:
         std::vector<order::ReifiedLinearConstraint> linearConstraints;
         
         unsigned int factor = 1000000;
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -4442,9 +4131,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4485,7 +4174,7 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             
@@ -4493,12 +4182,12 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
     
-    void bigger1()
+    TEST_CASE("bigger1", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4517,7 +4206,7 @@ public:
         
         //unsigned int factor = 100000000;
         unsigned int factor = (2147483648 / 3)-1;
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -4540,9 +4229,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4583,7 +4272,7 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             
@@ -4591,12 +4280,12 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
     
-    void bigger2()
+    TEST_CASE("Bigger2", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4615,7 +4304,7 @@ public:
         
         //unsigned int factor = 100000000;
         unsigned int factor = Domain::max;
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -4638,9 +4327,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4681,7 +4370,7 @@ public:
                 
             }
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             
             
@@ -4689,11 +4378,11 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
-    void bigger3()
+    TEST_CASE("Bigger3", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4712,7 +4401,7 @@ public:
         
         //unsigned int factor = 100000000;
         unsigned int factor = Domain::max;
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -4735,9 +4424,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4784,12 +4473,12 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
     
-    void bigger4()
+    TEST_CASE("Bigger4", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4809,7 +4498,7 @@ public:
         std::vector<order::ReifiedLinearConstraint> linearConstraints;
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -4832,101 +4521,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
-            
-            
-            if (conf.n_.getConfig().minLitsPerVar == -1)
-            {
-                ///name the order lits
-                /// i just use free id's for this.
-                /// in the next incremental step these id's need to be
-                /// made false variables
-                
-                //            Clasp::OutputTable& st = f.ctx.output;
-                
-                //            for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
-                //            {
-                //                std::string varname;
-                //                switch(i)
-                //                {
-                //                case 0: varname="a"; break;
-                //                case 1: varname="b"; break;
-                //                case 2: varname="c"; break;
-                //                default:
-                //                {
-                //                    std::stringstream ss;
-                //                    ss << i;
-                //                    varname="V" + ss.str();
-                //                    break;
-                //                }
-                //                }
-                
-                //                auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
-                //                for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
-                //                {
-                //                    std::stringstream ss;
-                //                    ss << varname << "<=" << *litresit;
-                //                    st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
-                //                }
-                //            }
-                
-                
-            }
-            f.prepare();
-            
-            
-            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
-            //f.solve(&to);
-            f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
-        }
-    }
-    
-    void bigger5()
-    {
-        
-        //std::cout << "start SMM3 " << std::endl;
-        Clasp::ClaspFacade f;
-        ClingconConfig conf(f.ctx, lazySolveConfigProp4);
-        conf.solve.numModels = 13;
-        
-        //conf.solve.project =  1;
-        
-        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
-        //lp.start(f.ctx);
-        
-        std::vector<order::ReifiedLinearConstraint> linearConstraints;
-        
-        
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
-        {
-            
-            MySharedContext& solver = conf.creator_;
-            
-            View a = conf.n_.createView(Domain());
-            View b = conf.n_.createView(Domain());
-            View c = conf.n_.createView(Domain());
-            
-            
-            
-            
-            LinearConstraint l(LinearConstraint::Relation::EQ);
-            l.add(a*1000);
-            l.add(b*-42100);
-            l.add(c*123456);
-            l.addRhs(1234560);
-            //std::cout << std::endl << l << std::endl;
-            linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
-            
-            for (auto &i : linearConstraints)
-                conf.n_.addConstraint(std::move(i));
-            
-            CPPUNIT_ASSERT(conf.n_.prepare());
-            
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -4973,12 +4570,104 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
+//    void bigger5()
+//    {
+        
+//        //std::cout << "start SMM3 " << std::endl;
+//        Clasp::ClaspFacade f;
+//        ClingconConfig conf(f.ctx, lazySolveConfigProp4);
+//        conf.solve.numModels = 13;
+        
+//        //conf.solve.project =  1;
+        
+//        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+//        //lp.start(f.ctx);
+        
+//        std::vector<order::ReifiedLinearConstraint> linearConstraints;
+        
+        
+//        REQUIRE(lp.end()); /// UNSAT
+//        {
+            
+//            MySharedContext& solver = conf.creator_;
+            
+//            View a = conf.n_.createView(Domain());
+//            View b = conf.n_.createView(Domain());
+//            View c = conf.n_.createView(Domain());
+            
+            
+            
+            
+//            LinearConstraint l(LinearConstraint::Relation::EQ);
+//            l.add(a*1000);
+//            l.add(b*-42100);
+//            l.add(c*123456);
+//            l.addRhs(1234560);
+//            //std::cout << std::endl << l << std::endl;
+//            linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+            
+//            for (auto &i : linearConstraints)
+//                conf.n_.addConstraint(std::move(i));
+            
+//            REQUIRE(conf.n_.prepare());
+            
+//            REQUIRE(conf.n_.finalize());
+            
+            
+//            if (conf.n_.getConfig().minLitsPerVar == -1)
+//            {
+//                ///name the order lits
+//                /// i just use free id's for this.
+//                /// in the next incremental step these id's need to be
+//                /// made false variables
+                
+//                //            Clasp::OutputTable& st = f.ctx.output;
+                
+//                //            for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
+//                //            {
+//                //                std::string varname;
+//                //                switch(i)
+//                //                {
+//                //                case 0: varname="a"; break;
+//                //                case 1: varname="b"; break;
+//                //                case 2: varname="c"; break;
+//                //                default:
+//                //                {
+//                //                    std::stringstream ss;
+//                //                    ss << i;
+//                //                    varname="V" + ss.str();
+//                //                    break;
+//                //                }
+//                //                }
+                
+//                //                auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
+//                //                for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
+//                //                {
+//                //                    std::stringstream ss;
+//                //                    ss << varname << "<=" << *litresit;
+//                //                    st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
+//                //                }
+//                //            }
+                
+                
+//            }
+//            f.prepare();
+            
+            
+//            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+//            //f.solve(&to);
+//            f.solve();
+//            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
+//            REQUIRE(f.summary().enumerated()==13);
+//        }
+//    }
     
-    void bigger6()
+    
+    TEST_CASE("Bigger6", "1")
     {
         
         //std::cout << "start SMM3 " << std::endl;
@@ -4996,7 +4685,7 @@ public:
         std::vector<order::ReifiedLinearConstraint> linearConstraints;
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -5019,9 +4708,9 @@ public:
             for (auto &i : linearConstraints)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             if (conf.n_.getConfig().minLitsPerVar == -1)
@@ -5068,12 +4757,12 @@ public:
             //f.solve(&to);
             f.solve();
             //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==13);
+            REQUIRE(f.summary().enumerated()==13);
         }
     }
     
     
-    void testEquality1()
+    TEST_CASE("TestEquality1", "1")
     {
         
         //std::cout << "start test 0 " << std::endl;
@@ -5097,7 +4786,7 @@ public:
         
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         
         
         
@@ -5236,33 +4925,33 @@ public:
         for (auto &i : linearConstraints)
             conf.n_.addConstraint(std::move(i));
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[0])));
-        CPPUNIT_ASSERT(!f.ctx.master()->isTrue(toClaspFormat(lits[1])) && !f.ctx.master()->isFalse(toClaspFormat(lits[1])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[2])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[3])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[4])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[5])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[6])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[7])));
-        CPPUNIT_ASSERT(f.ctx.master()->isTrue(toClaspFormat(lits[8])));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[0]))));
+        REQUIRE((!f.ctx.master()->isTrue(toClaspFormat(lits[1])) && !f.ctx.master()->isFalse(toClaspFormat(lits[1]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[2]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[3]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[4]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[5]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[6]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[7]))));
+        REQUIRE((f.ctx.master()->isTrue(toClaspFormat(lits[8]))));
         
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[9])));
-        CPPUNIT_ASSERT(!f.ctx.master()->isTrue(toClaspFormat(lits[10])) && !f.ctx.master()->isFalse(toClaspFormat(lits[10])));
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[11])));
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[12])));
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[13])));
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[14])));
-        CPPUNIT_ASSERT(f.ctx.master()->isFalse(toClaspFormat(lits[15])));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[9]))));
+        REQUIRE((!f.ctx.master()->isTrue(toClaspFormat(lits[10])) && !f.ctx.master()->isFalse(toClaspFormat(lits[10]))));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[11]))));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[12]))));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[13]))));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[14]))));
+        REQUIRE((f.ctx.master()->isFalse(toClaspFormat(lits[15]))));
         
         
     }
     
     
-    void testEquality2()
+    TEST_CASE("TestEquality2", "1")
     {
         
         // a = 2*b
@@ -5282,7 +4971,7 @@ public:
         Clasp::Asp::LogicProgram& lp = facade.startAsp(conf);
         //lp.start(f.ctx);
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& s = conf.creator_;
@@ -5359,16 +5048,16 @@ public:
             for (auto &i : lc)
                 conf.n_.addConstraint(std::move(i));
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
         }
     }
     
     
     
     
-    void testPidgeon()
+    TEST_CASE("TestPidgeon2", "1")
     {
         
         auto myconf = lazySolveConfigProp4;
@@ -5382,7 +5071,7 @@ public:
         //lp.start(f.ctx);
         
         
-        CPPUNIT_ASSERT(lp.end()); /// UNSAT
+        REQUIRE(lp.end()); /// UNSAT
         {
             
             MySharedContext& solver = conf.creator_;
@@ -5397,13 +5086,13 @@ public:
         }
         
         
-        CPPUNIT_ASSERT(conf.n_.prepare());
+        REQUIRE(conf.n_.prepare());
         
-        CPPUNIT_ASSERT(conf.n_.finalize());
+        REQUIRE(conf.n_.finalize());
         
         
         //f.ctx.startAddConstraints(1000);
-        //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
         f.prepare();
         //std::cout << "constraints: " << f.ctx.stats().numConstraints() << std::endl;
         //std::cout << "variables:   " << f.ctx.stats().vars << std::endl;
@@ -5414,13 +5103,13 @@ public:
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
         //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        CPPUNIT_ASSERT(f.summary().enumerated()==24);
+        REQUIRE(f.summary().enumerated()==24);
         //TODO: compare with translation based approach
         
     }
     
     
-    void testDomain()
+    TEST_CASE("TestDomain2", "1")
     {
         
         {
@@ -5435,7 +5124,7 @@ public:
             //lp.start(f.ctx);
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             {
                 
                 MySharedContext& solver = conf.creator_;
@@ -5451,13 +5140,13 @@ public:
             }
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             //std::cout << "constraints: " << f.ctx.stats().numConstraints() << std::endl;
             //std::cout << "variables:   " << f.ctx.stats().vars << std::endl;
@@ -5468,7 +5157,7 @@ public:
             //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
             //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==10);
+            REQUIRE(f.summary().enumerated()==10);
             
         }
         
@@ -5484,7 +5173,7 @@ public:
             //lp.start(f.ctx);
             
             
-            CPPUNIT_ASSERT(lp.end()); /// UNSAT
+            REQUIRE(lp.end()); /// UNSAT
             {
                 
                 MySharedContext& solver = conf.creator_;
@@ -5500,13 +5189,13 @@ public:
             }
             
             
-            CPPUNIT_ASSERT(conf.n_.prepare());
+            REQUIRE(conf.n_.prepare());
             
-            CPPUNIT_ASSERT(conf.n_.finalize());
+            REQUIRE(conf.n_.finalize());
             
             
             //f.ctx.startAddConstraints(1000);
-            //CPPUNIT_ASSERT(conf.n_.createClauses()); /// UNSAT
+            //REQUIRE(conf.n_.createClauses()); /// UNSAT
             f.prepare();
             //std::cout << "constraints: " << f.ctx.stats().numConstraints() << std::endl;
             //std::cout << "variables:   " << f.ctx.stats().vars << std::endl;
@@ -5517,14 +5206,7 @@ public:
             //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
             //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
             //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            CPPUNIT_ASSERT(f.summary().enumerated()==14);
+            REQUIRE(f.summary().enumerated()==14);
         }
         
     }
-    
-    
-    
-    
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION (ClingconTest);
