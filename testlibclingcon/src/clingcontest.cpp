@@ -73,18 +73,18 @@ public:
         return ClaspConfig::addPost(s);
     }
     
-    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints) const
-    {
-        clingcon::ClingconDLPropagator* dlp = new clingcon::ClingconDLPropagator(s, conf_);
-        for (const auto&i : constraints)
-        {
-            if (dlp->isValidConstraint(i))
-                dlp->addValidConstraint(i);
-        }
-        if (!s.addPost(dlp))
-            return false;
-        return true;
-    }
+//    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints) const
+//    {
+//        clingcon::ClingconDLPropagator* dlp = new clingcon::ClingconDLPropagator(s, conf_);
+//        for (const auto&i : constraints)
+//        {
+//            if (dlp->isValidConstraint(i))
+//                dlp->addValidConstraint(i);
+//        }
+//        if (!s.addPost(dlp))
+//            return false;
+//        return true;
+//    }
     
     //clingcon::ClingconPropagator* prop_;///prop_ = new clingcon::ClingconPropagator(new MySolver(&s));
     
