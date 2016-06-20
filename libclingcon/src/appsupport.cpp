@@ -37,7 +37,7 @@ Helper::Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfi
 
 void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf)
 {
-    ProgramOptions::OptionGroup cspconf("Constraint Processing Options");
+    ProgramOptions::OptionGroup cspconf("Constraint Processing Options", ProgramOptions::desc_level_e1);
     cspconf.addOptions()
             ("redundant-nogood-check", ProgramOptions::storeTo(conf.redundantClauseCheck = true), "Check translated nogoods for redundancies (default: true)")
             ("domain-size", ProgramOptions::storeTo(conf.domSize = 10000), "Restrict the number of ranges a domain can have when multiplied (-1=all) (default: 10000)")
