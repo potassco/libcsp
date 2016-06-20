@@ -112,18 +112,18 @@ public:
     }
     
 private:
-    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints)
-    {
-        clingcon::ClingconDLPropagator* dlp = new clingcon::ClingconDLPropagator(s, conf_);
-        for (const auto&i : constraints)
-        {
-            if (dlp->isValidConstraint(i))
-                dlp->addValidConstraint(i);
-        }
-        if (!s.addPost(dlp))
-            return false;
-        return true;        
-    }
+//    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints)
+//    {
+//        clingcon::ClingconDLPropagator* dlp = new clingcon::ClingconDLPropagator(s, conf_);
+//        for (const auto&i : constraints)
+//        {
+//            if (dlp->isValidConstraint(i))
+//                dlp->addValidConstraint(i);
+//        }
+//        if (!s.addPost(dlp))
+//            return false;
+//        return true;
+//    }
 
     order::Config conf_;
     order::Normalizer& n_;
