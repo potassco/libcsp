@@ -77,7 +77,10 @@ public:
     std::vector<ReifiedLinearConstraint>& constraints()
     {
         for (auto& i : linearConstraints_)
+        {
             assert(i.impl);
+            ((void)(i));
+        }
         return linearConstraints_;
     }
 
