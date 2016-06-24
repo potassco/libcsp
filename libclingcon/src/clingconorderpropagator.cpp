@@ -132,7 +132,7 @@ Clasp::Constraint::PropResult ClingconOrderPropagator::propagate(Clasp::Solver& 
 }
 
 
-void ClingconOrderPropagator::reason(Clasp::Solver& s, Clasp::Literal p, Clasp::LitVec& lits)
+void ClingconOrderPropagator::reason(Clasp::Solver& , Clasp::Literal p, Clasp::LitVec& lits)
 {
     if (conflict_.size())
     {
@@ -416,7 +416,7 @@ ForwardIt my_upper_bound(ForwardIt first, ForwardIt last, Clasp::Solver& s, cons
 
 }
 
-bool ClingconOrderPropagator::isModel(Clasp::Solver& s)
+bool ClingconOrderPropagator::isModel(Clasp::Solver& )
 {
     //std::cout << "Is probably a model ?" << " at dl " << s_.decisionLevel() << std::endl;
     auto& vs = p_.getVVS().getVariableStorage();
@@ -464,7 +464,10 @@ bool ClingconOrderPropagator::isModel(Clasp::Solver& s)
                     break;
                 }
             if(!fulfilled)
+            {
+                lastModel_.erase(it->first);
                 continue;
+            }
 
             order::Variable v(it->first);
             order::EqualityClass::Edge e(1,1,0);
@@ -508,12 +511,23 @@ bool ClingconOrderPropagator::isModel(Clasp::Solver& s)
 
 const char* ClingconOrderPropagator::printModel(order::Variable v, const std::string& name)
 {
-    assert(lastModel_.find(v)!= lastModel_.end());
+    auto find = lastModel_.find(v);
+    if (find== lastModel_.end())
+        return 0;
     //std::cout << "enter printModel " << v << " " << name << std::endl;
     outputbuf_ = name;
     outputbuf_ += "=";
-    outputbuf_ += std::to_string(lastModel_[v]);
+    outputbuf_ += std::to_string(find->second);
     return outputbuf_.c_str();  
+}
+
+bool ClingconOrderPropagator::getValue(order::Variable v, int32& value)
+{
+    auto find = lastModel_.find(v);
+    if (find== lastModel_.end())
+        return false;
+    value = find->second;
+    return true;
 }
 
 }

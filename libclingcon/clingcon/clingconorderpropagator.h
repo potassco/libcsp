@@ -186,6 +186,8 @@ public:
 
     
     const char* printModel(order::Variable v, const std::string& name);
+    /// only to be used of a model has been found
+    bool getValue(order::Variable v, int32& value);
 
     Clasp::Solver& solver() { return s_; }
     
@@ -232,7 +234,7 @@ private:
     std::string outputbuf_;
     std::vector<bool> watched_; /// which variables we need to watch
 
-    std::unordered_map<order::Variable,int32> lastModel_; /// values of all variables in the last model
+    std::unordered_map<order::Variable,int32> lastModel_; /// values of all shown variables in the last model
     const NameList* names_; /// for every Variable, a name and a disjunction of condition if shown
 
 

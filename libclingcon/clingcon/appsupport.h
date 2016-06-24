@@ -66,6 +66,29 @@ public:
         }
         return 0;        
     }
+
+    bool first(const Clasp::Model& m, const char*& name, int32& value)
+    {
+        curr_ = names_.begin();
+        currentSolverId_ = m.sId;
+        return next(name,value);
+    }
+
+    bool next(const char*& name, int32& value)
+    {
+        while (curr_ != names_.end())
+        {
+            if (props_[currentSolverId_]->getValue(curr_->first,value))
+            {
+                name = curr_->second.first.c_str();
+                ++curr_;
+                return true;
+            }
+            ++curr_;
+        }
+        return false;
+    }
+
     clingcon::NameList::iterator curr_;
     unsigned int currentSolverId_;
     clingcon::NameList names_; /// order::Variable to name + condition
@@ -161,6 +184,8 @@ public:
     void postRead();
     bool postEnd();
     void postSolve();
+
+    TheoryOutput* theoryOutput() { return &to_; }
 
 private:
 
