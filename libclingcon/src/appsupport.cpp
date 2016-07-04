@@ -75,7 +75,7 @@ void Helper::postRead()
 {
     ///TODO: ensure its csp theory ;-)
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
-        if ((*i)->atom()!=0)
+        if ((*i)->atom()!=0 && tp_.isClingconConstraint(i))
             lp_->startChoiceRule().addHead((*i)->atom()).endRule();
 }
 
@@ -90,8 +90,7 @@ bool Helper::postEnd()
 
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
-                if (!tp_.readConstraint(i))
-                    throw std::runtime_error("Unknown theory atom detected, cowardly refusing to continue");
+                tp_.readConstraint(i);
             }
             to_.names_ = tp_.postProcess();
             ctx_.output.theory = &to_;

@@ -478,6 +478,13 @@ using namespace order;
     }
 
 
+bool TheoryParser::isClingconConstraint(Potassco::TheoryData::atom_iterator& i)
+{
+    Potassco::Id_t theoryTerm = (*i)->term();
+    CType ct;
+    bool impl; /// implication or equality
+    return getConstraintType(theoryTerm, ct, impl);
+}
 
 
 bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
