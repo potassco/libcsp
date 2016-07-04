@@ -29,11 +29,10 @@ namespace clingcon
 
 using namespace order;
 
-    bool TheoryParser::getConstraintType(Potassco::Id_t id, CType& t, bool& impl)
+    bool TheoryParser::getConstraintType(Potassco::Id_t id, CType& t)
     {
         if (termId2constraint_.find(id) == termId2constraint_.end())
         {
-            impl=false;
             std::stringstream ss;
             auto term = td_.getTerm(id);
             if (term.type()==Potassco::Theory_t::Symbol)
@@ -50,16 +49,7 @@ using namespace order;
                     else
                         return false;
 
-                    if (term.size()!=1)
-                        return false;
-                    std::stringstream ss2;
-                    toString(ss2, td_.getTerm(*term.begin())); 
-                    if (ss2.str()=="nonstrict")
-                        impl=true;
-                    else
-                    if (ss2.str()=="strict")
-                        impl=false;
-                    else
+                    if (term.size()!=0)
                         return false;
                 }
                 else
@@ -68,24 +58,23 @@ using namespace order;
             std::string s = ss.str();
 
             if (s=="sum")
-                termId2constraint_[id]=std::make_pair(SUM,impl);
+                termId2constraint_[id]=std::make_pair(SUM,false);
             else
                 if (s=="dom")
-                    termId2constraint_[id]=std::make_pair(DOM,impl);
+                    termId2constraint_[id]=std::make_pair(DOM,false);
                 else
                     if (s=="show")
-                        termId2constraint_[id]=std::make_pair(SHOW,impl);
+                        termId2constraint_[id]=std::make_pair(SHOW,false);
                     else
                         if (s=="distinct")
-                            termId2constraint_[id]=std::make_pair(DISTINCT,impl);
+                            termId2constraint_[id]=std::make_pair(DISTINCT,false);
                         else
                             if (s=="minimize")
-                                termId2constraint_[id]=std::make_pair(MINIMIZE,impl);
+                                termId2constraint_[id]=std::make_pair(MINIMIZE,false);
                             else // last
                                 return false;
         }
         t = termId2constraint_[id].first;
-        impl = termId2constraint_[id].second;
         return true;
     }
 
@@ -482,12 +471,11 @@ bool TheoryParser::isClingconConstraint(Potassco::TheoryData::atom_iterator& i)
 {
     Potassco::Id_t theoryTerm = (*i)->term();
     CType ct;
-    bool impl; /// implication or equality
-    return getConstraintType(theoryTerm, ct, impl);
+    return getConstraintType(theoryTerm, ct);
 }
 
 
-bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
+bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, bool strict)
 {
     //Potassco::TheoryData::Term sum("sum");
     /// i has atom, guard, rhs, and begin/end to read next level
@@ -496,8 +484,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
     //const Potassco::TheoryData::Term& tt = td_.getTerm(theoryTerm);
     //std::cout << toString(tt) << std::endl;
     CType ct;
-    bool impl; /// implication or equality
-    if (!getConstraintType(theoryTerm, ct, impl))
+    if (!getConstraintType(theoryTerm, ct))
         return false;
     switch(ct)
     {
@@ -562,7 +549,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
         }
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,impl));
+        n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,strict));
         break;
     }
 
@@ -624,7 +611,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
             error("Rhs VariableView expected",*(*i)->rhs());
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedDomainConstraint(v,std::move(d),lit,impl));
+        n_.addConstraint(order::ReifiedDomainConstraint(v,std::move(d),lit,strict));
         break;
     }
 
@@ -660,7 +647,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i)
             error("Did not expect a rhs in distinct",*(*i)->rhs());
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedAllDistinct(std::move(views),lit,impl));
+        n_.addConstraint(order::ReifiedAllDistinct(std::move(views),lit,strict));
         break;
     }
         

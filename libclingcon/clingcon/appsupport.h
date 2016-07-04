@@ -189,6 +189,9 @@ public:
 
 private:
 
+    /// checks if atoms occurs in some body of the logic program
+    bool occursInBody(Clasp::Asp::LogicProgram& p, Potassco::Atom_t aId);
+
     void simplifyMinimize();
 
     Clasp::SharedContext& ctx_;

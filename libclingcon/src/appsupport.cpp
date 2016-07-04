@@ -73,11 +73,19 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
 
 void Helper::postRead()
 {
-    ///TODO: ensure its csp theory ;-)
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
-        if ((*i)->atom()!=0 && tp_.isClingconConstraint(i))
+        if ((*i)->atom()!=0 && tp_.isClingconConstraint(i) && occursInBody(*lp_,(*i)->atom()))
             lp_->startChoiceRule().addHead((*i)->atom()).endRule();
 }
+
+
+bool Helper::occursInBody(Clasp::Asp::LogicProgram& p, Potassco::Atom_t aId)
+{
+    if (!aId || !p.validAtom(aId)) { return false; }
+    Clasp::Asp::PrgAtom* a = p.getRootAtom(aId);
+    return a->hasDep(Clasp::Asp::PrgAtom::dep_all);
+} 
+
 
 bool Helper::postEnd()
 {
@@ -90,7 +98,7 @@ bool Helper::postEnd()
 
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
-                tp_.readConstraint(i);
+                tp_.readConstraint(i, occursInBody(*lp_,(*i)->atom()));
             }
             to_.names_ = tp_.postProcess();
             ctx_.output.theory = &to_;

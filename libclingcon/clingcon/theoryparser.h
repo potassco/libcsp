@@ -55,7 +55,8 @@ public:
 
     /// returns false, if not a constraint of this theory
     /// throws string with error if error occurs
-    bool readConstraint(Potassco::TheoryData::atom_iterator& i);
+    /// save constraint as strict or nonstrict
+    bool readConstraint(Potassco::TheoryData::atom_iterator& i, bool strict);
     /// turn show predicates to variables
     NameList& postProcess();
     const std::vector<tuple2View>& minimize() const;
@@ -68,7 +69,7 @@ private:
     void error(const std::string& s, Potassco::Id_t id);
 
 
-    bool getConstraintType(Potassco::Id_t id, CType& t, bool &impl);
+    bool getConstraintType(Potassco::Id_t id, CType& t);
     bool getGuard(Potassco::Id_t id, order::LinearConstraint::Relation& rel);
 
 
