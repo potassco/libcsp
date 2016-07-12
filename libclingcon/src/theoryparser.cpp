@@ -475,7 +475,7 @@ bool TheoryParser::isClingconConstraint(Potassco::TheoryData::atom_iterator& i)
 }
 
 
-bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, bool strict)
+bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, Direction dir)
 {
     //Potassco::TheoryData::Term sum("sum");
     /// i has atom, guard, rhs, and begin/end to read next level
@@ -549,7 +549,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, bool s
         }
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,strict));
+        n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,dir));
         break;
     }
 
@@ -611,7 +611,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, bool s
             error("Rhs VariableView expected",*(*i)->rhs());
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedDomainConstraint(v,std::move(d),lit,strict));
+        n_.addConstraint(order::ReifiedDomainConstraint(v,std::move(d),lit,dir));
         break;
     }
 
@@ -647,7 +647,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, bool s
             error("Did not expect a rhs in distinct",*(*i)->rhs());
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        n_.addConstraint(order::ReifiedAllDistinct(std::move(views),lit,strict));
+        n_.addConstraint(order::ReifiedAllDistinct(std::move(views),lit,dir));
         break;
     }
         
@@ -794,7 +794,7 @@ void TheoryParser::add2Shown(order::Variable v, uint32 tid, Clasp::Literal l)
         LinearConstraint lc(LinearConstraint::Relation::EQ);
         lc.add(newV*-1);
         lc.add(v);
-        n_.addConstraint(ReifiedLinearConstraint(std::move(lc),trueLit_,false));
+        n_.addConstraint(ReifiedLinearConstraint(std::move(lc),trueLit_,Direction::FWD));
         shown_.resize(std::max((unsigned int)(newV.v)+1,(unsigned int)(shown_.size())),std::make_pair(MAXID,Clasp::Literal(0,false)));
         shown_[newV.v] = std::make_pair(tid,l);
     }

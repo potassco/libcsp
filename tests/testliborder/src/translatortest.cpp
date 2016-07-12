@@ -141,7 +141,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //std::cout << std::endl << l << std::endl;
 
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
@@ -177,7 +177,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //std::cout << std::endl << l << std::endl;
 
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             
             try{
             norm.prepare();
@@ -211,7 +211,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //std::cout << std::endl << l << std::endl;
 
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
             
@@ -256,7 +256,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -306,7 +306,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -349,7 +349,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -390,7 +390,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -442,7 +442,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -508,7 +508,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             
@@ -569,7 +569,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -621,7 +621,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -672,7 +672,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -735,7 +735,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -796,7 +796,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -866,7 +866,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             //l.normalize();
             //l.sort(t);
 
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.getNewLiteral(true),Direction::EQ));
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
@@ -951,7 +951,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             const int high=3;
             for (int i = low; i <= high; ++i)
                 vars.emplace_back(norm.createView(Domain(low,high)));
-            ReifiedAllDistinct alldiff(std::move(vars),s.trueLit(),false);
+            ReifiedAllDistinct alldiff(std::move(vars),s.trueLit(),Direction::EQ);
 
 
             norm.addConstraint(std::move(alldiff));
@@ -982,7 +982,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             const int high=2;
             for (int i = low; i <= high; ++i)
                 vars.emplace_back(norm.createView(Domain(low,high)));
-            ReifiedAllDistinct alldiff(std::move(vars),s.falseLit(),false);
+            ReifiedAllDistinct alldiff(std::move(vars),s.falseLit(),Direction::EQ);
 
 
             norm.addConstraint(std::move(alldiff));
@@ -1013,7 +1013,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             const int high=2;
             for (int i = low; i <= high; ++i)
                 vars.emplace_back(norm.createView(Domain(low,high)));
-            ReifiedAllDistinct alldiff(std::move(vars),s.getNewLiteral(true),false);
+            ReifiedAllDistinct alldiff(std::move(vars),s.getNewLiteral(true),Direction::EQ);
 
 
             norm.addConstraint(std::move(alldiff));
@@ -1046,7 +1046,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             l.add(norm.createView(Domain(1,10)));
             l.addRhs(-9);
             l.add(norm.createView()*-1);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
@@ -1076,7 +1076,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             l.add(norm.createView(Domain(0,9)));
             l.add(norm.createView(Domain(0,9)));
             l.addRhs(12);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
@@ -1117,7 +1117,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(e*100);
                 l.add(m*1000);
                 l.addRhs(9500);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -1163,7 +1163,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(3);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1172,7 +1172,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(1);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
 
@@ -1220,21 +1220,21 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(s*1);
                 l.add(e*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(n*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1242,14 +1242,14 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(e*1);
                 l.add(n*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1257,7 +1257,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(n*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
 
@@ -1311,7 +1311,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1320,7 +1320,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
 
@@ -1341,7 +1341,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(y*-1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -1350,49 +1350,49 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(s*1);
                 l.add(e*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(n*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(m*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(o*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(s*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1400,42 +1400,42 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(e*1);
                 l.add(n*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(m*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(o*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(e*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1443,35 +1443,35 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(n*1);
                 l.add(d*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(n*1);
                 l.add(m*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(n*1);
                 l.add(o*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(n*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(n*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1479,28 +1479,28 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(d*1);
                 l.add(m*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(d*1);
                 l.add(o*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(d*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(d*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1508,21 +1508,21 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(m*1);
                 l.add(o*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(m*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(m*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1530,14 +1530,14 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(o*1);
                 l.add(r*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(o*1);
                 l.add(y*-1);
                 l.addRhs(0);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
 
@@ -1592,7 +1592,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
             {
@@ -1601,7 +1601,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
 
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
 
@@ -1622,10 +1622,10 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(y*-1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
-            norm.addConstraint(ReifiedAllDistinct({s,e,n,d,m,o,r,e,m,o,n,e,y},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({s,e,n,d,m,o,r,e,m,o,n,e,y},solver.trueLit(),Direction::EQ));
 
         }
 
@@ -1680,7 +1680,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 views.emplace_back(one);
 
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),Direction::EQ));
             }
 
             {
@@ -1698,13 +1698,13 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 lin.add(q[i]*1);
                 View b = norm.createView();
                 lin.add(b*-1);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(lin),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(lin),solver.trueLit(),Direction::EQ));
 
 
                 one.push_back(std::make_pair(b,ReifiedDNF(std::move(l))));
                 views.emplace_back(one);
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -1722,13 +1722,13 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 lin.add(q[i]*1);
                 View b = norm.createView();
                 lin.add(b*-1);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(lin),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(lin),solver.trueLit(),Direction::EQ));
 
 
                 one.push_back(std::make_pair(b,ReifiedDNF(std::move(l))));
                 views.emplace_back(one);
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(views),solver.trueLit(),Direction::EQ));
             }
             //norm.addConstraint(ReifiedDisjoint({s,e,n,d,m,o,r,e,m,o,n,e,y},solver.trueLit(),false));
 
@@ -1784,7 +1784,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 vars.emplace_back(one);
 
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),Direction::EQ));
             }
 
             {
@@ -1801,7 +1801,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 one.push_back(std::make_pair(q[i],ReifiedDNF(std::move(l))));
                 vars.emplace_back(one);
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -1818,7 +1818,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 one.push_back(std::make_pair(q[i],ReifiedDNF(std::move(l))));
                 vars.emplace_back(one);
             }
-            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(vars),solver.trueLit(),Direction::EQ));
             }
             //norm.addConstraint(ReifiedDisjoint({s,e,n,d,m,o,r,e,m,o,n,e,y},solver.trueLit(),false));
 
@@ -1881,10 +1881,10 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(i*-1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
-            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,z,w},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,z,w},solver.trueLit(),Direction::EQ));
 
         }
 
@@ -1951,16 +1951,16 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(r*-1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
                 l.add(z);
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.falseLit(),Direction::EQ));
             }
 
-            norm.addConstraint(ReifiedAllDistinct({z,w,e,i,v,r},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({z,w,e,i,v,r},solver.trueLit(),Direction::EQ));
 
         }
 
@@ -2006,13 +2006,13 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             View u = norm.createView(Domain(0,9));
 
 
-            norm.addConstraint(ReifiedDomainConstraint(e,Domain(0,9),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDomainConstraint(e,Domain(0,9),solver.trueLit(),Direction::EQ));
             {
                 LinearConstraint l(LinearConstraint::Relation::GE);
                 l.add(e*1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
             {
                 LinearConstraint l(LinearConstraint::Relation::EQ);
@@ -2031,17 +2031,17 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.add(f*-1);
                 l.addRhs(0);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
-            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),Direction::EQ));
 
             {
                 LinearConstraint l(LinearConstraint::Relation::GE);
                 l.add(e*1);
                 l.addRhs(4);
                 //std::cout << std::endl << l << std::endl;
-                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.getNewLiteral(false),false));
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.getNewLiteral(false),Direction::EQ));
             }
 
         }
@@ -2085,7 +2085,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             View u = norm.createView(Domain(7,7));
 
 
-            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),Direction::EQ));
 
 
 
@@ -2110,7 +2110,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             View e = norm.createView(Domain(0,1));
             View i = norm.createView(Domain(1,2));
 
-            norm.addConstraint(ReifiedAllDistinct({e,i},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({e,i},solver.trueLit(),Direction::EQ));
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
@@ -2142,7 +2142,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             View u = norm.createView(Domain(7,10));
 
 
-            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),false));
+            norm.addConstraint(ReifiedAllDistinct({e,i,n,s,v,r,f,u},solver.trueLit(),Direction::EQ));
 
 
 
@@ -2214,7 +2214,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             View e = norm.createView(Domain(0,9));
 
             Domain d(5,5);
-            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),Direction::EQ));
 
 
 
@@ -2242,24 +2242,24 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             Domain d(5,7);
             d.remove(6,6);
-            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),Direction::EQ));
 
             {
             LinearConstraint l1(LinearConstraint::Relation::EQ);
             l1.add(e);
             l1.addRhs(7);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),Direction::EQ));
             }
             {
             LinearConstraint l1(LinearConstraint::Relation::NE);
             l1.add(e);
             l1.addRhs(5);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),Direction::EQ));
             }
             LinearConstraint l1(LinearConstraint::Relation::NE);
             l1.add(e);
             l1.addRhs(7);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),solver.getNewLiteral(true),Direction::EQ));
 
 
 
@@ -2306,20 +2306,20 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             Domain d(5,7);
             d.remove(6,6);
             auto lit = solver.getNewLiteral(true);
-            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),lit,false));
+            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),lit,Direction::EQ));
 
             {
             LinearConstraint l1(LinearConstraint::Relation::EQ);
             l1.add(e);
             l1.addRhs(7);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),~lit,false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),~lit,Direction::EQ));
             }
 
             {
             LinearConstraint l1(LinearConstraint::Relation::EQ);
             l1.add(e);
             l1.addRhs(5);
-            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),~lit,false));
+            norm.addConstraint(ReifiedLinearConstraint(std::move(l1),~lit,Direction::EQ));
             }
 
 
@@ -2350,7 +2350,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             Domain d(5,10);
             d.unify(20,30);
             d.unify(40,50);
-            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),false));
+            norm.addConstraint(ReifiedDomainConstraint(e,std::move(d),solver.getNewLiteral(true),Direction::EQ));
 
 
 
@@ -2469,7 +2469,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         const int high=49;
         for (int i = low; i <= high; ++i)
             views.emplace_back(norm.createView(Domain(low,high)));
-        ReifiedAllDistinct alldiff(std::move(views),s.falseLit(),false);
+        ReifiedAllDistinct alldiff(std::move(views),s.falseLit(),Direction::EQ);
 
         norm.addConstraint(std::move(alldiff));
 
@@ -2510,7 +2510,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(-i);
                 ldiag.emplace_back(norm.createView());
                 l.add(ldiag.back()*-1);
-                norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
             ///WTF, this is the same as ldiag, where is the difference!
@@ -2522,7 +2522,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                 l.addRhs(-i);
                 rdiag.emplace_back(norm.createView());
                 l.add(rdiag.back()*-1);
-                norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),false));
+                norm.addConstraint(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -2531,19 +2531,19 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : views)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
             {
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : ldiag)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
             {
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : rdiag)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
 
 
@@ -2608,19 +2608,19 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : views)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
             {
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : ldiag)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
             {
             std::vector<std::vector<std::pair<View,ReifiedDNF>>> disj;
             for (auto i : rdiag)
                 disj.emplace_back(std::vector<std::pair<View,ReifiedDNF>>{std::make_pair(i,ReifiedDNF(std::vector<std::vector<Literal>>{std::vector<Literal>()}))});
-            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),false));
+            norm.addConstraint(ReifiedDisjoint(std::move(disj),solver.trueLit(),Direction::EQ));
             }
 
 

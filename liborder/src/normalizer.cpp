@@ -61,17 +61,17 @@ void Normalizer::addMinimize(View& v, unsigned int level)
 
 bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedLinearConstraint>& insert)
 {
-    bool impl = l.impl;
-    if (impl && s_.isFalse(l.v))
+    Direction impl = l.impl;
+    if ((impl==Direction::FWD && s_.isFalse(l.v)) || (impl==Direction::BACK && s_.isTrue(l.v)))
         return true;
     s_.freeze(l.v);
     l.normalize();
-    l.impl = true;
+    l.impl = Direction::FWD;
     assert(l.l.getRelation()==LinearConstraint::Relation::LE || l.l.getRelation()==LinearConstraint::Relation::EQ || l.l.getRelation()==LinearConstraint::Relation::NE);
 
     if (l.l.getRelation()==LinearConstraint::Relation::LE)
     {
-        if (l.l.getConstViews().size()==1 && !impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && impl==Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             //ReifiedLinearConstraint copy(l);
             View v = *l.l.getConstViews().begin();
@@ -88,9 +88,9 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
         else
         {
             ReifiedLinearConstraint t(l);
-            if (!s_.isFalse(l.v))
+            if (!s_.isFalse(l.v) && (impl & Direction::FWD))
                 insert.emplace_back(std::move(l));
-            if (!s_.isTrue(t.v) && !impl)
+            if (!s_.isTrue(t.v) && (impl & Direction::BACK))
             {
                 t.reverse();
                 t.v = ~t.v;
@@ -102,7 +102,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
     if (l.l.getRelation()==LinearConstraint::Relation::EQ)
     {
         assert(l.l.getRelation()==LinearConstraint::Relation::EQ);
-        if (l.l.getConstViews().size()==1 && !impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && impl==Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             View v = *(l.l.getConstViews().begin());
             Restrictor r = vc_.getRestrictor(v);
@@ -114,14 +114,14 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
         ReifiedLinearConstraint u(l);
         ReifiedLinearConstraint less(l);
         ReifiedLinearConstraint more(l);
-        if (!s_.isFalse(l.v))
+        if (!s_.isFalse(l.v) && (impl & Direction::FWD))
         {
             l.l.setRelation(LinearConstraint::Relation::LE);
             insert.emplace_back(std::move(l));
             u.l.setRelation(LinearConstraint::Relation::GE);
             insert.emplace_back(std::move(u));
         }
-        if (!s_.isTrue(orig) && !impl)
+        if (!s_.isTrue(orig) && (impl & Direction::BACK))
         {
             Literal x = s_.getNewLiteral(true); 
             less.v = x;
@@ -144,7 +144,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
     else 
     if (l.l.getRelation()==LinearConstraint::Relation::NE)
     {
-        if (l.l.getConstViews().size()==1 && !impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && impl==Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             View v = *(l.l.getConstViews().begin());
             Restrictor r = vc_.getRestrictor(v);
@@ -156,7 +156,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
         ReifiedLinearConstraint u(l);
         ReifiedLinearConstraint less(l);
         ReifiedLinearConstraint more(l);
-        if (!s_.isFalse(l.v))
+        if (!s_.isFalse(l.v) && (impl & Direction::FWD))
         {
             Literal x = s_.getNewLiteral(true);
             less.v = x;
@@ -175,7 +175,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
             if (!s_.createClause(LitVec{x,y,~orig})) /// orig -> x or y
                 return false;
         }
-        if (!s_.isTrue(orig) && !impl)
+        if (!s_.isTrue(orig) && (impl & Direction::BACK))
         {
             l.v = ~l.v;
             l.l.setRelation(LinearConstraint::Relation::LE);
@@ -192,13 +192,13 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
 std::pair<bool,bool> Normalizer::deriveSimpleDomain(ReifiedDomainConstraint& d)
 {
     View v = d.getView();
-    if (s_.isFalse(d.getLiteral()) && d.isImpl())
+    if ((s_.isFalse(d.getLiteral()) && d.getDirection() == Direction::FWD) || (s_.isTrue(d.getLiteral()) && d.getDirection() == Direction::BACK))
         return std::make_pair(true,true);
     if (v.a==0)
     {
         if (d.getDomain().in(v.c))
         {
-            if (!d.isImpl())
+            if (d.getDirection() == Direction::EQ)
                 return std::make_pair(true,s_.setEqual(d.getLiteral(),s_.trueLit()));
             else
                 return std::make_pair(true,true);
@@ -206,16 +206,15 @@ std::pair<bool,bool> Normalizer::deriveSimpleDomain(ReifiedDomainConstraint& d)
         else
             return std::make_pair(true,s_.setEqual(d.getLiteral(),s_.falseLit()));
     }
-    if (s_.isTrue(d.getLiteral()))
+    if (s_.isTrue(d.getLiteral()) && d.getDirection() & Direction::FWD)
     {
         if (!vc_.intersectView(d.getView(),d.getDomain()))
             return std::make_pair(true, false);
         return std::make_pair(true, true);
     }
     else
-        if (s_.isFalse(d.getLiteral()))
+        if (s_.isFalse(d.getLiteral()) && d.getDirection() & Direction::BACK)
         {
-            assert(!d.isImpl());
             Domain all;
             all.remove(d.getDomain());
             if (!vc_.intersectView(d.getView(),all))
@@ -227,36 +226,35 @@ std::pair<bool,bool> Normalizer::deriveSimpleDomain(ReifiedDomainConstraint& d)
 
 std::pair<bool,bool> Normalizer::deriveSimpleDomain(const ReifiedLinearConstraint& l)
 {
-    if (s_.isFalse(l.v) && l.impl)
+    if ((s_.isFalse(l.v) && l.impl==Direction::FWD) || (s_.isTrue(l.v) && l.impl==Direction::BACK))
         return std::make_pair(true,true);
     
     if (l.l.getViews().size()> 1)
         return std::make_pair(false, true);
     if (l.l.getViews().size()==0)
     {
-        if ((l.l.getRelation()==LinearConstraint::Relation::LE && 0 > l.l.getRhs())
+        bool failed = ((l.l.getRelation()==LinearConstraint::Relation::LE && 0 > l.l.getRhs())
                 ||
             (l.l.getRelation()==LinearConstraint::Relation::EQ && 0 != l.l.getRhs())
                 ||
-            (l.l.getRelation()==LinearConstraint::Relation::NE && 0 == l.l.getRhs()))
+            (l.l.getRelation()==LinearConstraint::Relation::NE && 0 == l.l.getRhs()));
+        if (failed && (l.impl & Direction::FWD))
             return std::make_pair(true,s_.createClause(LitVec{~l.v}));
+        if (!failed && (l.impl & Direction::BACK))
+            return std::make_pair(true,s_.createClause(LitVec{l.v}));
         else
-            if (l.impl)
-                return std::make_pair(true,true);
-            else
-                return std::make_pair(true,s_.createClause(LitVec{l.v}));
+            return std::make_pair(true,true);
     }
     auto& view = l.l.getViews().front();
     if (l.l.getRelation()==LinearConstraint::Relation::LE)
     {
-        if (s_.isTrue(l.v))
+        if (s_.isTrue(l.v) && l.impl & Direction::FWD)
         {
             return std::make_pair(true, vc_.constrainUpperBound(view,l.l.getRhs()));
         }
         else
-            if (s_.isFalse(l.v))
+            if (s_.isFalse(l.v) && l.impl & Direction::BACK)
             {
-                assert(!l.impl);
                 return std::make_pair(true, vc_.constrainLowerBound(view,l.l.getRhs()+1));
             }
     }
@@ -329,7 +327,7 @@ bool Normalizer::addPidgeonConstraint(ReifiedAllDistinct& l)
     }
     if (size==d.size()) // no overlap between variables
     {
-        if (!l.isImpl() && !s_.createClause(LitVec{l.getLiteral()}))
+        if ((l.getDirection() & Direction::BACK) && !s_.createClause(LitVec{l.getLiteral()}))
             return false;
         return true;
     }
@@ -382,7 +380,7 @@ bool Normalizer::addPermutationConstraint(ReifiedAllDistinct& l)
     }
     if (size==d.size()) // no overlap between variables
     {
-        if (!l.isImpl() && !s_.createClause(LitVec{l.getLiteral()}))
+        if ((l.getDirection() & Direction::BACK) && !s_.createClause(LitVec{l.getLiteral()}))
             return false;
         return true;
     }
@@ -441,7 +439,7 @@ bool Normalizer::addDistinctCardinality(ReifiedAllDistinct&& l)
     }
     if (size==d.size()) // no overlap between variables
     {
-        if (!l.isImpl() && !s_.createClause(LitVec{l.getLiteral()}))
+        if ((l.getDirection() & Direction::BACK) && !s_.createClause(LitVec{l.getLiteral()}))
             return false;
         return true;
     }
@@ -464,12 +462,13 @@ bool Normalizer::addDistinctCardinality(ReifiedAllDistinct&& l)
         conditions.emplace_back(x);
         if (!s_.createCardinality(conditions.back(),2,std::move(lits)))
             return false;
+        if (l.getDirection() & Direction::FWD)
         if (!s_.createClause(LitVec{~conditions.back(),~l.getLiteral()}))
             return false;
     }
 
     conditions.emplace_back(l.getLiteral());
-    if (l.isImpl())
+    if (l.getDirection() == Direction::FWD)
         return true;
     return s_.createClause(conditions);
 }
@@ -490,7 +489,7 @@ bool Normalizer::addDistinctPairwiseUnequal(ReifiedAllDistinct&& l)
     }
     if (size==d.size()) // no overlap between variables
     {
-        if (!l.isImpl() && !s_.createClause(LitVec{l.getLiteral()}))
+        if ((l.getDirection() & Direction::BACK) && !s_.createClause(LitVec{l.getLiteral()}))
             return false;
         return true;
     }
@@ -514,20 +513,20 @@ bool Normalizer::addDistinctPairwiseUnequal(ReifiedAllDistinct&& l)
             x = s_.trueLit();
         else
         {
-            if (l.isImpl())
+            if (l.getDirection() == Direction::FWD)
                 x = l.getLiteral();
             else
                 x = s_.getNewLiteral(true);
         }
         std::vector<ReifiedLinearConstraint> tempv;
-        if (!convertLinear(ReifiedLinearConstraint(LinearConstraint(i),x,l.isImpl()),tempv))
+        if (!convertLinear(ReifiedLinearConstraint(LinearConstraint(i),x,l.getDirection()),tempv))
             return false;
         else
         {
             linearConstraints_.insert(linearConstraints_.end(), tempv.begin(), tempv.end());
         }
 
-        if (!l.isImpl())
+        if (l.getDirection() & Direction::BACK)
         {
             lits.emplace_back(~x);
             if (!s_.createClause(LitVec{~l.getLiteral(),x}))
@@ -536,7 +535,7 @@ bool Normalizer::addDistinctPairwiseUnequal(ReifiedAllDistinct&& l)
     }
 
 
-    if (!l.isImpl())
+    if (l.getDirection() & Direction::BACK)
     {
         /// if l.v is false, then at least one of the inequalities is also false
         lits.emplace_back(l.getLiteral());
@@ -573,21 +572,24 @@ bool Normalizer::addDomainConstraint(ReifiedDomainConstraint&& d)
             if (!s_.createClause(LitVec{u,~x, ~y})) return false;
         }
     }
-    if (!d.isImpl())
+    if (d.getDirection() & Direction::BACK)
     {
     for (const auto& i : longc)
         if (!s_.createClause(LitVec{~i,d.getLiteral()})) return false;
     }
 
-    longc.emplace_back(~d.getLiteral());
-    if (!s_.createClause(longc)) return false;  
+    if (d.getDirection() & Direction::FWD)
+    {
+        longc.emplace_back(~d.getLiteral());
+        if (!s_.createClause(longc)) return false;
+    }
 
     return true;
 }
 
 bool Normalizer::addDisjoint(ReifiedDisjoint&& l)
 {
-    bool impl = l.isImpl();
+    Direction impl = l.getDirection();
     ReifiedNormalizedDisjoint d(std::move(l),s_);
 
     if (conf_.disjoint2distinct)
@@ -613,7 +615,7 @@ bool Normalizer::addDisjoint(ReifiedDisjoint&& l)
 
         if (allDiff)
         {
-            addConstraint(ReifiedAllDistinct(std::move(views),l.getLiteral(),l.isImpl()));
+            addConstraint(ReifiedAllDistinct(std::move(views),l.getLiteral(),l.getDirection()));
             return true;
         }
     }
@@ -688,7 +690,7 @@ bool Normalizer::addDisjoint(ReifiedDisjoint&& l)
     }
 
     auxs.emplace_back(d.getLiteral());
-    if (!impl && !s_.createClause(auxs))
+    if ((impl & Direction::BACK) && !s_.createClause(auxs))
         return false;
 
     return true;
@@ -734,7 +736,7 @@ bool Normalizer::calculateDomains()
     removed = 0;
     for (size_t i = 0; i < this->disjoints_.size()-removed;)
     {
-        if (disjoints_[i].isImpl() && s_.isFalse(disjoints_[i].getLiteral()))
+        if ((disjoints_[i].getDirection()==Direction::FWD && s_.isFalse(disjoints_[i].getLiteral())) || (disjoints_[i].getDirection()==Direction::BACK && s_.isTrue(disjoints_[i].getLiteral())))
         {
             ++removed;
             disjoints_[i] = std::move(disjoints_[disjoints_.size()-removed]);
@@ -747,7 +749,7 @@ bool Normalizer::calculateDomains()
     removed = 0;
     for (size_t i = 0; i < this->allDistincts_.size()-removed;)
     {
-        if (allDistincts_[i].isImpl() && s_.isFalse(allDistincts_[i].getLiteral()))
+        if ((allDistincts_[i].getDirection()==Direction::FWD && s_.isFalse(allDistincts_[i].getLiteral())) || (allDistincts_[i].getDirection()==Direction::BACK && s_.isTrue(allDistincts_[i].getLiteral())))
         {
             ++removed;
             allDistincts_[i] = std::move(allDistincts_[allDistincts_.size()-removed]);
@@ -844,12 +846,12 @@ uint64 Normalizer::estimateVariables(const ReifiedDomainConstraint& d)
 uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
 {
     uint64 ret = 0;
-    if (l.impl && s_.isFalse(l.v))
+    if ((l.impl == Direction::FWD && s_.isFalse(l.v)) || (l.impl == Direction::BACK && s_.isTrue(l.v)))
         return ret;
     l.normalize();
     if (l.l.getRelation()==LinearConstraint::Relation::LE)
     {
-        if (l.l.getConstViews().size()==1 && !l.impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && l.impl == Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             Variable v = l.l.getViews().begin()->v;
             estimateLE_[v] = std::min(estimateLE_[v]+1,allLiterals(v,getVariableCreator()));
@@ -859,7 +861,7 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
     else 
     if (l.l.getRelation()==LinearConstraint::Relation::EQ)
     {
-        if (l.l.getConstViews().size()==1 && !l.impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && l.impl == Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             Variable v = l.l.getViews().begin()->v;
             estimateEQ_[v] = std::min(estimateEQ_[v]+1,allLiterals(v,getVariableCreator()));
@@ -867,13 +869,13 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
             return ret;
         }
         
-        if (!s_.isTrue(l.v) && !l.impl)
+        if (!s_.isTrue(l.v) && l.impl & Direction::BACK)
             ret +=2;
     }
     else 
     if (l.l.getRelation()==LinearConstraint::Relation::NE)
     {
-        if (l.l.getConstViews().size()==1 && !l.impl) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
+        if (l.l.getConstViews().size()==1 && l.impl == Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
         {
             Variable v = l.l.getViews().begin()->v;
             estimateEQ_[v] = std::min(estimateEQ_[v]+1,allLiterals(v,getVariableCreator()));
@@ -881,7 +883,7 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
             return ret;
         }
         
-        if (!s_.isFalse(l.v))
+        if (!s_.isFalse(l.v) && l.impl & Direction::FWD)
             ret+=2;
     }
     
@@ -961,7 +963,7 @@ uint64 Normalizer::estimateVariables(const ReifiedAllDistinct& c)
             else
                 estimateLE_[i.v] = std::min(estimateLE_[i.v] + max,allLiterals(i.v,getVariableCreator()));
         }
-        return ((views.size()*views.size() + 1)/2)*2 + ((s_.isTrue(c.getLiteral()) || c.isImpl()) ? 0 : ((views.size()*views.size() + 1) / 2));
+        return ((views.size()*views.size() + 1)/2)*2 + ((s_.isTrue(c.getLiteral()) || c.getDirection() == Direction::FWD) ? 0 : ((views.size()*views.size() + 1) / 2));
     }
     //return d.size()*conf_.hallsize*views.size() +  d.size()*conf_.hallsize*splitHallConstraintEstimate(s_, views.size(),conf_) + permutation;
 }
@@ -992,7 +994,7 @@ uint64 Normalizer::estimateVariables(const ReifiedDisjoint& d)
 
     if (allDiff && conf_.disjoint2distinct)
     {
-        return sum + estimateVariables(ReifiedAllDistinct(std::move(vars),d.getLiteral(),d.isImpl()));
+        return sum + estimateVariables(ReifiedAllDistinct(std::move(vars),d.getLiteral(),d.getDirection()));
     }
 
     ViewDomain dom(1,-1);
@@ -1051,19 +1053,19 @@ bool Normalizer::prepare()
         {
             ReifiedLinearConstraint l(i); // make a copy
 
-            if (s_.isTrue(l.v))
+            if (s_.isTrue(l.v) && l.impl & Direction::FWD)
             {
                 p.addImp(std::move(l));
             }
             else
-                if (s_.isFalse(l.v) && !l.impl) 
+                if (s_.isFalse(l.v) && l.impl & Direction::BACK)
                 {
                     l.reverse();
                     l.v = ~l.v;
                     p.addImp(std::move(l));
                 }
         }
-        if (i.l.getRelation()==LinearConstraint::Relation::EQ && s_.isTrue(i.v))
+        if (i.l.getRelation()==LinearConstraint::Relation::EQ && s_.isTrue(i.v) && i.impl==Direction::FWD)
         {
             ReifiedLinearConstraint l(i); // make a copy
             l.l.setRelation(LinearConstraint::Relation::LE);

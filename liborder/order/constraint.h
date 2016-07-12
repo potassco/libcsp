@@ -31,6 +31,23 @@
 namespace order
 {
 
+enum class Direction : int
+{
+    NONE=0, FWD=1, BACK=2, EQ=3,
+};
+inline Direction operator | (Direction lhs, Direction rhs)
+{
+    return (Direction)(static_cast<int>(lhs) | static_cast<int>(rhs));
+}
+inline bool operator & (Direction lhs, Direction rhs)
+{
+    return (bool)static_cast<int>(static_cast<int>(lhs) & static_cast<int>(rhs));
+}
+inline Direction& operator |= (Direction& lhs, Direction rhs)
+{
+    lhs = (Direction)(static_cast<int>(lhs) | static_cast<int>(rhs));
+    return lhs;
+}
 enum class TruthValue {TRUE, FALSE, UNKNOWN};
 struct ReifiedLinearConstraint;
 
@@ -160,7 +177,7 @@ inline std::ostream& operator<< (std::ostream& stream, const LinearConstraint& l
 
 struct ReifiedLinearConstraint
 {
-    ReifiedLinearConstraint(LinearConstraint&& ll, const Literal& vv, bool impl) : l(ll), v(vv), impl(impl) {}
+    ReifiedLinearConstraint(LinearConstraint&& ll, const Literal& vv, Direction impl) : l(ll), v(vv), impl(impl) {}
     ReifiedLinearConstraint(const ReifiedLinearConstraint& ) = default;
 
     /// sort without impl
@@ -172,7 +189,7 @@ struct ReifiedLinearConstraint
     void sort(const VariableCreator& vc, const Config& c) { l.sort(vc,c); }
     LinearConstraint l;
     Literal v;
-    bool impl;
+    Direction impl;
     /// returns a list of reified constraints, the first one is the one that represents the original constraints
     /// the others describe the helper variables
     std::vector<ReifiedLinearConstraint> split(VariableCreator& vc, CreatingSolver &s, const Config &conf) const;
@@ -187,12 +204,12 @@ class ReifiedAllDistinct
 {
 public:
     ///TODO: sort variables, detect subset relations, reuse intermediate variables etc...
-    ReifiedAllDistinct(std::vector<View>&& views, const Literal& l, bool impl) : views_(std::move(views)), v_(l), impl_(impl)
+    ReifiedAllDistinct(std::vector<View>&& views, const Literal& l, Direction impl) : views_(std::move(views)), v_(l), impl_(impl)
     {
         std::sort(views_.begin(), views_.end());
         views_.erase(std::unique(views_.begin(), views_.end()), views_.end());
     }
-    bool isImpl() const { return impl_; }
+    Direction getDirection() const { return impl_; }
     void add(const Variable& v) { views_.emplace_back(v); }
     const std::vector<View>& getViews() const { return views_; }
     std::vector<View>& getViews() { return views_; }
@@ -208,7 +225,7 @@ private:
 
     std::vector<View> views_;
     Literal v_;
-    bool impl_;
+    Direction impl_;
 };
 
 
@@ -218,12 +235,12 @@ private:
 class ReifiedDomainConstraint
 {
 public:
-    ReifiedDomainConstraint(View v, Domain&& d, const Literal& l, bool impl) : v_(v), d_(std::move(d)), l_(l), impl_(impl) {}
+    ReifiedDomainConstraint(View v, Domain&& d, const Literal& l, Direction impl) : v_(v), d_(std::move(d)), l_(l), impl_(impl) {}
     ReifiedDomainConstraint(const ReifiedDomainConstraint& c) = default;
     ReifiedDomainConstraint(ReifiedDomainConstraint&& m) = default;
     ReifiedDomainConstraint& operator=(ReifiedDomainConstraint&& m) = default;
     ReifiedDomainConstraint& operator=(const ReifiedDomainConstraint& a) = default;
-    bool isImpl() const { return impl_; }
+    Direction getDirection() const { return impl_; }
     View getView() const { return v_; }
     View& getView() { return v_; }
     Literal getLiteral() const { return l_; }
@@ -235,7 +252,7 @@ private:
     View v_;
     Domain d_;
     Literal l_;
-    bool impl_;
+    Direction impl_;
 };
 
 
@@ -264,10 +281,10 @@ public:
     /// input: a set of viewlists
     /// the results of the variables of the first set are disjoint from the one from the other sets etc...
     /// a variable is only in the set if its condition is true
-    ReifiedDisjoint(std::vector<std::vector<std::pair<View,ReifiedDNF>>>&& views, const Literal& l, bool impl) : views_(std::move(views)), v_(l), impl_(impl)
+    ReifiedDisjoint(std::vector<std::vector<std::pair<View,ReifiedDNF>>>&& views, const Literal& l, Direction impl) : views_(std::move(views)), v_(l), impl_(impl)
     {
     }
-    bool isImpl() const { return impl_; }
+    Direction getDirection() const { return impl_; }
     const std::vector<std::vector<std::pair<View,ReifiedDNF>>>& getViews() const {return views_; }
     std::vector<std::vector<std::pair<View,ReifiedDNF>>>& getViews() {return views_; }
     void times(int32 x)
@@ -282,7 +299,7 @@ public:
 private:
     std::vector<std::vector<std::pair<View,ReifiedDNF>>> views_;
     Literal v_;
-    bool impl_;
+    Direction impl_;
 };
 
 

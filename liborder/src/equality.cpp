@@ -168,7 +168,7 @@ namespace order
         for (unsigned int i = 0; i < linearConstraints.size();)
         {
             auto& rc = linearConstraints[i];
-            if ((s_.isTrue(rc.v) && rc.l.getRelation()==LinearConstraint::Relation::EQ) || (s_.isFalse(rc.v) && rc.l.getRelation()==LinearConstraint::Relation::NE && !rc.impl))
+            if ((s_.isTrue(rc.v) && rc.l.getRelation()==LinearConstraint::Relation::EQ && (rc.impl & Direction::FWD)) || (s_.isFalse(rc.v) && rc.l.getRelation()==LinearConstraint::Relation::NE && (rc.impl & Direction::BACK)))
             {
                 rc.l.setRelation(LinearConstraint::Relation::EQ);
                 equals.emplace_back(std::move(rc.l));
@@ -179,7 +179,7 @@ namespace order
                 ++i;
         }
         
-        
+
         unsigned int current = 0;
         unsigned int last = 0;
         if (current < equals.size())
@@ -215,7 +215,7 @@ namespace order
         }    
         
         for (auto& i : equals)
-            linearConstraints.emplace_back(std::move(i),s_.trueLit(),false);
+            linearConstraints.emplace_back(std::move(i),s_.trueLit(),Direction::FWD);
                 
         return true;    
     }

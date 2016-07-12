@@ -22,6 +22,7 @@
 #include <clingcon/solver.h>
 #include <order/normalizer.h>
 #include <potassco/theory_data.h>
+#include <order/constraint.h>
 #include <unordered_map>
 #include <sstream>
 
@@ -40,9 +41,11 @@ inline void hash_combine(std::size_t & seed, const T & v)
 
 using NameList = std::unordered_map<order::Variable,std::pair<std::string,Clasp::LitVec>>;
 
+
 class TheoryParser
 {
 public:
+
     enum CType {SUM, DOM, DISTINCT, SHOW, MINIMIZE};
     using mytuple = std::vector<Potassco::Id_t>;   /// a tuple identifier
     using tuple2View = std::map<mytuple, order::View>; // could be unordered
@@ -56,7 +59,7 @@ public:
     /// returns false, if not a constraint of this theory
     /// throws string with error if error occurs
     /// save constraint as strict or nonstrict
-    bool readConstraint(Potassco::TheoryData::atom_iterator& i, bool strict);
+    bool readConstraint(Potassco::TheoryData::atom_iterator& i, order::Direction dir);
     /// turn show predicates to variables
     NameList& postProcess();
     const std::vector<tuple2View>& minimize() const;

@@ -74,8 +74,75 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
 void Helper::postRead()
 {
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
-        if ((*i)->atom()!=0 && tp_.isClingconConstraint(i) && occursInBody(*lp_,(*i)->atom()))
-            lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+    {
+        auto atom = (*i)->atom();
+        bool isClingcon = tp_.isClingconConstraint(i);
+        atom = lp_->getAtom(atom)->id();
+        assert(lp_->validAtom(atom));
+        assert(lp_->getAtom(atom)->relevant());
+        const Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
+        TDInfo info;
+        if (isClingcon)
+        {
+
+            //std::cout << "level: " << ctx_.solver(0)->level(lit.var()) << " ";
+            //std::cout << "isTrue: " <<  a->value()==Clasp::value_true << " ";
+            //std::cout << "isFalse: " <<  a->value()==Clasp::value_false << " " << std::endl;
+
+            info.value=a->value();
+            //std::cout << "sign: " <<  lit.sign() << " " << std::endl;
+            if (info.value==Clasp::value_true)
+            {
+                info.dir |= order::Direction::FWD;
+            }
+            else
+            if (info.value==Clasp::value_false)
+            {
+                info.dir |= order::Direction::BACK;
+            }
+            else if (!conf_.strict)
+            {
+                /// can an atom occur true/false in a body ? I think not, so this is a check for body/integrity constraint
+                for (Clasp::Asp::PrgAtom::dep_iterator it = a->deps_begin(), end = a->deps_end(); it != end; ++it) {
+                  uint32 bodyId = it->var();
+                  const Clasp::Asp::PrgBody* b = lp_->getBody(bodyId);
+                  if (b->eq()) {
+                    /// can i savely ignore this, as it also occurs in the other body ?
+                    continue;
+                    //b = prg.getBody(bodyId = prg.getEqBody(bodyId));
+                    //printf("Atom %u occurs in body %u, which is eq to body %u\n", atom, it->var(), bodyId);
+                  }
+                  if (b->relevant()) {
+                    printf("Atom %u occurs in b%c of body with id %u = {", atom, it->sign() ? '-' : '+', bodyId);
+                    if (b->value()==Clasp::value_false)
+                    {
+                        /// we have an integrity constraint
+                        if (it->sign())
+                            info.dir |= order::Direction::FWD;
+                        else
+                            info.dir |= order::Direction::BACK;
+                    }
+                    else
+                    {
+                        info.dir = order::Direction::EQ;
+                    }
+                    // Do something with body, e.g. iterate over its elements
+                    // via goals_begin()/goals_end();
+                  }
+                }
+            }
+
+            if (lp_->isDefined(atom))
+                info.dir |= order::Direction::FWD;
+
+            if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
+                lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+            if (conf_.strict)
+                info.dir = order::Direction::EQ;
+
+        }
+        tdinfo_.emplace_back(info);
+    }
 }
 
 
@@ -96,9 +163,11 @@ bool Helper::postEnd()
         if (!conflict)
         {
 
+            int count = 0;
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
-                tp_.readConstraint(i, occursInBody(*lp_,(*i)->atom()));
+                //tp_.readConstraint(i, conf_.strict || occursInBody(*lp_,(*i)->atom()));
+                tp_.readConstraint(i, tdinfo_[count].dir);
             }
             to_.names_ = tp_.postProcess();
             ctx_.output.theory = &to_;

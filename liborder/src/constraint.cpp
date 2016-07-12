@@ -278,11 +278,11 @@ std::vector<ReifiedLinearConstraint> ReifiedLinearConstraint::split(VariableCrea
     ret.emplace_back(std::move(*splitted.begin()),v,impl);
     
     Literal lit = s.trueLit();
-    if (impl)       /// in the case of an implication, we also have an implication on the splitted constraints,
+    if (impl != Direction::EQ)       /// in the case of an implication, we also have an implication on the splitted constraints,
         lit = v;    /// disabling them if not needed
     for (auto i = splitted.begin()+1; i != splitted.end(); ++i)
     {
-        ret.emplace_back(std::move(*i),lit,true); // original
+        ret.emplace_back(std::move(*i),lit,Direction::FWD); // original
     }
     return ret;
 }
@@ -295,7 +295,7 @@ void ReifiedLinearConstraint::normalize()
     case LinearConstraint::Relation::EQ: break;
     case LinearConstraint::Relation::NE:
     {
-        if (!impl)
+        if (impl==Direction::EQ)
         {
             v = ~v;
             l.setRelation(LinearConstraint::Relation::EQ);

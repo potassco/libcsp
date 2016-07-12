@@ -204,6 +204,16 @@ private:
     Configurator configurator_;
     clingcon::TheoryParser tp_;
 
+    class TDInfo
+    {
+    public:
+        TDInfo() : dir(order::Direction::NONE), value(Clasp::value_free) {}
+        order::Direction dir;
+        Clasp::ValueRep value;
+    };
+
+    std::vector<TDInfo> tdinfo_;
+
 
 
 };

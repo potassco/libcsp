@@ -28,7 +28,7 @@ namespace order
 struct Config
 {
 public:
-    Config() = default;
+    Config() : strict(false) {}//= default;
 
     Config(bool redundantClauseCheck,
            unsigned int domSize, bool break_symmetries,
@@ -52,10 +52,11 @@ public:
         optimizeOptimize(optimizeOptimize),
         coefFirst(coefFirst), descendCoef(descendCoef), descendDom(descendDom),
         propStrength(propStrength), sortQueue(sortQueue),
-        convertLazy(convertLazy)
+        convertLazy(convertLazy), strict(false)
     {
         if (this->splitsize_maxClauseSize.first>=0)
             this->splitsize_maxClauseSize.first = std::max((int64)(3),this->splitsize_maxClauseSize.first);
+
     }
     //Config() : hallsize(0), redundantClauseCheck(true), domSize(10000), break_symmetries(false), splitsize_maxClauseSize{3,1024}, pidgeon(true), permutation(true),
     //           disjoint2distinct(true), alldistinctCard(false), explicitBinaryOrderClauses(true) {}
@@ -85,6 +86,7 @@ public:
     unsigned int propStrength; /// propagation strength for lazy constraints 1..4
     bool sortQueue; /// sort the lazy propagation queue by constraint size (makes sense without splitting)
     std::pair<unsigned int,bool> convertLazy;
+    bool strict; /// hidde option for testing strict/vs fwd/back inferences only
 };
 
 

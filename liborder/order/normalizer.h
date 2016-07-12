@@ -78,7 +78,7 @@ public:
     {
         for (auto& i : linearConstraints_)
         {
-            assert(i.impl);
+            assert(i.impl == Direction::FWD);
             ((void)(i));
         }
         return linearConstraints_;

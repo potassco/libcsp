@@ -42,7 +42,7 @@ using namespace order;
             l.add(a);
             l.add(b*-1);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(p.process(lc));
         REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
@@ -62,7 +62,7 @@ using namespace order;
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==0);
@@ -80,7 +80,7 @@ using namespace order;
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.addRhs(3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(!p.process(lc));
     }
@@ -101,7 +101,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(p.process(lc));
 
@@ -131,7 +131,7 @@ using namespace order;
             l.add(d*-1);
             l.addRhs(-3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
@@ -140,7 +140,7 @@ using namespace order;
             l.add(c*-1);
             l.addRhs(-2);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
@@ -148,7 +148,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(1);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
 
         REQUIRE(p.process(lc));
@@ -188,7 +188,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -197,7 +197,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(p.process(lc));
 
@@ -225,7 +225,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(3);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -234,7 +234,7 @@ using namespace order;
             l.add(b*-1);
             l.addRhs(4);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         REQUIRE(!p.process(lc));
     }
@@ -258,7 +258,7 @@ using namespace order;
             l.add(b*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -267,7 +267,7 @@ using namespace order;
             l.add(b*-4);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         REQUIRE(p.process(lc));
@@ -305,7 +305,7 @@ using namespace order;
             l.add(b*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -314,7 +314,7 @@ using namespace order;
             l.add(b*-4);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -323,7 +323,7 @@ using namespace order;
             l.add(b*-18);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         REQUIRE(p.process(lc));
@@ -378,7 +378,7 @@ using namespace order;
             l.add(b*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -387,7 +387,7 @@ using namespace order;
             l.add(c*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -396,7 +396,7 @@ using namespace order;
             l.add(e*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
@@ -404,7 +404,7 @@ using namespace order;
             l.add(f*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         {
@@ -413,7 +413,7 @@ using namespace order;
             l.add(d*-2);
             l.addRhs(0);
             l.normalize();
-            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         
@@ -429,7 +429,7 @@ using namespace order;
         l.add(g);
         l.addRhs(0);
         l.normalize();
-        lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),false));
+        lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
         
         REQUIRE(p.process(lc));
@@ -472,7 +472,7 @@ using namespace order;
         REQUIRE(l.getViews()[1].a==32);
         REQUIRE(l.getViews().size()==2);
         
-        ReifiedAllDistinct rd({a*3,b+7,c,d,e,f,g},Literal(0,false),false);
+        ReifiedAllDistinct rd({a*3,b+7,c,d,e,f,g},Literal(0,false),Direction::EQ);
         p.substitute(rd);
     }
 
