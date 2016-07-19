@@ -73,6 +73,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
 
 void Helper::postRead()
 {
+    tdinfo_.clear();
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
     {
         auto atom = (*i)->atom();
@@ -113,7 +114,7 @@ void Helper::postRead()
                     //printf("Atom %u occurs in body %u, which is eq to body %u\n", atom, it->var(), bodyId);
                   }
                   if (b->relevant()) {
-                    printf("Atom %u occurs in b%c of body with id %u = {", atom, it->sign() ? '-' : '+', bodyId);
+                    //printf("Atom %u occurs in b%c of body with id %u = {", atom, it->sign() ? '-' : '+', bodyId);
                     if (b->value()==Clasp::value_false)
                     {
                         /// we have an integrity constraint
@@ -167,7 +168,7 @@ bool Helper::postEnd()
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
                 //tp_.readConstraint(i, conf_.strict || occursInBody(*lp_,(*i)->atom()));
-                tp_.readConstraint(i, tdinfo_[count].dir);
+                tp_.readConstraint(i, tdinfo_[count++].dir);
             }
             to_.names_ = tp_.postProcess();
             ctx_.output.theory = &to_;
