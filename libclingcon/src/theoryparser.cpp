@@ -549,6 +549,8 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, Direct
         }
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
+        if (lc.getConstViews().size()==1)
+            dir = Direction::EQ;
         n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,dir));
         break;
     }
