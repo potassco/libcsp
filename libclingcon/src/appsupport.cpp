@@ -82,7 +82,7 @@ void Helper::postRead()
         assert(lp_->validAtom(atom));
         assert(lp_->getAtom(atom)->relevant());
         const Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
-        TDInfo info;
+        order::Direction info = order::Direction::NONE;
         if (isClingcon)
         {
 
@@ -90,16 +90,16 @@ void Helper::postRead()
             //std::cout << "isTrue: " <<  a->value()==Clasp::value_true << " ";
             //std::cout << "isFalse: " <<  a->value()==Clasp::value_false << " " << std::endl;
 
-            info.value=a->value();
+            //info.value=a->value();
             //std::cout << "sign: " <<  lit.sign() << " " << std::endl;
-            if (info.value==Clasp::value_true)
+            if (a->value()==Clasp::value_true)
             {
-                info.dir |= order::Direction::FWD;
+                info |= order::Direction::FWD;
             }
             else
-            if (info.value==Clasp::value_false)
+            if (a->value()==Clasp::value_false)
             {
-                info.dir |= order::Direction::BACK;
+                info |= order::Direction::BACK;
             }
             else if (!conf_.strict)
             {
@@ -119,13 +119,13 @@ void Helper::postRead()
                     {
                         /// we have an integrity constraint
                         if (it->sign())
-                            info.dir |= order::Direction::FWD;
+                            info |= order::Direction::FWD;
                         else
-                            info.dir |= order::Direction::BACK;
+                            info |= order::Direction::BACK;
                     }
                     else
                     {
-                        info.dir = order::Direction::EQ;
+                        info = order::Direction::EQ;
                     }
                     // Do something with body, e.g. iterate over its elements
                     // via goals_begin()/goals_end();
@@ -134,12 +134,12 @@ void Helper::postRead()
             }
 
             if (lp_->isDefined(atom))
-                info.dir |= order::Direction::FWD;
+                info |= order::Direction::FWD;
 
             if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
                 lp_->startChoiceRule().addHead((*i)->atom()).endRule();
             if (conf_.strict)
-                info.dir = order::Direction::EQ;
+                info = order::Direction::EQ;
 
         }
         tdinfo_.emplace_back(info);
@@ -167,8 +167,8 @@ bool Helper::postEnd()
             int count = 0;
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
-                //tp_.readConstraint(i, conf_.strict || occursInBody(*lp_,(*i)->atom()));
-                tp_.readConstraint(i, tdinfo_[count++].dir);
+                assert(tdinfo_[count]!=order::Direction::NONE);
+                tp_.readConstraint(i, tdinfo_[count++]);
             }
             to_.names_ = tp_.postProcess();
             ctx_.output.theory = &to_;
