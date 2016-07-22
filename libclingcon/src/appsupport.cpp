@@ -142,6 +142,9 @@ void Helper::postRead()
                 info = order::Direction::EQ;
 
         }
+        if (info==order::Direction::NONE)
+            info==order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)
+
         tdinfo_.emplace_back(info);
     }
 }
@@ -167,7 +170,7 @@ bool Helper::postEnd()
             int count = 0;
             for (auto i = td_.currBegin(); i != td_.end(); ++i)
             {
-                assert(tdinfo_[count]!=order::Direction::NONE);
+                assert((!tp_.isClingconConstraint(i)) || tdinfo_[count]!=order::Direction::NONE);
                 tp_.readConstraint(i, tdinfo_[count++]);
             }
             to_.names_ = tp_.postProcess();
