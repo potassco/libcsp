@@ -143,7 +143,7 @@ void Helper::postRead()
 
         }
         if (info==order::Direction::NONE)
-            info==order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)
+            info=order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)
 
         tdinfo_.emplace_back(info);
     }
