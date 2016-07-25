@@ -72,7 +72,7 @@ bool Domain::in(const Domain& x) const
 
 bool Domain::constrainDomain(int32 times, int32 c, int32 div)
 {
-    if ((times+c % div ==0) || div==1) return true;
+    if ((times+c % div ==0) || abs(div)==1) return true;
        
     Domain n(1,-1);
 
@@ -104,7 +104,7 @@ bool Domain::constrainDomain(int32 times, int32 c, int32 div)
         {
             int period;
             if (count==1)
-                period=div;
+                period=abs(div);
             else
                 period=second-first;
     

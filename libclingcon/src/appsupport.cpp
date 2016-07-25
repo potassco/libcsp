@@ -74,6 +74,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
 void Helper::postRead()
 {
     tdinfo_.clear();
+    std::unordered_map<Potassco::Id_t,bool> atoms; // i know i know
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
     {
         auto atom = (*i)->atom();
@@ -130,6 +131,18 @@ void Helper::postRead()
                     // Do something with body, e.g. iterate over its elements
                     // via goals_begin()/goals_end();
                   }
+                }
+
+                /// special case, can't occur with gringo, but with other translations
+                /// does not work in multi-shot, due to "completion"
+                if (atoms.find(atom) != atoms.end()) /// not yet found
+                {
+                    atoms[atom]=true;
+                }else
+                {
+                    /// already found
+                    info = order::Direction::EQ;
+                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();
                 }
             }
 
