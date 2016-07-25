@@ -231,8 +231,8 @@ using namespace order;
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==79);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==79);
             //TODO: compare with translation based approach
             
             
@@ -314,7 +314,7 @@ using namespace order;
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to); /// 442 solutions
         f.solve();
-        REQUIRE(f.summary().enumerated()==442);
+        REQUIRE(f.summary().numEnum==442);
         //f.solve();
         
         /// first thing in next incremental step is
@@ -455,8 +455,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==2);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==2);
             //TODO: compare with translation based approach
             
             
@@ -572,8 +572,8 @@ using namespace order;
             
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==3);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==3);
             //TODO: compare with translation based approach
             
             
@@ -671,8 +671,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             f.solve();
             //f.solve();
-            // std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==30);
+            // std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==30);
             //TODO: compare with translation based approach
             
             
@@ -855,8 +855,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==5040);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==5040);
             //TODO: compare with translation based approach
             
             
@@ -1189,8 +1189,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
             //TODO: compare with translation based approach
             
             
@@ -1522,8 +1522,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
             //TODO: compare with translation based approach
             
             
@@ -1687,8 +1687,8 @@ using namespace order;
         f.solve();
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==724);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==724);
         //TODO: compare with translation based approach
         
     }
@@ -1853,8 +1853,8 @@ using namespace order;
         f.solve();
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==724);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==724);
         //TODO: compare with translation based approach
         
     }
@@ -1977,8 +1977,8 @@ using namespace order;
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==12);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==12);
         //TODO: compare with translation based approach
         
     }
@@ -2110,8 +2110,8 @@ using namespace order;
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==12);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==12);
         //TODO: compare with translation based approach
         
     }
@@ -2252,8 +2252,8 @@ using namespace order;
         //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
         //f.solve(&to);
         f.solve();
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==24);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==24);
         //TODO: compare with translation based approach
         
     }
@@ -2342,8 +2342,8 @@ using namespace order;
            Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
            //f.solve(&to);
            f.solve();
-           //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-           REQUIRE(f.summary().enumerated()==4);
+           //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+           REQUIRE(f.summary().numEnum==4);
            //TODO: compare with translation based approach
            
            
@@ -2438,8 +2438,8 @@ using namespace order;
             Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==2);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==2);
             //TODO: compare with translation based approach
             
             
@@ -2574,8 +2574,8 @@ using namespace order;
             Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==6);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==6);
             //TODO: compare with translation based approach
             
             
@@ -2715,8 +2715,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
             //TODO: compare with translation based approach
             
             
@@ -2864,8 +2864,8 @@ using namespace order;
             Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
         }
     }
     
@@ -3061,8 +3061,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==450);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==450);
             //TODO: compare with translation based approach
         }
     }
@@ -3208,9 +3208,9 @@ using namespace order;
 //            f.solve();
 //            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
 //            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-//            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+//            //            std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
 //            /// THIS IS THE NUMBER FOR n=10
-//            REQUIRE(f.summary().enumerated()==std::min((unsigned int)(724),numM));
+//            REQUIRE(f.summary().numEnum==std::min((unsigned int)(724),numM));
 //            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 //            //            std::cout << "Printing took "
 //            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
@@ -3354,9 +3354,9 @@ using namespace order;
 //            f.solve();
 //            //            std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
 //            //            std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-//            //            std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+//            //            std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
 //            /// THIS IS THE NUMBER FOR n=10
-//            REQUIRE(f.summary().enumerated()==std::min((unsigned int)(724),numM));
+//            REQUIRE(f.summary().numEnum==std::min((unsigned int)(724),numM));
 //            //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 //            //            std::cout << "Printing took "
 //            //                      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
@@ -3490,9 +3490,9 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
             /// THIS IS THE NUMBER FOR n=10
-            REQUIRE(f.summary().enumerated()==92);
+            REQUIRE(f.summary().numEnum==92);
             //TODO: compare with translation based approach
         }
     }
@@ -3630,9 +3630,9 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
             /// THIS IS THE NUMBER FOR n=10
-            REQUIRE(f.summary().enumerated()==92);
+            REQUIRE(f.summary().numEnum==92);
             //TODO: compare with translation based approach
         }
     }
@@ -3894,8 +3894,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
             //TODO: compare with translation based approach
         }
     }
@@ -4088,8 +4088,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==1);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==1);
             //TODO: compare with translation based approach
         }
     }
@@ -4181,8 +4181,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -4279,8 +4279,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -4377,8 +4377,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -4472,8 +4472,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -4569,8 +4569,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -4661,8 +4661,8 @@ using namespace order;
 //            //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
 //            //f.solve(&to);
 //            f.solve();
-//            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-//            REQUIRE(f.summary().enumerated()==13);
+//            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+//            REQUIRE(f.summary().numEnum==13);
 //        }
 //    }
     
@@ -4756,8 +4756,8 @@ using namespace order;
             //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
             //f.solve(&to);
             f.solve();
-            //std::cout << "This was Test4 " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==13);
+            //std::cout << "This was Test4 " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==13);
         }
     }
     
@@ -5102,8 +5102,8 @@ using namespace order;
         f.solve();
         //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
         //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-        //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-        REQUIRE(f.summary().enumerated()==24);
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==24);
         //TODO: compare with translation based approach
         
     }
@@ -5156,8 +5156,8 @@ using namespace order;
             f.solve();
             //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
             //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==10);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==10);
             
         }
         
@@ -5205,8 +5205,8 @@ using namespace order;
             f.solve();
             //std::cout << "conflicts: " << f.ctx.master()->stats.conflicts << std::endl;
             //std::cout << "choices: " << f.ctx.master()->stats.choices << std::endl;
-            //std::cout << "This was " << f.summary().enumerated() << " models" << std::endl;
-            REQUIRE(f.summary().enumerated()==14);
+            //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+            REQUIRE(f.summary().numEnum==14);
         }
         
     }

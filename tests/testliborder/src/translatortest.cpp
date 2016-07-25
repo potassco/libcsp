@@ -115,7 +115,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         b.endProgram();
         f.prepare();
         f.solve();
-        return f.summary().enumerated();
+        return f.summary().numEnum;
     }
     
     TEST_CASE("testOutOfRange", "translatortest")

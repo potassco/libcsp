@@ -144,7 +144,7 @@ void ClingconOrderPropagator::reason(Clasp::Solver& , Clasp::Literal p, Clasp::L
 }
 
 
-bool ClingconOrderPropagator::init(Clasp::Solver& s)
+bool ClingconOrderPropagator::init(Clasp::Solver&)
 {
     return true;
 }
@@ -381,7 +381,7 @@ void ClingconOrderPropagator::reset()
 }
 
 
-void ClingconOrderPropagator::undoLevel(Clasp::Solver& s)
+void ClingconOrderPropagator::undoLevel(Clasp::Solver&)
 {
     //std::cout << "undo dl " << s_.decisionLevel() << std::endl;
     assertConflict_ = false;

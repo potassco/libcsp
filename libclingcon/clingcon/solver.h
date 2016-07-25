@@ -63,6 +63,9 @@ public:
     
     void makeRestFalse()
     {
+        //DAS HIER FUNZT NET ALS ERSETZUNG !!!
+        /// i have to come up with free lists for incremental steps
+        //c_.popVars(maxVar_ - currentVar_ -1);
         //std::cout << "used " << currentVar_-1 << " of " << maxVar_ -1 << std::endl;
         for (;currentVar_ < maxVar_; ++currentVar_)
             c_.addUnary(Clasp::Literal(currentVar_,true));

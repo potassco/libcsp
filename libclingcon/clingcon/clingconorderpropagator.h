@@ -164,7 +164,7 @@ public:
 
     /// propagator interface
     virtual uint32 priority() const { return Clasp::PostPropagator::priority_reserved_ufs+1; } // we schedule after the ufs checker
-    virtual bool   init(Clasp::Solver& s);
+    virtual bool   init(Clasp::Solver &s) override;
     virtual bool   propagateFixpoint(Clasp::Solver& , Clasp::PostPropagator* );
     virtual void   reset();
     virtual bool   isModel(Clasp::Solver& s);
@@ -172,7 +172,7 @@ public:
     /// constraint interface
     virtual PropResult propagate(Clasp::Solver& s, Clasp::Literal p, uint32& data);
     virtual void reason(Clasp::Solver& s, Clasp::Literal p, Clasp::LitVec& lits);
-    virtual void undoLevel(Clasp::Solver& s);
+    virtual void undoLevel(Clasp::Solver& s) override;
     virtual bool simplify(Clasp::Solver& , bool ) { return false; }
 
     ///TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DESTROY MUSS ÜBERLADEN WERDEN, und watches removed
