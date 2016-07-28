@@ -1699,7 +1699,7 @@ using namespace order;
         for (auto i : conf1)
             nQueensaux(i);
     }
-    
+
 
     void nQueensExaux(order::Config c)
     {
