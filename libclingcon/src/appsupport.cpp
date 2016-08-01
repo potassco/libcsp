@@ -59,6 +59,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("prop-strength", ProgramOptions::storeTo(conf.propStrength = 4)->arg("<n>"), "Propagation strength %A {1=weak .. 4=strong} (default: 4)")
             ("sort-queue", ProgramOptions::storeTo(conf.sortQueue = false), "Sort lazy propagation queue by constraint size (default: false)")
             ("convert-lazy-variables", ProgramOptions::storeTo(conf.convertLazy = std::make_pair(0,false))->arg("<n,b>"), "Add the union(b=true)/intersection(b=false) of the lazy variables of the first n threads (default: 0,false)")
+            ("strict", ProgramOptions::storeTo(conf.strict = false), "Enable strict (redundant) constraints (default: false)")
             ;
     root.add(cspconf);
 

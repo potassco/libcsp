@@ -78,10 +78,10 @@ bool operator==(const LitVec& l1, const LitVec& l2)
 }
 
 
-order::Config test1 = order::Config(false,10000,false,{3,1024},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true));
-order::Config test2 = order::Config(true,100,false,{0,10000},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true));
-order::Config test3 = order::Config(true,100,false,{1000,10000},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true));
-order::Config test4 = order::Config(true,100,false,{3,1024},false,false,false,false,false,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true));
+order::Config test1 = order::Config(false,10000,false,{3,1024},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true),false);
+order::Config test2 = order::Config(true,100,false,{0,10000},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true),true);
+order::Config test3 = order::Config(true,100,false,{1000,10000},false,false,false,false,true,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true),false);
+order::Config test4 = order::Config(true,100,false,{3,1024},false,false,false,false,false,true,0,-1,-1,true,true, false,true,false, 4,true,std::make_pair(64,true),true);
 std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 ///break symm

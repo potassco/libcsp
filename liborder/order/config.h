@@ -28,7 +28,7 @@ namespace order
 struct Config
 {
 public:
-    Config() : strict(false) {}//= default;
+    Config() {}//= default;
 
     Config(bool redundantClauseCheck,
            unsigned int domSize, bool break_symmetries,
@@ -40,7 +40,7 @@ public:
            bool equalityProcessing, bool optimizeOptimize,
            bool coefFirst, bool descendCoef, bool descendDom,
            unsigned int propStrength, bool sortQueue,
-           std::pair<unsigned int,bool> convertLazy) :
+           std::pair<unsigned int,bool> convertLazy, bool strict) :
         redundantClauseCheck(redundantClauseCheck),
         domSize(domSize), break_symmetries(break_symmetries),
         splitsize_maxClauseSize(splitsize_maxClauseSize),
@@ -52,7 +52,7 @@ public:
         optimizeOptimize(optimizeOptimize),
         coefFirst(coefFirst), descendCoef(descendCoef), descendDom(descendDom),
         propStrength(propStrength), sortQueue(sortQueue),
-        convertLazy(convertLazy), strict(false)
+        convertLazy(convertLazy), strict(strict)
     {
         if (this->splitsize_maxClauseSize.first>=0)
             this->splitsize_maxClauseSize.first = std::max((int64)(3),this->splitsize_maxClauseSize.first);
