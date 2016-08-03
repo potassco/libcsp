@@ -87,6 +87,7 @@ void Helper::postRead()
         order::Direction info = order::Direction::NONE;
         if (isClingcon)
         {
+            std::vector<Clasp::LitVec> completion;
 
             //std::cout << "level: " << ctx_.solver(0)->level(lit.var()) << " ";
             //std::cout << "isTrue: " <<  a->value()==Clasp::value_true << " ";
@@ -105,6 +106,7 @@ void Helper::postRead()
             }
             else if (!conf_.strict)
             {
+
                 /// can an atom occur true/false in a body ? I think not, so this is a check for body/integrity constraint
                 for (Clasp::Asp::PrgAtom::dep_iterator it = a->deps_begin(), end = a->deps_end(); it != end; ++it) {
                   uint32 bodyId = it->var();
@@ -129,6 +131,15 @@ void Helper::postRead()
                     {
                         info = order::Direction::EQ;
                     }
+                    if (info!= order::Direction::EQ)
+                    {
+                        completion.push_back(Clasp::LitVec());
+                        for (auto elem = b->goals_begin(); elem != b->goals_end(); ++elem)
+                        {
+                            if (lp_->getAtom(elem->var())->id()!=a->id())
+                                completion.back().push_back(*elem);
+                        }
+                    }
                     // Do something with body, e.g. iterate over its elements
                     // via goals_begin()/goals_end();
                   }
@@ -136,14 +147,14 @@ void Helper::postRead()
 
                 /// special case, can't occur with gringo, but with other translations
                 /// does not work in multi-shot, due to "completion"
-                if (atoms.find(atom) != atoms.end()) /// not yet found
+                if (atoms.find(atom) == atoms.end()) /// not yet found
                 {
                     atoms[atom]=true;
                 }else
                 {
                     /// already found
                     info = order::Direction::EQ;
-                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();// warning, this makes it an defined atom
                 }
             }
 
@@ -154,6 +165,49 @@ void Helper::postRead()
                 lp_->startChoiceRule().addHead((*i)->atom()).endRule();
             if (conf_.strict)
                 info = order::Direction::EQ;
+
+            if (tp_.isUnarySum(i))
+                info = order::Direction::EQ;
+
+            if (a->value()==Clasp::value_free && (info == order::Direction::FWD || info == order::Direction::BACK))
+            {
+                bool fwd = (info == order::Direction::FWD);
+                Clasp::LitVec newLits;
+                //        COMPLETION MACHEN,
+                //                für alle die FWD sind, alle Teilbodies aus allen integ constr. müssen falsch sein, dann kann das constraint atom falsch gemacht werden
+                //                :- b1,b2,b3,b4, not "x > 7".
+                //                :- c1,c2,c3,c4, not "x > 7".
+                for (auto& body : completion)
+                {
+                    if (body.size()>1)
+                    {
+                        newLits.push_back(Clasp::Literal(lp_->newAtom(),false));
+                        for (auto& lit : body)
+                        {
+                            // aux means that the body is false
+                            //                aux(b) :- not b1.
+                            //                aux(b) :- not b2.
+                            //                aux(b) :- not b3.
+                            //                aux(c) :- not c1.
+                            //                aux(c) :- not c2.
+                            //                aux(c) :- not c3.
+                            lp_->startRule().addHead(newLits.back().var()).addToBody(lit.var(),lit.sign()).endRule();
+                        }
+                    }
+                    else
+                    {
+                        assert(body.size()==1);
+                        newLits.push_back(~body.back());
+                    }
+                }
+                auto rule = lp_->startRule();
+                for (auto i : newLits)
+                {
+                    //                :- aux(b), aux(c), "x > 7".
+                    rule.addToBody(i.var(),!i.sign());
+                }
+                rule.addToBody(atom,fwd).endRule();
+            }
 
         }
         if (info==order::Direction::NONE)

@@ -55,6 +55,7 @@ public:
         n_(n), td_(td), lp_(lp), trueLit_(trueLit)
     {}
     bool isClingconConstraint(Potassco::TheoryData::atom_iterator& i);
+    bool isUnarySum(Potassco::TheoryData::atom_iterator& i);
 
     /// returns false, if not a constraint of this theory
     /// throws string with error if error occurs

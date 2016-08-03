@@ -474,6 +474,81 @@ bool TheoryParser::isClingconConstraint(Potassco::TheoryData::atom_iterator& i)
     return getConstraintType(theoryTerm, ct);
 }
 
+bool TheoryParser::isUnarySum(Potassco::TheoryData::atom_iterator& i)
+{
+    Potassco::Id_t theoryTerm = (*i)->term();
+    CType ct;
+    if (!getConstraintType(theoryTerm, ct))
+        return false;
+    switch(ct)
+    {
+
+    case SUM:
+    {
+        order::LinearConstraint lc(order::LinearConstraint::Relation::EQ);
+        for (auto elemId = (*i)->begin(); elemId != (*i)->end(); ++elemId)
+        {
+            auto& elem = td_.getElement(*elemId);
+            if (elem.condition()!=0)
+                error("Conditions on theory terms not yet supported");
+            // check condition of element
+            //elem->condition;
+            assert(elem.size()>=1);
+            /// everything more than 1 element is just for set semantics and is not used in the theory
+            //for (auto single_elem = elem.begin(); single_elem != elem.end(); ++single_elem)
+            auto single_elem = elem.begin();
+            {
+//                auto& a = td_.getTerm(*single_elem);
+//                std::cout << toString(a) << " ";
+//                std::cout << std::endl;
+                if (isNumber(*single_elem))
+                {
+                    lc.addRhs(-getNumber(*single_elem));
+                }
+                else
+                {
+                    order::View v;
+                    if (getView(*single_elem,v))
+                        lc.add(v);
+                    else
+                        error("VariableView or integer expression expected",*single_elem);
+                }
+            }
+        }
+
+        if (!(*i)->guard())
+            error("Guard expected");
+        order::LinearConstraint::Relation rel;
+        if (!getGuard(*(*i)->guard(),rel))
+            error("Guard expected",*(*i)->guard());
+        lc.setRelation(rel);
+
+
+        if (!(*i)->rhs())
+            error("Rhs VariableView expected");
+
+        if (isNumber(*(*i)->rhs()))
+        {
+            lc.addRhs(getNumber(*(*i)->rhs()));
+        }
+        else
+        {
+            order::View v;
+            if (!getView(*(*i)->rhs(), v))
+                error("Rhs VariableView or number expected",*(*i)->rhs());
+            //if (v.reversed())
+            //    lc.invert();
+            v = v * -1;
+            lc.add(v);
+        }
+        lc.normalize();
+        return lc.getConstViews().size()==1;
+    }
+    default:{}
+    }
+    return false;
+}
+
 
 bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, Direction dir)
 {
@@ -549,8 +624,6 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, Direct
         }
 
         order::Literal lit = toOrderFormat(lp_->getLiteral((*i)->atom()));
-        if (lc.getConstViews().size()==1)
-            dir = Direction::EQ;
         n_.addConstraint(order::ReifiedLinearConstraint(std::move(lc),lit,dir));
         break;
     }
