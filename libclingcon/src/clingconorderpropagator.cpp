@@ -485,7 +485,7 @@ bool ClingconOrderPropagator::isModel(Clasp::Solver& )
             }
         
             order::ViewIterator vit;
-            if (watched_[v])
+            if (watched_[var])
             {
                 order::Restrictor lr;
                 lr = p_.getVVS().getVariableStorage().getCurrentRestrictor(var);
