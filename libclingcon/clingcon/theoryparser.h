@@ -86,8 +86,10 @@ private:
     std::stringstream& toString(std::stringstream& ss, const Potassco::TheoryData::Term& t);
 
     bool isNumber(Potassco::Id_t id);
+    bool isNumber(const Potassco::TheoryData::Term& a);
 
     int getNumber(Potassco::Id_t id);
+    int getNumber(const Potassco::TheoryData::Term& a);
     
     void add2Shown(order::Variable v, uint32 tid, Clasp::Literal l);
 

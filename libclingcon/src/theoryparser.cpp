@@ -123,6 +123,11 @@ using namespace order;
                     {
                         Potassco::Id_t f = t.function();
                         //TODO: what about internal functions like + * etc...
+                        if (isNumber(t))
+                        {
+                            ss << getNumber(t);
+                            return ss;
+                        }
                         toString(ss, td_.getTerm(f));
                         ss << "(";
                     }
@@ -153,8 +158,11 @@ using namespace order;
 
     bool TheoryParser::isNumber(Potassco::Id_t id)
     {
-        auto& a = td_.getTerm(id);
+        return isNumber(td_.getTerm(id));
+    }
 
+    bool TheoryParser::isNumber(const Potassco::TheoryData::Term& a)
+    {
         if (a.type()==Potassco::Theory_t::Number)
             return true;
         if (a.type()==Potassco::Theory_t::Compound)
@@ -194,7 +202,12 @@ using namespace order;
     int TheoryParser::getNumber(Potassco::Id_t id)
     {
         assert(isNumber(id));
-        auto& a = td_.getTerm(id);
+        return getNumber(td_.getTerm(id));
+    }
+
+    int TheoryParser::getNumber(const Potassco::TheoryData::Term& a)
+    {
+        assert(isNumber(a));
 
         if (a.type()==Potassco::Theory_t::Number)
             return a.number();
@@ -450,7 +463,11 @@ using namespace order;
             {
                 std::string fname(toString(td_.getTerm(a.function())));
                 if (!isalpha(fname[0]))
+                {
+                    if (isNumber(a))
+                        return true;
                     return false;
+                }
                 for (auto i = a.begin(); i != a.end();++i)
                     if (!check(*i))
                         return false;
