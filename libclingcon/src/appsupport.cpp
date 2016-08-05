@@ -159,7 +159,35 @@ void Helper::postRead()
             }
 
             if (lp_->isDefined(atom))
+            {
                 info |= order::Direction::FWD;
+                if (completion.size()) // so we have a choice rule
+                {
+                    for (auto bodies = a->supps_begin(); bodies != a->supps_end(); ++bodies)
+                    {
+                        if (bodies->isBody())
+                        {
+                            const Clasp::Asp::PrgBody* body = lp_->getBody(bodies->node());
+                            assert(body->type()==Potassco::Body_t::Normal);
+                            completion.push_back(Clasp::LitVec());
+                            for (Clasp::Asp::PrgBody::goal_iterator elem = body->goals_begin(); elem != body->goals_end(); ++elem)
+                            {
+                                completion.back().push_back(*elem);
+                            }
+//                   ACHTUNG: Body kann auch Aggregat sein und nicht nur Konjunktion
+//                   Benni's Vorschlag, die Cosntraints hier später als Klauseln hinzufügen, nach End Program
+//                   dann können die ID's der bodies und Atome in Literals umgewandelt werden
+//                   der besser: ich transformiere alle head Regeln in body regeln, indem ich mir vom head alle bodies geben lasse und
+//                   warscheinlich auch nen Problem wenn der Body nen aggregat ist
+                        }
+                        else
+                        {
+                            info = order::Direction::EQ;
+                        }
+                    }
+                }
+            }
+
 
             if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
                 lp_->startChoiceRule().addHead((*i)->atom()).endRule();
@@ -200,15 +228,17 @@ void Helper::postRead()
                         newLits.push_back(~body.back());
                     }
                 }
-                auto rule = lp_->startRule();
-                for (auto i : newLits)
+                if (newLits.size())
                 {
-                    //                :- aux(b), aux(c), "x > 7".
-                    rule.addToBody(i.var(),!i.sign());
+                    auto rule = lp_->startRule();
+                    for (auto i : newLits)
+                    {
+                        //                :- aux(b), aux(c), "x > 7".
+                        rule.addToBody(i.var(),!i.sign());
+                    }
+                    rule.addToBody(atom,fwd).endRule();
                 }
-                rule.addToBody(atom,fwd).endRule();
             }
-
         }
         if (info==order::Direction::NONE)
             info=order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)

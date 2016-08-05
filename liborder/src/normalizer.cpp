@@ -888,12 +888,15 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
     }
     
     
+    int factor = 1;
+    if (l.l.getRelation()==LinearConstraint::Relation::EQ)
+        factor = 2; // we have to consider both directions
     uint64 size = conf_.translateConstraints == -1 ? std::numeric_limits<uint64>::max() : conf_.translateConstraints;
     uint64 product = l.l.productOfDomainsExceptLast(getVariableCreator());
     if (product<=size)
     {
         for (const auto& view : l.l.getViews())
-            estimateLE_[view.v] = std::min(estimateLE_[view.v]+std::min(product,allLiterals(view.v,getVariableCreator())),allLiterals(view.v,getVariableCreator()));
+            estimateLE_[view.v] = std::min(estimateLE_[view.v]+std::min(product*factor,allLiterals(view.v,getVariableCreator())),allLiterals(view.v,getVariableCreator()));
     }
     
     
