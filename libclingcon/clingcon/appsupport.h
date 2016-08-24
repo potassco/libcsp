@@ -191,6 +191,7 @@ private:
 
     /// checks if atoms occurs in some body of the logic program
     bool occursInBody(Clasp::Asp::LogicProgram& p, Potassco::Atom_t aId);
+    void transformHeadConstraints(Clasp::Asp::PrgAtom *a);
 
     void simplifyMinimize();
 

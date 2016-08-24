@@ -71,6 +71,66 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
     root.add(hidden);
 }
 
+void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
+{
+    ///1. Transform all rules where we have a theory atom in the head
+    ///1.1 ta :- B   nach :- B, not ta.
+    ///     therefore, get PrgBody, call remove head, create new body with all
+    /// goals (literals) of the old body plus not ta.
+    ///1.2 ta :- lb {B}. nach :- sum(B)+1 {B, not ta=sum(B)+1-lb}
+    ///1.3 ta v tb v c :- B nach c :- B, not ta, not tb.
+    ///Missing: Facts ta, and empty body
+    Clasp::Asp::EdgeVec supps;
+    a->clearSupports(supps);/// get all bodies and remove them (does this also remove the other direction? (body -> head ?))
+    /// for each rule where a is in the head, we need to move it into the body
+    for (auto s : supps)
+    {
+        if (s.isBody())
+        {
+            Clasp::Asp::PrgBody* prgbody = lp_->getBody(s.node());
+            prgbody->removeHead(a, s.type());
+            if (prgbody->type()==Clasp::Asp::Body_t::Normal)
+            {
+                auto rb = lp_->startRule();
+                for (uint32 id = 0; id < prgbody->size(); ++id)
+                {
+                    rb.addToBody(prgbody->goal(id).var(),!prgbody->goal(id).sign());
+                }
+                rb.addToBody(a->id(),false);
+                rb.endRule();
+            }
+            else
+            {
+                auto rb = lp_->startWeightRule(prgbody->sumW()+1);
+                for (uint32 id = 0; id < prgbody->size(); ++id)
+                {
+                    rb.addToBody(prgbody->goal(id).var(),!prgbody->goal(id).sign(),prgbody->weight(id));
+                }
+                rb.addToBody(a->id(), false, prgbody->sumW()+1 - prgbody->bound());
+                rb.endRule();
+            }
+        }
+        else if (s.isDisj())
+        {
+            /// wait for benni's response on how to identify theory atoms
+            throw std::runtime_error("theory atoms in disjunctions not supported");
+//            Clasp::Asp::PrgDisj* disj = lp_->getDisj(s.node());
+//            Clasp::VarVec theoryAtoms;
+//            Clasp::VarVec rest;
+//            for (auto i : disj)
+//            {
+//                //if ()
+//                td_.getElement()
+//            }
+//                // remove disjunction D from program -
+//                // also removes edge between B and D
+//                D->detach(*lp_);
+
+        }
+        /// else ?
+    }
+}
+
 
 void Helper::postRead()
 {
@@ -83,10 +143,21 @@ void Helper::postRead()
         atom = lp_->getAtom(atom)->id();
         assert(lp_->validAtom(atom));
         assert(lp_->getAtom(atom)->relevant());
-        const Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
+        Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
         order::Direction info = order::Direction::NONE;
         if (isClingcon)
         {
+            transformHeadConstraints(a);
+            //a = lp_->getAtom(atom);
+
+
+            /// Missing: Completion for bodies which are aggregates ?
+            /// Reassure: I do add newAtoms for the manual completion,
+            /// how does this work in the incremental setting, that GRINGO
+            /// does not reuse these numbers !?!?!?!?
+            //DO IT
+
+
             std::vector<Clasp::LitVec> completion;
 
             //std::cout << "level: " << ctx_.solver(0)->level(lit.var()) << " ";
@@ -154,43 +225,17 @@ void Helper::postRead()
                 {
                     /// already found
                     info = order::Direction::EQ;
-                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();// warning, this makes it an defined atom
+                    // this theory atom maybe does not occur in any rule,
+                    // it is simply equivalent to an atom which occurs somewhere
+                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();// warning, this makes it a defined atom
                 }
             }
 
             if (lp_->isDefined(atom))
-            {
                 info |= order::Direction::FWD;
-                if (completion.size()) // so we have a choice rule
-                {
-                    for (auto bodies = a->supps_begin(); bodies != a->supps_end(); ++bodies)
-                    {
-                        if (bodies->isBody())
-                        {
-                            const Clasp::Asp::PrgBody* body = lp_->getBody(bodies->node());
-                            assert(body->type()==Potassco::Body_t::Normal);
-                            completion.push_back(Clasp::LitVec());
-                            for (Clasp::Asp::PrgBody::goal_iterator elem = body->goals_begin(); elem != body->goals_end(); ++elem)
-                            {
-                                completion.back().push_back(*elem);
-                            }
-//                   ACHTUNG: Body kann auch Aggregat sein und nicht nur Konjunktion
-//                   Benni's Vorschlag, die Cosntraints hier später als Klauseln hinzufügen, nach End Program
-//                   dann können die ID's der bodies und Atome in Literals umgewandelt werden
-//                   der besser: ich transformiere alle head Regeln in body regeln, indem ich mir vom head alle bodies geben lasse und
-//                   warscheinlich auch nen Problem wenn der Body nen aggregat ist
-                        }
-                        else
-                        {
-                            info = order::Direction::EQ;
-                        }
-                    }
-                }
-            }
 
-
-            if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
-                lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+            //if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
+            //    lp_->startChoiceRule().addHead((*i)->atom()).endRule();
             if (conf_.strict)
                 info = order::Direction::EQ;
 
@@ -228,17 +273,17 @@ void Helper::postRead()
                         newLits.push_back(~body.back());
                     }
                 }
-                if (newLits.size())
+
+                auto rule = lp_->startRule();
+                assert(newLits.size());
+                for (auto i : newLits)
                 {
-                    auto rule = lp_->startRule();
-                    for (auto i : newLits)
-                    {
-                        //                :- aux(b), aux(c), "x > 7".
-                        rule.addToBody(i.var(),!i.sign());
-                    }
-                    rule.addToBody(atom,fwd).endRule();
+                    //                :- aux(b), aux(c), "x > 7".
+                    rule.addToBody(i.var(),!i.sign());
                 }
+                rule.addToBody(atom,fwd).endRule();
             }
+
         }
         if (info==order::Direction::NONE)
             info=order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)
