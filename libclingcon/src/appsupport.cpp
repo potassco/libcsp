@@ -89,26 +89,27 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
         {
             Clasp::Asp::PrgBody* prgbody = lp_->getBody(s.node());
             prgbody->removeHead(a, s.type());
+            Potassco::RuleBuilder rb;
             if (prgbody->type()==Clasp::Asp::Body_t::Normal)
             {
-                auto rb = lp_->startRule();
+                rb.startBody();
                 for (uint32 id = 0; id < prgbody->size(); ++id)
                 {
-                    rb.addToBody(prgbody->goal(id).var(),!prgbody->goal(id).sign());
+                    rb.addGoal(prgbody->goal(id).sign() ? Potassco::neg(prgbody->goal(id).var()) : prgbody->goal(id).var());
                 }
-                rb.addToBody(a->id(),false);
-                rb.endRule();
+                rb.addGoal(Potassco::neg(a->id()));
             }
             else
             {
-                auto rb = lp_->startWeightRule(prgbody->sumW()+1);
+                rb.startSum(prgbody->sumW()+1);
                 for (uint32 id = 0; id < prgbody->size(); ++id)
                 {
-                    rb.addToBody(prgbody->goal(id).var(),!prgbody->goal(id).sign(),prgbody->weight(id));
+                    rb.addGoal(prgbody->goal(id).sign() ? Potassco::neg(prgbody->goal(id).var()) : prgbody->goal(id).var(),prgbody->weight(id));
                 }
-                rb.addToBody(a->id(), false, prgbody->sumW()+1 - prgbody->bound());
-                rb.endRule();
+                rb.addGoal(Potassco::neg(a->id()), prgbody->sumW()+1 - prgbody->bound());
             }
+            rb.end();
+            lp_->addRule(rb.rule());
         }
         else if (s.isDisj())
         {
@@ -227,7 +228,11 @@ void Helper::postRead()
                     info = order::Direction::EQ;
                     // this theory atom maybe does not occur in any rule,
                     // it is simply equivalent to an atom which occurs somewhere
-                    lp_->startChoiceRule().addHead((*i)->atom()).endRule();// warning, this makes it a defined atom
+                    Potassco::RuleBuilder rb;
+                    rb.start(Potassco::Head_t::Choice);// warning, this makes it a defined atom
+                    rb.addHead((*i)->atom());
+                    rb.end();
+                    lp_->addRule(rb.rule());
                 }
             }
 
@@ -264,7 +269,9 @@ void Helper::postRead()
                             //                aux(c) :- not c1.
                             //                aux(c) :- not c2.
                             //                aux(c) :- not c3.
-                            lp_->startRule().addHead(newLits.back().var()).addToBody(lit.var(),lit.sign()).endRule();
+                            Potassco::RuleBuilder rb;
+                            rb.start().addHead(newLits.back().var()).addGoal(lit.sign() ? Potassco::neg(lit.var()) : lit.var()).end();
+                            lp_->addRule(rb.rule());
                         }
                     }
                     else
@@ -274,14 +281,16 @@ void Helper::postRead()
                     }
                 }
 
-                auto rule = lp_->startRule();
+                Potassco::RuleBuilder rb;
+                rb.start();
                 assert(newLits.size());
                 for (auto i : newLits)
                 {
                     //                :- aux(b), aux(c), "x > 7".
-                    rule.addToBody(i.var(),!i.sign());
+                    rb.addGoal(i.sign() ? Potassco::neg(i.var()) : i.var());
                 }
-                rule.addToBody(atom,fwd).endRule();
+                rb.addGoal(fwd ? atom : Potassco::neg(atom)).end();
+                lp_->addRule(rb.rule());
             }
 
         }

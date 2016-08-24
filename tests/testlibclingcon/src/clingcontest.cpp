@@ -264,23 +264,32 @@ using namespace order;
         lp.addOutput("a",a);
         lp.addOutput("b",b);
         {
-            lp.startChoiceRule().addHead(a).addHead(b).endRule();
+            Potassco::RuleBuilder rb;
+            rb.start(Potassco::Head_t::Choice);
+            rb.addHead(a).addHead(b).end();
+            lp.addRule(rb.rule());
         }
         
         {
-            lp.startRule().addHead(a).addToBody(b,true).endRule();
+            Potassco::RuleBuilder rb;
+            rb.start().addHead(a).addGoal(b).end();
+            lp.addRule(rb.rule());
         }
         
         
         auto constraint1 = lp.newAtom();
         lp.addOutput("a+b+c<=17",constraint1);
         {
-            lp.startRule().addToBody(a,true).addToBody(b,true).addToBody(constraint1,false).addHead(lp.falseAtom()).endRule();
+            Potassco::RuleBuilder rb;
+            rb.start().addGoal(a).addGoal(b).addGoal(Potassco::neg(constraint1))/*.addHead(lp.falseAtom())*/.end();
+            lp.addRule(rb.rule());
         }
         
         {
             //// ADDITIONAL STUFF
-            lp.startChoiceRule().addHead(constraint1).endRule();
+            Potassco::RuleBuilder rb;
+            rb.start(Potassco::Head_t::Choice).addHead(constraint1).end();
+            lp.addRule(rb.rule());
         }
         
         
