@@ -80,6 +80,13 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
     ///1.2 ta :- lb {B}. nach :- sum(B)+1 {B, not ta=sum(B)+1-lb}
     ///1.3 ta v tb v c :- B nach c :- B, not ta, not tb.
     ///Missing: Facts ta, and empty body
+
+
+    if (lp_->isFact(a))
+        return;
+
+
+
     Clasp::Asp::EdgeVec supps;
     a->clearSupports(supps);/// get all bodies and remove them (does this also remove the other direction? (body -> head ?))
     /// for each rule where a is in the head, we need to move it into the body
@@ -135,6 +142,7 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
 
 void Helper::postRead()
 {
+    //lp_->setMaxInputAtom(lp_->numAtoms());
     tdinfo_.clear();
     std::unordered_map<Potassco::Id_t,bool> atoms; // i know i know
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
@@ -180,7 +188,8 @@ void Helper::postRead()
             {
 
                 /// can an atom occur true/false in a body ? I think not, so this is a check for body/integrity constraint
-                for (Clasp::Asp::PrgAtom::dep_iterator it = a->deps_begin(), end = a->deps_end(); it != end; ++it) {
+                for (Clasp::Asp::PrgAtom::dep_iterator it = a->deps_begin(), end = a->deps_end(); it != end; ++it)
+                {
                   uint32 bodyId = it->var();
                   const Clasp::Asp::PrgBody* b = lp_->getBody(bodyId);
                   if (b->eq()) {
@@ -312,6 +321,16 @@ bool Helper::occursInBody(Clasp::Asp::LogicProgram& p, Potassco::Atom_t aId)
 
 bool Helper::postEnd()
 {
+    /// remove all of our propagators, because we will set a new one
+    for (unsigned int i = 0; i != to_.numThreads; ++i)
+    if (to_.props_[i])
+    {
+        assert(ctx_.hasSolver(i));
+        ctx_.solver(i)->removePost(to_.props_[i]);
+        delete to_.props_[i];
+        to_.props_[i] = nullptr;
+    }
+
     if (lp_->end() && ctx_.master()->propagate())
     {
         bool conflict = false;

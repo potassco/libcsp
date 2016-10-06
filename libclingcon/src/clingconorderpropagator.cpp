@@ -59,8 +59,9 @@ Clasp::Constraint::PropResult ClingconOrderPropagator::propagate(Clasp::Solver& 
 //            std::cout << "Literal: " << p.rep() << "<-litnumber "<< p.var() << "," << p.sign() << " @"<< s_.decisionLevel() << std::endl;
 
             order::Restrictor lr = p_.getVVS().getVariableStorage().getRestrictor(cspVar.first); //(*orderLits_[cspVar.first]);
-            assert(p_.getVVS().getVariableStorage().getDomain(cspVar.first).size() > bound); /// assure that the given bound is in range
-            assert(toClaspFormat(p_.getVVS().getVariableStorage().getLELiteral(lr.begin()+bound)).var() == p.var()); /// given the cspvar+bound we can reinfer the literal which should be p again
+            ///these two assertions do not work for incremental
+            ///assert(p_.getVVS().getVariableStorage().getDomain(cspVar.first).size() > bound); /// assure that the given bound is in range
+            ///assert(toClaspFormat(p_.getVVS().getVariableStorage().getLELiteral(lr.begin()+bound)).var() == p.var()); /// given the cspvar+bound we can reinfer the literal which should be p again
 
             if ((p.sign() && !sign) || (!p.sign() && sign))
             {   /// cspVar.first > bound

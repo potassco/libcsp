@@ -111,7 +111,7 @@ public:
             {
                 to_.props_[i]->solver().removePost(to_.props_[i]);
                 delete to_.props_[i];
-                to_.props_[i] = 0;
+                to_.props_[i] = nullptr;
             }
     }
     
@@ -130,7 +130,7 @@ public:
         {
             s.removePost(to_.props_[s.id()]);
             delete to_.props_[s.id()];
-            to_.props_[s.id()] = 0;
+            to_.props_[s.id()] = nullptr;
         }
         
         

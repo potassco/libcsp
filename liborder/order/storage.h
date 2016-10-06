@@ -141,7 +141,7 @@ public:
 
         if (store_ == hasmap && map_.size()*3>=maxSize_) /// convert map to vector if it gets too large
         {
-            store_ = store_ | hasvector; 
+            store_ = hasvector;
             Literal l(0,false);
             l.flag();
             vector_.resize(maxSize_, l);
