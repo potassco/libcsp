@@ -142,7 +142,7 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
 
 void Helper::postRead()
 {
-    //lp_->setMaxInputAtom(lp_->numAtoms());
+    lp_->setMaxInputAtom(lp_->numAtoms());
     tdinfo_.clear();
     std::unordered_map<Potassco::Id_t,bool> atoms; // i know i know
     for (auto i = td_.currBegin(); i != td_.end(); ++i)

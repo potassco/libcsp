@@ -146,7 +146,7 @@ public:
 
 
     /// assure that there are no variables left 
-    void createNewLiterals(std::size_t num)
+    void createNewLiterals(uint64 num)
     {
         assert(maxVar_==currentVar_);
 //        if (num<=maxVar_-currentVar_)
@@ -154,6 +154,8 @@ public:
 //        num -= maxVar_-currentVar_;
 //        c_.numVars()
         //currentVar_ = c_.addVar(Clasp::Var_t::Atom);
+        if ((uint64)(c_.numVars()) + num > std::numeric_limits<uint32>::max())
+            throw std::runtime_error("Trying to create more than 2^32 atoms.\n Restrict your domains or choose other options.");
         currentVar_ = c_.addVars(num,Clasp::Var_t::Atom);
 //        for (size_t i = 1; i < num; ++i)
 //        {

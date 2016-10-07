@@ -45,7 +45,7 @@ public:
 
     }
 
-    virtual void createNewLiterals(std::size_t )
+    virtual void createNewLiterals(uint64 )
     {
 
     }

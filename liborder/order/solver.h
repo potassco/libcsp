@@ -166,7 +166,7 @@ public:
     
     /// preallocate a number of Literals
     /// for getNewLiteral to return
-    virtual void createNewLiterals(std::size_t num) = 0;
+    virtual void createNewLiterals(uint64 num) = 0;
 
     /// returns a new literal
     /// pre: enough literals must have been created by createNewLiterals before
