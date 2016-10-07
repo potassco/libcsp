@@ -477,8 +477,8 @@ using namespace order;
                 for (auto i = a.begin(); i != a.end();++i)
                     if (!check(*i))
                         return false;
-                return true;
             }
+            return true;
         }
         return false;
     }
