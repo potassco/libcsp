@@ -79,13 +79,9 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
     /// goals (literals) of the old body plus not ta.
     ///1.2 ta :- lb {B}. nach :- sum(B)+1 {B, not ta=sum(B)+1-lb}
     ///1.3 ta v tb v c :- B nach c :- B, not ta, not tb.
-    ///Missing: Facts ta, and empty body
-
 
     if (lp_->isFact(a))
         return;
-
-
 
     Clasp::Asp::EdgeVec supps;
     a->clearSupports(supps);/// get all bodies and remove them (does this also remove the other direction? (body -> head ?))
@@ -142,6 +138,9 @@ void Helper::transformHeadConstraints(Clasp::Asp::PrgAtom* a)
 
 void Helper::postRead()
 {
+    if (!lp_->ok()) // UNSAT, not all atoms are created
+        return;
+
     lp_->setMaxInputAtom(lp_->numAtoms());
     tdinfo_.clear();
     std::unordered_map<Potassco::Id_t,bool> atoms; // i know i know
