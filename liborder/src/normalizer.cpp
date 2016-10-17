@@ -889,7 +889,7 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
     
     
     int factor = 1;
-    if (l.l.getRelation()==LinearConstraint::Relation::EQ)
+    if (l.l.getRelation()==LinearConstraint::Relation::EQ || l.l.getRelation()==LinearConstraint::Relation::NE)
         factor = 2; // we have to consider both directions
     uint64 size = conf_.translateConstraints == -1 ? std::numeric_limits<uint64>::max() : conf_.translateConstraints;
     uint64 product = l.l.productOfDomainsExceptLast(getVariableCreator());
