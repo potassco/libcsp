@@ -152,7 +152,7 @@ namespace order
             convert *= (oldfactor/g);
             Edge newConstraint = e.second * (myfactor/g);
             newConstraint.secondCoef = convert.firstCoef;
-            newConstraint.constant += convert.constant;
+            newConstraint.constant -= convert.constant;
             assert(constraints_.find(e.first)==constraints_.end());
             constraints_[e.first] = newConstraint;
         }
