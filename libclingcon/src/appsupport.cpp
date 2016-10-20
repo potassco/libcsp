@@ -158,14 +158,6 @@ void Helper::postRead()
             transformHeadConstraints(a);
             //a = lp_->getAtom(atom);
 
-
-            /// Missing: Completion for bodies which are aggregates ?
-            /// Reassure: I do add newAtoms for the manual completion,
-            /// how does this work in the incremental setting, that GRINGO
-            /// does not reuse these numbers !?!?!?!?
-            //DO IT
-
-
             std::vector<Clasp::LitVec> completion;
 
             //std::cout << "level: " << ctx_.solver(0)->level(lit.var()) << " ";
@@ -277,8 +269,8 @@ void Helper::postRead()
                             //                aux(c) :- not c1.
                             //                aux(c) :- not c2.
                             //                aux(c) :- not c3.
-                            Potassco::RuleBuilder rb;
-                            rb.start().addHead(newLits.back().var()).addGoal(lit.sign() ? Potassco::neg(lit.var()) : lit.var()).end();
+                            Potassco::RuleBuilder rb; // revert literals from the body
+                            rb.start().addHead(newLits.back().var()).addGoal(lit.sign() ? lit.var() : Potassco::neg(lit.var())).end();
                             lp_->addRule(rb.rule());
                         }
                     }
