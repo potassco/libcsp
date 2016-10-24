@@ -178,6 +178,7 @@ void Helper::postRead()
             else if (!conf_.strict)
             {
 
+
                 /// can an atom occur true/false in a body ? I think not, so this is a check for body/integrity constraint
                 for (Clasp::Asp::PrgAtom::dep_iterator it = a->deps_begin(), end = a->deps_end(); it != end; ++it)
                 {
@@ -216,31 +217,42 @@ void Helper::postRead()
                     // via goals_begin()/goals_end();
                   }
                 }
-
-                /// special case, can't occur with gringo, but with other translations
-                /// does not work in multi-shot, due to "completion"
-                if (atoms.find(atom) == atoms.end()) /// not yet found
-                {
-                    atoms[atom]=true;
-                }else
-                {
-                    /// already found
-                    info = order::Direction::EQ;
-                    // this theory atom maybe does not occur in any rule,
-                    // it is simply equivalent to an atom which occurs somewhere
-                    Potassco::RuleBuilder rb;
-                    rb.start(Potassco::Head_t::Choice);// warning, this makes it a defined atom
-                    rb.addHead((*i)->atom());
-                    rb.end();
-                    lp_->addRule(rb.rule());
-                }
             }
 
             if (lp_->isDefined(atom))
                 info |= order::Direction::FWD;
 
-            //if (atom!=0 && isClingcon && (conf_.strict || occursInBody(*lp_,(*i)->atom())))
-            //    lp_->startChoiceRule().addHead((*i)->atom()).endRule();
+            /// special case, can't occur with gringo, but with other translations
+            /// does not work in multi-shot, due to "completion"
+            if (atoms.find(atom) == atoms.end()) /// not yet found
+            {
+                atoms[atom]=true;
+            }else
+            {
+               /*
+                /// already found
+                info = order::Direction::EQ;
+                // this theory atom maybe does not occur in any rule,
+                // it is simply equivalent to an atom which occurs somewhere
+                Potassco::RuleBuilder rb;
+                rb.start(Potassco::Head_t::Choice);// warning, this makes it a defined atom
+                rb.addHead((*i)->atom());
+                rb.end();
+                lp_->addRule(rb.rule());*/
+
+                info = order::Direction::EQ;
+                if (!lp_->isFact(atom))
+                {
+                Potassco::RuleBuilder rb;
+                rb.start();
+                rb.addGoal(Potassco::lit((*i)->atom()));
+                rb.addGoal(Potassco::neg((*i)->atom()));
+                rb.end();
+                lp_->addRule(rb.rule());
+                }
+
+            }
+
             if (conf_.strict)
                 info = order::Direction::EQ;
 
