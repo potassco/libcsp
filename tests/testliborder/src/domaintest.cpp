@@ -65,7 +65,7 @@ using namespace order;
         e.unify(-100,50);
         Domain::const_iterator begin2 = e.begin();
         Domain::const_iterator end2 = e.end();
-        
+
         REQUIRE(end2-begin2==201);
         REQUIRE(e.size()==201);
 

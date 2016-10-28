@@ -44,13 +44,13 @@ bool VariableCreator::intersectView(const View &v, Domain d)
 {
     assert(isValid(v.v));
     std::unique_ptr<Domain> copy(new Domain(*domains_[v.v]));
-    
+
     d += -v.c;
     ///TODO: need to have solver for this
     //if (copy->overflow())
         //s.intermediateVariableOutOfRange();
     d.inplace_divide(v.a);
-    
+
     if (!copy->intersect(d))
         return false;
     if (!domainChange(v.v,*copy))
@@ -64,12 +64,12 @@ bool VariableCreator::intersectView(const View &v, Domain d)
 bool VariableCreator::removeFromView(const View& v, int x)
 {
     assert(isValid(v.v));
-    
+
     x -= v.c;
     if (x%v.a!=0)
         return true;
     x /= v.a;
-    
+
     std::unique_ptr<Domain> copy(new Domain(*domains_[v.v]));
     if (!copy->remove(x))
         return false;
@@ -108,7 +108,7 @@ bool VariableCreator::setGELit(const Restrictor::ViewIterator& it, Literal l)
         return s_.setEqual(l,s_.falseLit());
     Variable v = it.view().v;
     isValid(v);
-    
+
     if (it.numElement()==0)
         return s_.setEqual(s_.trueLit(), l);
     prepareOrderLitMemory(v);
@@ -146,7 +146,7 @@ std::pair<bool,Literal> VariableCreator::hasEqualLit(Restrictor::ViewIterator it
             return std::make_pair(true,getLELiteral(it));
         if (d.upper()==*it && hasGELiteral(it))
             return std::make_pair(true,getGELiteral(it));
-        
+
         return std::make_pair(false,s_.trueLit());
     }
 }
@@ -224,7 +224,7 @@ bool VariableCreator::restrictDomainsAccordingToLiterals()
 {
     for (std::size_t i = 0; i < numVariables(); ++i)
     {
-        if (isValid(i) && hasOrderLitMemory(i))
+        if (isValid(i) && hasOrderLitMemory(i) && orderLitMemory_[i].numLits()>0)
         {
             auto r = getRestrictor(View(i));
             if (r.size()==1)
@@ -233,10 +233,10 @@ bool VariableCreator::restrictDomainsAccordingToLiterals()
             pure_LELiteral_iterator pitend(r.end(),orderLitMemory_[i],false);
             assert(pitbegin.isValid());
             assert(pitend.isValid());
-            
+
             int32 lower = r.lower();// can be int32 here, as i only have Variables
             int32 upper = r.upper();
-            
+
             while(pitbegin<=pitend)
             {
                 assert(pitbegin.isValid());
@@ -303,7 +303,7 @@ bool VariableCreator::createEqualClauses()
         Variable v = i.first.first;
         int value =  i.first.second;
         Literal l  =  i.second;
-        if (l.flagged()) 
+        if (l.flagged())
             continue;
 
         i.second.flag();  /// mark as already proceeded
@@ -383,10 +383,10 @@ bool VariableCreator::domainChange(const Variable& var, int newLower, int newUpp
 
         auto it = order::wrap_lower_bound(r.begin(),r.end(),newLower);
         size_t start = it - r.begin();
-        
+
         it = order::wrap_upper_bound(it,r.end(),newUpper);
         size_t end = (it - r.begin());
-        
+
         /// we prefer the map if available to create the clauses (and keep it up to date)
         if (orderLitMemory_[var].hasMap())
         {
@@ -472,7 +472,7 @@ bool VariableCreator::domainChange(const Variable& var, const Domain& d)
 
         auto it = order::wrap_lower_bound(r.begin(),r.end(),d.lower());
         size_t start = it - r.begin();
-        
+
 
         /// handle new holes
         /// i go through the new domain
@@ -503,9 +503,9 @@ bool VariableCreator::domainChange(const Variable& var, const Domain& d)
         auto endit = order::wrap_upper_bound(it,r.end(),d.upper());
         keep.emplace_back(endit);
 
-        
+
         size_t end = (endit - r.begin());
-        
+
 
         ///TODO: setting everything to false/true on the edges of the map
         /// all holes must be removed and also set equal to the predecessor in the new domain
@@ -629,7 +629,7 @@ bool VariableCreator::domainChange(const Variable& var, const Domain& d)
                 ++i;
             }
 
-            assert(end-start<=v.size());                
+            assert(end-start<=v.size());
         }
 
         orderLitMemory_[var].setSize(d.size());
@@ -697,10 +697,10 @@ void VariableStorage::constrainVariable(const Restrictor& r)
 
 
 bool VolatileVariableStorage::setLELit(const Restrictor::ViewIterator &it, Literal l)
-{ 
+{
     if (it.view().reversed())
         return setGELit(ViewIterator::viewToVarIterator(it),l);
-    assert (vs_.getDomain(it.view().v).size() > it.numElement()); /// end iterator, after range 
+    assert (vs_.getDomain(it.view().v).size() > it.numElement()); /// end iterator, after range
     Variable v = it.view().v;
     vs_.isValid(v);
     assert (volOrderLitMemory_[v].hasNoLiteral(it.numElement()));

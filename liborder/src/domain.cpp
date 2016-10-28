@@ -73,7 +73,7 @@ bool Domain::in(const Domain& x) const
 bool Domain::constrainDomain(int32 times, int32 c, int32 div)
 {
     if ((times+c % div ==0) || abs(div)==1) return true;
-       
+
     Domain n(1,-1);
 
     if (div< (int64)size())
@@ -95,11 +95,11 @@ bool Domain::constrainDomain(int32 times, int32 c, int32 div)
                 if (count==2)
                 {
                     second=i;
-                    break;                    
+                    break;
                 }
             }
         }
-        
+
         if (count>0) // otherwise empty domain
         {
             int period;
@@ -107,7 +107,7 @@ bool Domain::constrainDomain(int32 times, int32 c, int32 div)
                 period=abs(div);
             else
                 period=second-first;
-    
+
             for (auto& x : ranges_)
             {
                 int start;
@@ -126,7 +126,7 @@ bool Domain::constrainDomain(int32 times, int32 c, int32 div)
     }
     else
     {
-        
+
         for (Domain::const_iterator i = begin(); i != end(); ++i)
             if ((times*(*i)+c)%div==0)
                 n.ranges_.emplace_back(Range(*i,*i));
@@ -230,14 +230,14 @@ bool Domain::remove(int32 x)
             {
                 int oldu = found->u;
                 found->u=x-1;
-                ranges_.insert(found+1,Range(x+1,oldu));                
+                ranges_.insert(found+1,Range(x+1,oldu));
             }
-            return !empty();            
+            return !empty();
         }
         return !empty();
-        
+
     }
-    return !empty();    
+    return !empty();
 }
 
 bool Domain::remove(int32 lower, int32 upper)
@@ -321,12 +321,12 @@ Domain& Domain::inplace_divide(int32 n)
         n *= -1;
     }
     if (n==1) return *this;
-    
+
     modified_=true;
     Domain d;
     d.ranges_.clear();
     auto start = d.ranges_.end();
-    
+
     for (auto& r : ranges_)
     {
         int32 old = - Domain::min-1;
@@ -341,8 +341,8 @@ Domain& Domain::inplace_divide(int32 n)
 //        if (l>u)
 //            continue;
     }
-    
-    d.ranges_.swap(ranges_);    
+
+    d.ranges_.swap(ranges_);
     return *this;
 }
 
@@ -590,10 +590,10 @@ Domain::const_iterator& Domain::const_iterator::operator-=(int64 x)
 
 
 ///ViewDomain
-/// 
-/// 
-/// 
-/// 
+///
+///
+///
+///
 
 bool ViewDomain::in(int64 x) const
 {

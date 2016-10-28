@@ -27,7 +27,7 @@
 #include <iostream>
 
 using namespace order;
-   
+
     TEST_CASE("EqualityProcessor1", "1")
     {
         MySolver s;
@@ -169,8 +169,8 @@ using namespace order;
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==4);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).constant==3);
     }
-    
-    
+
+
     TEST_CASE("EqualityProcessor6", "6")
     {
         /// 2 times a = b + 3
@@ -190,7 +190,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a);
@@ -205,7 +205,7 @@ using namespace order;
         REQUIRE(p.getEqualities(a.v)->top()==a.v);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==-3);
     }
-    
+
     TEST_CASE("EqualityProcessor7", "7")
     {
         // a = b + 3
@@ -227,7 +227,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a);
@@ -238,8 +238,8 @@ using namespace order;
         }
         REQUIRE(!p.process(lc));
     }
-    
-    
+
+
     TEST_CASE("EqualityProcessor8", "8")
     {
         // 3*a = 2*b
@@ -260,7 +260,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a*3);
@@ -269,23 +269,23 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==0);
-        
+
         REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
         REQUIRE(p.getEqualities(a.v)->top()==a.v);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
-        
+
         REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
         REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
-        
+
     }
-    
+
             // 7*a = 18*b
-    
+
     TEST_CASE("EqualityProcessor9", "9")
     {
         // 3*a = 2*b
@@ -307,7 +307,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a*3);
@@ -316,7 +316,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(a*7);
@@ -325,41 +325,41 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==0);
-        
+
         REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
         REQUIRE(p.getEqualities(a.v)->top()==a.v);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
-        
+
         REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
         REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
-        
+
     }
-    
-    
+
+
     TEST_CASE("EqualityProcessor10", "10")
     {
         // a = 2*b
         // b = 2*c
-       
+
         // d = 2*e
         // e = 2*f
-        
+
         ///merge both
         // c = 2*d
-        
-        
-        
+
+
+
         /// a = 2b
         /// a = 4c
         /// a = 8d
         /// a = 16e
         /// a = 32f
-        
+
         MySolver s;
         Normalizer n(s,lazySolveConfigProp4);
         EqualityProcessor p(s,n.getVariableCreator());
@@ -380,7 +380,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(b);
@@ -389,7 +389,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(d);
@@ -406,7 +406,7 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         {
             LinearConstraint l(LinearConstraint::Relation::EQ);
             l.add(c);
@@ -415,10 +415,10 @@ using namespace order;
             l.normalize();
             lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
-        
+
+
         /// further linear constraints
-        
+
         View g = n.createView();
         {
         LinearConstraint l(LinearConstraint::Relation::LE);
@@ -431,10 +431,10 @@ using namespace order;
         l.normalize();
         lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
         }
-        
+
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==1);
-        
+
         REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
         REQUIRE(p.getEqualities(b.v)==p.getEqualities(c.v));
         REQUIRE(p.getEqualities(c.v)==p.getEqualities(d.v));
@@ -446,32 +446,32 @@ using namespace order;
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).constant==0);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).constant==0);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).constant==0);
-        
+
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==1);
-        
+
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).firstCoef==4);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(c.v).secondCoef==1);
-        
+
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).firstCoef==8);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(d.v).secondCoef==1);
-        
+
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).firstCoef==16);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(e.v).secondCoef==1);
-        
+
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).firstCoef==32);
         REQUIRE(p.getEqualities(a.v)->getConstraints().at(f.v).secondCoef==1);
-        
+
         for (auto& i : lc)
             p.substitute(i.l);
-        
+
         const LinearConstraint& l = lc.back().l;
         REQUIRE(l.getViews()[0].v==a);
         REQUIRE(l.getViews()[0].a==101);
         REQUIRE(l.getViews()[1].v==g);
         REQUIRE(l.getViews()[1].a==32);
         REQUIRE(l.getViews().size()==2);
-        
+
         ReifiedAllDistinct rd({a*3,b+7,c,d,e,f,g},Literal(0,false),Direction::EQ);
         p.substitute(rd);
     }

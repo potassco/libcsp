@@ -61,7 +61,7 @@ using namespace order;
 
             n.prepare();
             //s.createNewLiterals(n.estimateVariables());
-            
+
 
         }
     }
@@ -91,7 +91,7 @@ using namespace order;
             n.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             n.prepare();
             //s.createNewLiterals(n.estimateVariables());
-            
+
             //p.addImp(n.removeConstraints());
             //p.propagate();
 
@@ -132,7 +132,7 @@ using namespace order;
             n.addConstraint(ReifiedLinearConstraint(std::move(l2),s.trueLit(),Direction::EQ));
             n.prepare();
             //s.createNewLiterals(n.estimateVariables());
-            
+
             REQUIRE(n.getVariableCreator().getViewDomain(v11).upper()==10);
             REQUIRE(n.getVariableCreator().getViewDomain(v12).upper()==10);
             REQUIRE(n.getVariableCreator().getViewDomain(v13).upper()==10);
@@ -212,7 +212,7 @@ using namespace order;
             n2.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),Direction::EQ));
             n2.prepare();
             //s.createNewLiterals(n2.estimateVariables());
-            
+
             //std::cout << p2 << std::endl;
 
             REQUIRE(n2.getVariableCreator().getViewDomain(v1).upper()==7);
@@ -251,7 +251,7 @@ using namespace order;
             n2.addConstraint(ReifiedLinearConstraint(std::move(l2),s.trueLit(),Direction::EQ));
             n2.prepare();
             //s.createNewLiterals(n2.estimateVariables());
-            
+
             REQUIRE(n2.getVariableCreator().getViewDomain(v11).upper()==10);
             REQUIRE(n2.getVariableCreator().getViewDomain(v12).upper()==10);
             REQUIRE(n2.getVariableCreator().getViewDomain(v13).upper()==10);
@@ -297,7 +297,7 @@ using namespace order;
             n2.addConstraint(ReifiedLinearConstraint(std::move(l4),s.falseLit(),Direction::EQ));
             n2.prepare();
             //s.createNewLiterals(n2.estimateVariables());
-            
+
             //p2.propagate_false(p2,l4);
             //std::cout << p2 << std::endl;
 
@@ -376,7 +376,7 @@ using namespace order;
         n.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),Direction::EQ));
         n.prepare();
         //s.createNewLiterals(n.estimateVariables());
-        
+
         //p.addImp(n.removeConstraints());
         //p.propagate();
 
@@ -410,7 +410,7 @@ using namespace order;
         n.addConstraint(ReifiedLinearConstraint(std::move(l),s.falseLit(),Direction::EQ));
         n.prepare();
         //s.createNewLiterals(n.estimateVariables());
-        
+
         //p.addImp(n.removeConstraints());
         //p.propagate();
 

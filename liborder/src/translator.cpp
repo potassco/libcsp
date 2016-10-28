@@ -71,7 +71,7 @@ public:
             currentIterators_.emplace_back(i);
     }
 
-    
+
     void pop_back()
     {
         assert(currentClause_.size()>1);/// first literal should never be popped
@@ -118,7 +118,7 @@ public:
         return s_.createClause(currentClause_);
     }
 private:
-       
+
     CreatingSolver& s_;
     LitVec currentClause_; // the clause currently building up
     std::vector<Restrictor::ViewIterator> currentIterators_; // the current iterator set representing the currentClause_
@@ -154,7 +154,7 @@ public:
         while(i != lr.end())
         {
             int64 newcurrent = current + *i;
-            
+
             clause.add(i);
             if (newcurrent+subsums[index+1].first<=(int64)c.getRhs()) // if we need to add more to be greater than the bound
             {
@@ -171,7 +171,7 @@ public:
             }
             ++i;
         }
-                
+
         return true;
     }
 

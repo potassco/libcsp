@@ -55,17 +55,17 @@ public:
 
     /// do initial propagation
     bool prepare();
-    
+
     /// gives an overapproximation of the number of boolean variables needed
     uint64 estimateVariables();
 
-        
+
     bool propagate();
-    
+
     bool atFixPoint() const;
-    
+
     bool finalize();
-    
+
     /// converts some of the aux literals in the VVS's into normal once
     /// numVars must be the biggest+1 boolean variable used in all order::Literals so far,
     /// sucht that the test l.var() < numVars is true for all "normal" variables
@@ -87,7 +87,7 @@ public:
     VariableCreator& getVariableCreator() { return vc_; }
     const VariableCreator& getVariableCreator() const { return vc_; }
 
-    
+
     /// pre: l.normalized()
     /// pre: l.getViews().size()==1
     Literal getLitFromUnary(const LinearConstraint& l)
@@ -119,7 +119,7 @@ public:
         assert(false);
         return Literal(0,false);
     }
-    
+
     Literal getEqualLit(View v, int i)
     {
         LinearConstraint l(LinearConstraint::Relation::EQ);
@@ -128,11 +128,11 @@ public:
         l.normalize();
         return getLitFromUnary(l);
     }
-    
+
     const EqualityProcessor::EqualityClassMap& getEqualities() const { return ep_.equalities(); }
 
 //private:
-    
+
     /// pre: prepare()
     bool auxprepare();
 
@@ -160,7 +160,7 @@ public:
     //bool addDistinctHallIntervals(ReifiedAllDistinct&& l);
     bool addDistinctCardinality(ReifiedAllDistinct&& l);
     bool addDisjoint(ReifiedDisjoint &&l);
-    
+
     void addMinimize();
     /// if constraint is true/false and (0-1 ary), retrict the domain and return true on first parameter(can be simplified away),
     ///  else false
@@ -194,7 +194,7 @@ public:
     VariableCreator vc_;
     Config conf_;
     EqualityProcessor ep_;
-    
+
     std::unique_ptr<LinearPropagator> propagator_;
     bool firstRun_;
 };

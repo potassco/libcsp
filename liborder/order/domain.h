@@ -57,7 +57,7 @@ class ViewDomain;
 class Domain
 {
 public:
-    
+
     static const int32 min = std::numeric_limits<int32>::min()/2+2;
     static const int32 max = std::numeric_limits<int32>::max()/2-1;
 
@@ -104,12 +104,12 @@ public:
     /// constrain all values i to fulfill: (times*i+c)%div==0
     /// return false if empty
     bool constrainDomain(int32 times, int32 c, int32 div);
-        
+
     /// divides the domain elements by n
     /// pre: n != 0
     /// removes all elements a, where a mod 0 != 0 before dividing
     Domain& inplace_divide(int32 n);
-    
+
 
     /// multiplies the domain elements by n if the size()
     /// is below a certain threshold, otherwise
@@ -134,7 +134,7 @@ public:
     /// pairwise addition of two domains
     /// TODO, maybe not optimal in runtime
     Domain& operator+=(const Domain& d);
-    
+
     /// pairwise addition of two domains
     Domain operator+(const int32& d) const
     {
@@ -142,7 +142,7 @@ public:
         ret+=d;
         return ret;
     }
-    
+
     /// pairwise addition of two domains
     /// TODO, maybe not optimal in runtime
     Domain& operator+=(const int32& d);
@@ -262,7 +262,7 @@ public:
             tmp-=x;
             return tmp;
         }
-        
+
         const Domain& getDomain() const { return *d_; }
 
         friend ViewIterator lower_bound(ViewIterator, ViewIterator, int64);
@@ -282,7 +282,7 @@ public:
 
 
 private:
-    
+
     /// multiply with -1
     void reverse();
 
@@ -325,7 +325,7 @@ public:
 class ViewDomain
 {
 public:
-    
+
     static const int64 min = std::numeric_limits<int64>::min()+2;
     static const int64 max = std::numeric_limits<int64>::max()-1;
 
@@ -353,14 +353,14 @@ public:
                 ranges_.emplace_back(r.l+c,r.u+c);
             return;
         }
-        
+
         for (auto r: d.ranges_)
             for (int64 i = r.l; i <= r.u; ++i)
             {
                 ranges_.emplace_back(i*n+c,i*n+c);
             }
     }
-   
+
 
     /// print a domain, short notation
     friend std::ostream& operator<< (std::ostream& stream, const ViewDomain& d);
@@ -465,7 +465,7 @@ public:
             tmp-=x;
             return tmp;
         }
-        
+
         const ViewDomain& getDomain() const { return *d_; }
 
 
@@ -504,12 +504,12 @@ class ViewIterator : public std::iterator<std::random_access_iterator_tag, int>
 {
 public:
     friend Restrictor;
-    
+
     ViewIterator() = default;
-    
+
     ViewIterator(const ViewIterator& ) = default;
     ViewIterator& operator=(const ViewIterator&) = default;
-    
+
     View view() const {return v_; }
     // please do only compare iterators of the same view
     bool operator==(ViewIterator const &x) const { assert(v_==x.v_); return index_ == x.index_; }
@@ -532,7 +532,7 @@ public:
     bool operator >=(const ViewIterator& m) const { return !(*this < m); }
     bool operator <=(const ViewIterator& m) const { return !(*this > m); }
 
-    
+
     int64 operator-(const ViewIterator& m) const { return index_ - m.index_; }
 
     ViewIterator& operator+=(int64 x) { index_ += x; v_.reversed() ? it_-=x : it_+=x; return *this; }
@@ -555,11 +555,11 @@ public:
 
     int64 operator*() const { return v_.multiply(v_.reversed() ? *(it_-1) : *it_); }
     int64 operator->() const { return v_.multiply(v_.reversed() ? *(it_-1) : *it_); }
-    
+
     /// returns this - domain.begin()
     uint64 numElement() const { return index_; }
-    
-    
+
+
     /// convert an iterator from a view to a one for the simple variable (a=1,c=0)
     /// points to the same position in the domain
     static ViewIterator viewToVarIterator(const ViewIterator& it)
@@ -580,14 +580,14 @@ public:
                 ret.index_ = it.it_.getDomain().size() -1 - it.index_;
             }
         }
-            
+
         return ret;
     }
     friend ViewIterator lower_bound(ViewIterator, ViewIterator, int64);
     friend ViewIterator upper_bound(ViewIterator, ViewIterator, int64);
-    
+
     //const Domain& getDomain() const { return it_.getDomain()v_.a + v_.c_; }
-    
+
 private:
     ViewIterator(const View& v, const Domain::const_iterator& it, unsigned int index) : v_(v), it_(it), index_(index) {}
     View v_;
@@ -625,7 +625,7 @@ public:
     Restrictor(const View& v, const Domain& d) : lower_(v,v.reversed() ? d.end() : d.begin(), 0), upper_(v,v.reversed() ? d.begin() : d.end(), d.size())
     {}
     Restrictor(const Restrictor& r) = default;
-    
+
     /// change view on the restrictor, and also have a restricted version (does not point to start/end of domain but somewhere in between)
     /// numElement of the iterators still refers to the gobal domain
     /// pre: r.begin().view().v == v.v
@@ -638,7 +638,7 @@ public:
         //std::cout << "Restrictor for View " << v.v << "*" << v.a << "+" << v.c << " : " << lower() << " . . " << upper() << " and indices " << begin().numElement() << " .. " << end().numElement() << std::endl;
         assert(r.begin().view().v == v.v);
         assert(r.begin().view().a == 1);
-        assert(r.begin().view().c == 0);        
+        assert(r.begin().view().c == 0);
     }
 
     Restrictor(const ViewIterator& l, const ViewIterator& u) : lower_{l}, upper_{u} {}
@@ -736,7 +736,7 @@ public:
         bool isAtFirstLiteral() const { return index_==0; }
 
         View getView() const { return v_; }
-        
+
         /// in case of a negative view, this index need to be converted by storage
         /// do not use this function otherwise !
         unsigned int getIndex() const { return index_; }

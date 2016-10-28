@@ -33,7 +33,7 @@ void ConstraintStorage::addImp(ReifiedLinearConstraint&& l)
     for (auto i : l.l.getConstViews())
     {
         assert(i.a!=0);
-        
+
         /// can sometimes add a constraint twice for the same variable, should not be a problem
         /// TODO: find a place to call unqiue ?
         if (!i.reversed())
@@ -74,7 +74,7 @@ void ConstraintStorage::removeLevel()
 void ConstraintStorage::constrainUpperBound(const View &view, const Solver& s)
 {
     Variable v = view.v;
-    
+
     if (ubChanges_.size()>v)
     for (auto i : ubChanges_[v])
     {
@@ -186,7 +186,7 @@ bool LinearPropagator::propagate()
 
 bool LinearPropagator::propagated() const
 {
-    return propagated_;    
+    return propagated_;
 }
 
 
@@ -265,7 +265,7 @@ bool LinearPropagator::propagate_true(const LinearConstraint& l)
     for (auto& i : l.getViews())
     {
         auto r = vs_.getCurrentRestrictor(i);
-        auto wholeRange = vs_.getRestrictor(i); 
+        auto wholeRange = vs_.getRestrictor(i);
         int64 up = l.getRhs() - minmax.first + r.lower();
         if (up < r.lower())
         {
@@ -315,7 +315,7 @@ void LinearLiteralPropagator::propagate_true(const ReifiedLinearConstraint& rl)
         std::pair<int64,int64> mm;
         mm.first = minmax.first - r.lower();
         mm.second = minmax.second - r.upper();
-        
+
         //Literal prop = s_.falseLit();
         bool prop = false;
         Restrictor::ViewIterator propIt(wholeRange.begin());
@@ -455,7 +455,7 @@ bool LinearLiteralPropagator::constrainUpperBound(const ViewIterator &u)
 
 /// return false if the domain is empty
 bool LinearLiteralPropagator::constrainLowerBound(const ViewIterator &l)
-{   
+{
     storage_.constrainLowerBound(l.view(),s_);
     return vs_.getVariableStorage().constrainLowerBound(l);
 }

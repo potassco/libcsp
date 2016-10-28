@@ -43,11 +43,11 @@ public:
     using Constraints = std::unordered_map<Variable,Edge>;
 
     EqualityClass(Variable top) : top_(top) {}
-    
+
     Variable top() const { return top_; }
-    
+
     bool add(LinearConstraint& l, VariableCreator& vc);
-    
+
     ///pre: top() < ec.top();
     /// l has something from both classes
     /// l has at least 2 variables
@@ -72,19 +72,19 @@ private:
 public:
     using EqualityClassMap = std::unordered_map<Variable,std::shared_ptr<EqualityClass>>;
     EqualityProcessor(CreatingSolver& s, VariableCreator& vc) : s_(s), vc_(vc) {}
-    
+
     const EqualityClassMap& equalities() const { return equalityClasses_; }
-    
+
     bool process(std::vector<ReifiedLinearConstraint>& linearConstraints);
-    
+
     EqualityClassSet getEqualityClasses(const LinearConstraint& l);
-    
+
     bool merge(EqualityClassSet& ecv, LinearConstraint& l);
 
     bool hasEquality(Variable v) const { return equalityClasses_.find(v) != equalityClasses_.end(); }
     bool isValid(Variable v) const { return (!hasEquality(v)) || getEqualities(v)->top()==v; }
     std::shared_ptr<EqualityClass> getEqualities(Variable v) const { assert(hasEquality(v)); return equalityClasses_.find(v)->second; }
-    
+
     bool substitute(LinearConstraint& l) const;
     bool substitute(ReifiedAllDistinct& l) const;
     bool substitute(ReifiedDomainConstraint& l) const;
@@ -95,8 +95,8 @@ private:
     EqualityClassMap equalityClasses_;
     CreatingSolver& s_;
     VariableCreator& vc_;
-    
-    
+
+
 };
 
 }

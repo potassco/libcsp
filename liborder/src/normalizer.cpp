@@ -98,7 +98,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
             }
         }
     }
-    else 
+    else
     if (l.l.getRelation()==LinearConstraint::Relation::EQ)
     {
         assert(l.l.getRelation()==LinearConstraint::Relation::EQ);
@@ -123,11 +123,11 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
         }
         if (!s_.isTrue(orig) && (impl & Direction::BACK))
         {
-            Literal x = s_.getNewLiteral(true); 
+            Literal x = s_.getNewLiteral(true);
             less.v = x;
             less.l.setRelation(LinearConstraint::Relation::LT);
             insert.emplace_back(std::move(less));
-            Literal y = s_.getNewLiteral(true); 
+            Literal y = s_.getNewLiteral(true);
             more.v = y;
             more.l.setRelation(LinearConstraint::Relation::GT);
             insert.emplace_back(std::move(more));
@@ -141,7 +141,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
                 return false;
         }
     }
-    else 
+    else
     if (l.l.getRelation()==LinearConstraint::Relation::NE)
     {
         if (l.l.getConstViews().size()==1 && impl==Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
@@ -162,7 +162,7 @@ bool Normalizer::convertLinear(ReifiedLinearConstraint&& l, std::vector<ReifiedL
             less.v = x;
             less.l.setRelation(LinearConstraint::Relation::LT);
             insert.emplace_back(std::move(less));
-            Literal y = s_.getNewLiteral(true); 
+            Literal y = s_.getNewLiteral(true);
             more.v = y;
             more.l.setRelation(LinearConstraint::Relation::GT);
             insert.emplace_back(std::move(more));
@@ -228,7 +228,7 @@ std::pair<bool,bool> Normalizer::deriveSimpleDomain(const ReifiedLinearConstrain
 {
     if ((s_.isFalse(l.v) && l.impl==Direction::FWD) || (s_.isTrue(l.v) && l.impl==Direction::BACK))
         return std::make_pair(true,true);
-    
+
     if (l.l.getViews().size()> 1)
         return std::make_pair(false, true);
     if (l.l.getViews().size()==0)
@@ -309,7 +309,7 @@ ViewDomain unify(const std::vector<View>& views, const VariableCreator& vc, uint
         size+=dd.size();
         d.unify(dd);
     }
-    return d;   
+    return d;
 }
 
 bool Normalizer::addPidgeonConstraint(ReifiedAllDistinct& l)
@@ -317,7 +317,7 @@ bool Normalizer::addPidgeonConstraint(ReifiedAllDistinct& l)
     auto& views = l.getViews();
     if (views.size()==0) return true;
     uint64 size = 0;
-    ViewDomain d = unify(views,vc_, size);    
+    ViewDomain d = unify(views,vc_, size);
 
     if (views.size()>d.size())
     {
@@ -370,8 +370,8 @@ bool Normalizer::addPermutationConstraint(ReifiedAllDistinct& l)
     if (views.size()==0) return true;
 
     uint64 size = 0;
-    ViewDomain d = unify(views,vc_,size);  
-    
+    ViewDomain d = unify(views,vc_,size);
+
     if (views.size()>d.size())
     {
         if (!s_.createClause(LitVec{~l.getLiteral()}))
@@ -429,7 +429,7 @@ bool Normalizer::addDistinctCardinality(ReifiedAllDistinct&& l)
     if (views.size()==0) return true;
 
     uint64 size = 0;
-    ViewDomain d = unify(views,vc_,size);  
+    ViewDomain d = unify(views,vc_,size);
 
     if (views.size()>d.size())
     {
@@ -479,7 +479,7 @@ bool Normalizer::addDistinctPairwiseUnequal(ReifiedAllDistinct&& l)
     if (views.size()==1) return true;
 
     uint64 size = 0;
-    ViewDomain d = unify(views,vc_,size);  
+    ViewDomain d = unify(views,vc_,size);
 
     if (views.size()>d.size())
     {
@@ -493,7 +493,7 @@ bool Normalizer::addDistinctPairwiseUnequal(ReifiedAllDistinct&& l)
             return false;
         return true;
     }
-    
+
     std::vector<LinearConstraint> inequalities;
     for (auto i = views.begin(); i != views.end()-1; ++i)
         for (auto j = i+1; j != views.end(); ++j)
@@ -566,7 +566,7 @@ bool Normalizer::addDomainConstraint(ReifiedDomainConstraint&& d)
             Literal x = vc_.getGELiteral(it);
             it = order::wrap_upper_bound(it,r.end(),i.u);
             Literal y = vc_.getLELiteral(it-1);
-            
+
             if (!s_.createClause(LitVec{~u,x})) return false;
             if (!s_.createClause(LitVec{~u,y})) return false;
             if (!s_.createClause(LitVec{u,~x, ~y})) return false;
@@ -731,8 +731,8 @@ bool Normalizer::calculateDomains()
             ++i;
     }
     linearConstraints_.erase(linearConstraints_.begin()+(linearConstraints_.size()-removed), linearConstraints_.end());
-    
-    
+
+
     removed = 0;
     for (size_t i = 0; i < this->disjoints_.size()-removed;)
     {
@@ -745,7 +745,7 @@ bool Normalizer::calculateDomains()
             ++i;
     }
     disjoints_.erase(disjoints_.begin()+(disjoints_.size()-removed), disjoints_.end());
-    
+
     removed = 0;
     for (size_t i = 0; i < this->allDistincts_.size()-removed;)
     {
@@ -793,7 +793,7 @@ uint64 Normalizer::estimateVariables()
     std::fill(estimateLE_.begin(), estimateLE_.end(),0); /// reset vector
     std::fill(estimateEQ_.begin(), estimateEQ_.end(),0); /// reset vector
     uint64 sum = 0;
-    
+
     for (auto& i : minimize_)
         estimateLE_[i.first.v]=allLiterals(i.first.v,getVariableCreator());
     for (auto& i : linearConstraints_)
@@ -804,25 +804,25 @@ uint64 Normalizer::estimateVariables()
         sum += estimateVariables(i);
     for (auto& i : disjoints_)
         sum += estimateVariables(i);
-    
+
     for (Variable i = 0; i <= getVariableCreator().numVariables(); ++i)
         if (getVariableCreator().isValid(i))
         {
             // only order lits
             uint64 min = conf_.minLitsPerVar == -1 ? allLiterals(i,getVariableCreator()) : std::min((uint64)(conf_.minLitsPerVar),allLiterals(i,getVariableCreator()));
-            
+
             min += estimateLE_[i]; /// estimation plus number added by minLitsPerVar
             min = std::min(min,uint64(getVariableCreator().getDomainSize(View(i))-1-getVariableCreator().numOrderLits(i))); // either min or less if i cant add so many
             sum += min;
             sum += estimateEQ_[i];
             /// ???
 //            THIS IS ALL TO COMPLICATED !!!!, estimate should be excact, unordered map or std::set ? for new literals ?
-//            do estimate for order and equal lits seperately                                                                                                        
+//            do estimate for order and equal lits seperately
 //            if (estimateLE_[i]< allOrderLiterals(i,getVariableCreator())+min )
 //            // order and equality lits
 //                sum += std::min(estimateLE_[i]+min,allLiterals(i,getVariableCreator()));
 //            sum -= getVariableCreator().numOrderLits(i);
-            
+
         }
     //sum -= getVariableCreator().numEqualLits();
     return sum;
@@ -840,7 +840,7 @@ uint64 Normalizer::estimateVariables(const ReifiedDomainConstraint& d)
             ++ret;
         estimateLE_[v] = std::min(estimateLE_[v]+2,allLiterals(v,getVariableCreator()));
     }
-    return ret;    
+    return ret;
 }
 
 uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
@@ -858,7 +858,7 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
             return ret;
         }
     }
-    else 
+    else
     if (l.l.getRelation()==LinearConstraint::Relation::EQ)
     {
         if (l.l.getConstViews().size()==1 && l.impl == Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
@@ -868,11 +868,11 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
             estimateLE_[v] = std::min(estimateLE_[v]+2,allLiterals(v,getVariableCreator()));
             return ret;
         }
-        
+
         if (!s_.isTrue(l.v) && l.impl & Direction::BACK)
             ret +=2;
     }
-    else 
+    else
     if (l.l.getRelation()==LinearConstraint::Relation::NE)
     {
         if (l.l.getConstViews().size()==1 && l.impl == Direction::EQ) // In this case we sometimes can make an orderLiteral out of it, if it was not yet otheriwse created
@@ -882,12 +882,12 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
             estimateLE_[v] = std::min(estimateLE_[v]+2,allLiterals(v,getVariableCreator()));
             return ret;
         }
-        
+
         if (!s_.isFalse(l.v) && l.impl & Direction::FWD)
             ret+=2;
     }
-    
-    
+
+
     int factor = 1;
     if (l.l.getRelation()==LinearConstraint::Relation::EQ || l.l.getRelation()==LinearConstraint::Relation::NE)
         factor = 2; // we have to consider both directions
@@ -898,11 +898,11 @@ uint64 Normalizer::estimateVariables(ReifiedLinearConstraint& l)
         for (const auto& view : l.l.getViews())
             estimateLE_[view.v] = std::min(estimateLE_[view.v]+std::min(product*factor,allLiterals(view.v,getVariableCreator())),allLiterals(view.v,getVariableCreator()));
     }
-    
-    
+
+
     return ret;
 }
-    
+
 
 uint64 Normalizer::estimateVariables(const ReifiedAllDistinct& c)
 {
@@ -911,13 +911,13 @@ uint64 Normalizer::estimateVariables(const ReifiedAllDistinct& c)
 
     uint64 size = 0;
     ViewDomain d = unify(views,vc_,size);
-    
+
     if (views.size()>d.size())
         return 0;
 
     if (size==d.size()) // no overlap between variables
         return 0;
-    
+
     if (conf_.pidgeon)
     {
         for (auto& i : views)
@@ -1025,7 +1025,7 @@ bool Normalizer::prepare()
     if (conf_.equalityProcessing && firstRun_)
         if (!equalityPreprocessing())
             return false;
-    
+
     /// calculate very first domains for easy constraints and remove them
     if (!calculateDomains())
         return false;
@@ -1091,9 +1091,9 @@ bool Normalizer::prepare()
         }
         /// as i only do bound propagation
     }
-    
+
     firstRun_ = false;
-    
+
     return auxprepare();
 }
 
@@ -1125,9 +1125,9 @@ bool Normalizer::auxprepare()
 
     //for (std::size_t i = 0; i < linearConstraints_.size(); ++i)
     //    std::cout << ":\t" << linearConstraints_[i].l << " << " << linearConstraints_[i].v.asUint() << " true/false " << s_.isTrue(linearConstraints_[i].v) << "/" << s_.isFalse(linearConstraints_[i].v) <<std::endl;
-    
+
     s_.createNewLiterals(estimateVariables());
-    
+
     /// 1st: add all linear constraints
     std::vector<ReifiedLinearConstraint> tempv;
     unsigned int end = linearConstraints_.size();
@@ -1176,7 +1176,7 @@ bool Normalizer::auxprepare()
         if (!addDisjoint(std::move(i)))
             return false;
     disjoints_.clear();
-    
+
     /// add even more constraints
     for (auto& i : allDistincts_)
         if (!addDistinct(std::move(i)))
@@ -1198,13 +1198,13 @@ bool Normalizer::auxprepare()
     ///TODO: do restrict variables if equality preprocessing restricts integer variables
     if (!vc_.restrictDomainsAccordingToLiterals())
         return false;
-    
+
     propagator_.reset(new LinearPropagator(s_,vc_,conf_));
     propagator_->addImp(std::move(linearConstraints_));
     linearConstraints_.clear();
-    
+
     return propagate();
-    
+
 }
 
 bool Normalizer::propagate()
@@ -1244,7 +1244,7 @@ bool Normalizer::finalize()
 {
     linearConstraints_ = propagator_->removeConstraints();
     propagator_.reset();
-    
+
 //    std::cout << "finalize" << std::endl;
 //    for (auto& i : linearConstraints_)
 //        std::cout << "Constraint " << i.l << " with rep " << i.v.asUint() << " is " << s_.isFalse(i.v) << " " << s_.isTrue(i.v) << std::endl;
@@ -1271,12 +1271,12 @@ bool Normalizer::finalize()
 
     /// make all unecessary ones false
     s_.makeRestFalse();
-    
+
     assert(allDistincts_.size()==0);
     assert(disjoints_.size()==0);
     assert(domainConstraints_.size()==0);
     assert(minimize_.size()==0);
-    
+
     return true;
 }
 
@@ -1299,14 +1299,14 @@ void Normalizer::convertAuxLiterals(std::vector<const order::VolatileVariableSto
                 //std::cout << "creating " << after-before << " new literals" << std::endl;
                 s_.createNewLiterals(after-before);
                 order::pure_LELiteral_iterator it(vc.getRestrictor(order::View(var)).begin(),vvs->getStorage(var),true);
-    
+
                 while(it.isValid())
                 {
                     Literal l = (*it);
                     if (l.var() > numVars) /// actually comparing clasp variables with order::Literals
                     {
                         //std::cout << l.var() << " is an aux var" << std::endl;
-    
+
                         auto newlit = s_.getNewLiteral(true);
                         getVariableCreator().setLELit(vc.getRestrictor(order::View(var)).begin()+it.numElement(),newlit);
                     }
@@ -1322,10 +1322,10 @@ void Normalizer::convertAuxLiterals(std::vector<const order::VolatileVariableSto
         for (order::Variable var = 0; var != vc_.numVariables(); ++var)
         {
             unsigned int before = getVariableCreator().numOrderLits(var);
-            
+
             ///compute the thread with the fewest literals
             unsigned int smallest = 0;
-            
+
             unsigned int size=std::numeric_limits<unsigned int>::max();
             unsigned int minimumLits = std::numeric_limits<unsigned int>::max(); /// the minimum number of lits to be added
             for (unsigned int i = 0; i != vvss.size(); ++i)
@@ -1335,20 +1335,20 @@ void Normalizer::convertAuxLiterals(std::vector<const order::VolatileVariableSto
                 {
                     smallest = i;
                     size = nl;
-                    
+
                 }
                 minimumLits = std::min(minimumLits,nl-before);
             }
             if (!minimumLits)
                 continue;
-            
+
             const VolatileVariableStorage* smallestVVS= vvss[smallest];
             auto& vc = smallestVVS->getVariableStorage();
-            
+
             s_.createNewLiterals(minimumLits);
-            
+
             order::pure_LELiteral_iterator it(vc.getRestrictor(order::View(var)).begin(),smallestVVS->getStorage(var),true);
-            
+
             while(it.isValid())
             {
                 if (smallestVVS->getStorage(var).getLiteral(it.numElement()).var()>numVars) // aux var
@@ -1363,21 +1363,21 @@ void Normalizer::convertAuxLiterals(std::vector<const order::VolatileVariableSto
                             break;
                         }
                     }
-                    
+
                     assert(getVariableCreator().getStorage(var).hasNoLiteral(it.numElement()));
-                    
+
                     if (found)
                     {
                         //std::cout << "\033[1;31m" << "added " << var << " on pos " << it.numElement() << "\033[0m" << std::endl;
                         auto newlit = s_.getNewLiteral(true);
-                        getVariableCreator().setLELit(vc.getRestrictor(order::View(var)).begin()+it.numElement(),newlit);                    
+                        getVariableCreator().setLELit(vc.getRestrictor(order::View(var)).begin()+it.numElement(),newlit);
                     }
                 }
                 ++it;
             }
             /// loop through the literals
-            /// 
-            /// 
+            ///
+            ///
             s_.makeRestFalse();
         }
     }

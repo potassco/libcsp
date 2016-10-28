@@ -49,7 +49,7 @@ public:
     enum CType {SUM, DOM, DISTINCT, SHOW, MINIMIZE};
     using mytuple = std::vector<Potassco::Id_t>;   /// a tuple identifier
     using tuple2View = std::map<mytuple, order::View>; // could be unordered
-    
+
 
     TheoryParser(order::Normalizer& n, Potassco::TheoryData& td, Clasp::Asp::LogicProgram* lp, order::Literal trueLit) :
         n_(n), td_(td), lp_(lp), trueLit_(trueLit)
@@ -64,7 +64,7 @@ public:
     /// turn show predicates to variables
     NameList& postProcess();
     const std::vector<tuple2View>& minimize() const;
-    
+
     void reset();
 
 private:
@@ -90,7 +90,7 @@ private:
 
     int getNumber(Potassco::Id_t id);
     int getNumber(const Potassco::TheoryData::Term& a);
-    
+
     void add2Shown(order::Variable v, uint32 tid, Clasp::Literal l);
 
     ///
@@ -114,19 +114,19 @@ private:
 
     order::View createVar(Potassco::Id_t id, int32 val);
 
-    
+
 private:
-    
+
     bool check(Potassco::Id_t id);
     bool isVariable(Potassco::Id_t id);
-    
+
 
     std::unordered_map<Potassco::Id_t, std::pair<CType,bool>>  termId2constraint_;
     std::unordered_map<Potassco::Id_t, order::LinearConstraint::Relation>  termId2guard_;
     std::vector<std::pair<Potassco::Id_t,Clasp::Literal>> shown_; /// order::Variable to TermId + condition literal
     std::vector<std::pair<Potassco::Id_t,Clasp::Literal>> shownPred_; /// a list of p/3 predicates to be shown + condition literal
     std::vector<tuple2View> minimize_;                /// for each level
-    
+
     std::vector<order::View>  termId2View_;
     order::Normalizer& n_;
     Potassco::TheoryData& td_;

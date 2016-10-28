@@ -60,7 +60,7 @@ public:
 
     //std::size_t numVars() const { return s_.numVars(); }
 
-    
+
     void makeRestFalse()
     {
         c_.popVars(maxVar_ - currentVar_);
@@ -81,7 +81,7 @@ public:
 //            growth*=2;
 //        }
         //std::cout << "create static literal " << currentVar_ << std::endl;
-        
+
         assert(currentVar_!=0);
         assert(c_.validVar(currentVar_));
         c_.setFrozen(currentVar_, frozen);
@@ -92,7 +92,7 @@ public:
 //        st.add(ss.str().c_str(),t);
         return toOrderFormat(Clasp::Literal(currentVar_++, false));
     }
-    
+
     Literal trueLit() const { return toOrderFormat(Clasp::posLit(0)); }
     Literal falseLit() const { return ~trueLit(); }
 
@@ -133,7 +133,7 @@ public:
     {
         throw std::runtime_error("Variable was unrestricted");
     }
-    
+
     void intermediateVariableOutOfRange() const
     {
         throw std::runtime_error("Intermediate Variable out of bounds (32bit integer)");
@@ -145,7 +145,7 @@ public:
 
 
 
-    /// assure that there are no variables left 
+    /// assure that there are no variables left
     void createNewLiterals(uint64 num)
     {
         assert(maxVar_==currentVar_);
@@ -168,7 +168,7 @@ public:
         c_.startAddConstraints();///TODO: give a guess ?
 
     }
-    
+
     void addMinimize(order::Literal v, int32 weight, unsigned int level)
     {
         Clasp::WeightLiteral wl= std::make_pair(toClaspFormat(v),weight);

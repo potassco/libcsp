@@ -163,7 +163,7 @@ public:
 class CreatingSolver : public Solver
 {
 public:
-    
+
     /// preallocate a number of Literals
     /// for getNewLiteral to return
     virtual void createNewLiterals(uint64 num) = 0;
@@ -184,14 +184,14 @@ public:
 
     /// called if the domain of var was not restricted
     virtual void unrestrictedDomainCallback(View var) const = 0;
-    
+
     /// called if the domain of an intermediate var was not in Domain::min Domain::max (roughly int32)
     virtual void intermediateVariableOutOfRange() const = 0;
-    
+
 
     virtual bool setEqual(const Literal& a, const Literal& b) = 0;
-    
-    
+
+
     virtual void addMinimize(order::Literal v, int32 weight, unsigned int level) = 0;
 };
 

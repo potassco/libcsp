@@ -76,7 +76,7 @@ namespace order
         }
         return true;
     }
-    
+
     ///pre: top() < ec.top();
     /// l has something from both classes
     /// l has at least 2 variables
@@ -160,7 +160,7 @@ namespace order
         return true;
     }
 
-    
+
 
     bool EqualityProcessor::process(std::vector<ReifiedLinearConstraint>& linearConstraints)
     {
@@ -178,7 +178,7 @@ namespace order
             else
                 ++i;
         }
-        
+
 
         unsigned int current = 0;
         unsigned int last = 0;
@@ -193,7 +193,7 @@ namespace order
                 if (!merge(ecv,l))
                     return false;
                 std::swap(equals[current],equals.back());
-                equals.pop_back(); 
+                equals.pop_back();
                 last = current;
                 if (last == equals.size())
                     last = 0;
@@ -212,14 +212,14 @@ namespace order
             }
 
 
-        }    
-        
+        }
+
         for (auto& i : equals)
             linearConstraints.emplace_back(std::move(i),s_.trueLit(),Direction::FWD);
-                
-        return true;    
+
+        return true;
     }
-    
+
     bool EqualityProcessor::substitute(LinearConstraint& l) const
     {
         for (auto& i : l.getViews())
@@ -240,7 +240,7 @@ namespace order
         l.normalize();
         return true;
     }
-    
+
     bool EqualityProcessor::substitute(ReifiedAllDistinct& l) const
     {
         for (auto& i : l.getViews())
@@ -255,12 +255,12 @@ namespace order
                 l.times(e.firstCoef/g);
                 i.v = it->second->top();
                 i.a = (old/g)*e.secondCoef;
-                i.c += (old/g)*e.constant;                
+                i.c += (old/g)*e.constant;
             }
         }
         return true;
     }
-    
+
     bool EqualityProcessor::substitute(ReifiedDomainConstraint& l) const
     {
         auto& i = l.getView();
@@ -279,7 +279,7 @@ namespace order
         }
         return true;
     }
-    
+
     bool EqualityProcessor::substitute(ReifiedDisjoint& l) const
     {
         for (auto& j : l.getViews())
@@ -297,7 +297,7 @@ namespace order
                     l.times(e.firstCoef/g);
                     i.v = it->second->top();
                     i.a = (old/g)*e.secondCoef;
-                    i.c += (old/g)*e.constant;                
+                    i.c += (old/g)*e.constant;
                 }
             }
         }
@@ -319,7 +319,7 @@ namespace order
         }
         return true;
     }
-    
+
     EqualityProcessor::EqualityClassSet EqualityProcessor::getEqualityClasses(const LinearConstraint& l)
     {
         EqualityClassSet ecv;
@@ -337,9 +337,9 @@ namespace order
                 ecv.emplace(sp);
             }
         }
-        return ecv;        
+        return ecv;
     }
-    
+
     bool EqualityProcessor::merge(EqualityProcessor::EqualityClassSet& ecv, LinearConstraint& l)
     {
         assert(ecv.size()<=2);

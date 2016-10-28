@@ -64,7 +64,7 @@ public:
             }
             ++curr_;
         }
-        return 0;        
+        return 0;
     }
 
     bool first(const Clasp::Model& m, const char*& name, int32& value)
@@ -100,12 +100,12 @@ public:
 class Configurator : public Clasp::Cli::ClaspCliConfig::Configurator
 {
 public:
-    
+
     Configurator(order::Config conf, order::Normalizer& n, TheoryOutput& to) : conf_(conf), n_(n), to_(to), cp_(0)
     {}
-    
+
     ~Configurator()
-    { 
+    {
         for (unsigned int i = 0; i < to_.numThreads; ++i)
             if (to_.props_[i] != nullptr)
             {
@@ -114,7 +114,7 @@ public:
                 to_.props_[i] = nullptr;
             }
     }
-    
+
     virtual bool addPost(Clasp::Solver& s)
     {
         /// there can be some propagation in clasp::prepare
@@ -125,21 +125,21 @@ public:
         //    if (!addDLProp(s,n_.constraints()))
         //        return false;
 
-        
+
         if (to_.props_[s.id()])
         {
             s.removePost(to_.props_[s.id()]);
             delete to_.props_[s.id()];
             to_.props_[s.id()] = nullptr;
         }
-        
-        
+
+
         //std::vector<order::ReifiedLinearConstraint> constraints;
         //if (conf_.dlprop==1)
         //{
         //    constraints = n_.constraints();
         //}
-        
+
         ///solver takes ownership of propagator
         clingcon::ClingconOrderPropagator* test = new clingcon::ClingconOrderPropagator(s, n_.getVariableCreator(), conf_,
                                                                                       n_.constraints(),n_.getEqualities(),
@@ -147,13 +147,13 @@ public:
         to_.props_[s.id()] = test;
         if (!s.addPost(to_.props_[s.id()]))
            return false;
-        
+
 //        if (conf_.dlprop==1)
 //            if (!addDLProp(s, constraints))
 //                return false;
         return true;
     }
-    
+
 private:
 //    bool addDLProp(Clasp::Solver& s, const std::vector<order::ReifiedLinearConstraint>& constraints)
 //    {

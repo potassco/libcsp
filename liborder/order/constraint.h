@@ -140,7 +140,7 @@ public:
     int factorize();
 
 private:
-    
+
 
 
     std::vector<View> views_; /// should only contain views with b==1 and c==0

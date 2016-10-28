@@ -39,13 +39,13 @@ public:
 
     ClingconDLPropagator(Clasp::Solver& s, order::Config conf) :
         s_(s), conf_(conf), propagated_pointer_(0)
-    {     
+    {
         activationsPerDl_.emplace_back(0);
         dls_.emplace_back(0);
     }
 
     virtual ~ClingconDLPropagator() {}
-    
+
     /// should be called on a normalized constraint to increase chances of being valid
     bool isValidConstraint(const order::ReifiedLinearConstraint &rl) const;
     /// pre, is valid constraint==true
@@ -72,14 +72,14 @@ public:
 
 
 private:
-    
 
-    
+
+
     Clasp::Literal edgeid2lit(difflogic::DLPropagator::EdgeId id) const;
     //ClingconDLPropagator::LitEdge litIndex2ledge(const Clasp::Literal& l) const; /// warning, this does not take a literal, but a data blob
-    
-    
-    
+
+
+
     Clasp::Solver& s_;
     order::Config conf_;
     Clasp::LitVec literals_; // EdgeId>0 -> literals_[id-1], EdgeId<0 -> ~(literals_[-id-1])
@@ -88,9 +88,9 @@ private:
     /// all these things should be on the watch stack in the same order
     /// but may be interleaved with some others
     std::vector<difflogic::DLPropagator::EdgeId> pending_; /// a list of EdgeId's that are pending to be propagated by us
-    
+
     std::vector<unsigned int> activationsPerDl_; /// the number of activations per decision level
-    std::vector<unsigned int> dls_; 
+    std::vector<unsigned int> dls_;
     //std::unordered_map<difflogic::DLPropagator::InternalEdge, Clasp::Literal, difflogic::DLPropagator::Edgehash> edge2Lit_;
     //std::unique_ptr<order::IncrementalSolver> ms_;
     difflogic::DLPropagator p_;

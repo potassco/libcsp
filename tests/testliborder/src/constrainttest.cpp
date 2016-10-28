@@ -79,7 +79,7 @@ using namespace order;
             REQUIRE(ss.str()==results[i]);
         }
     }
-    
+
     TEST_CASE("Linear Constraint normalize", "[lc]")
     {
         MySolver s;
@@ -88,7 +88,7 @@ using namespace order;
         Variable v1 = vc.createVariable(Domain(1,10));
         Variable v15 = vc.createVariable(Domain(1,10));
         Variable v2 = vc.createVariable(Domain(1,10));
-       
+
         LinearConstraint l(LinearConstraint::Relation::LE);
         l.add(View(v0,1));
         l.add(View(v0,3));
@@ -104,16 +104,16 @@ using namespace order;
         l.addRhs(-45);
         //std::cout << std::endl << l << std::endl;
         l.normalize();
-        
+
         REQUIRE(l.getViews()[0].v==v0);
         REQUIRE(l.getViews()[1].v==v1);
         //l.getViews()[2].v=v2;
-        
+
         REQUIRE(l.getViews()[0].a==-3);
         REQUIRE(l.getViews()[1].a==14);
         //l.getViews()[0].a=0
         REQUIRE(l.getViews().size()==2);
-        
+
     }
 
 

@@ -53,7 +53,7 @@ private:
     /// moves the list of all reified implications out of the object
     std::vector<ReifiedLinearConstraint> removeConstraints();
     void addLevel() { assert(toProcess_.empty()); }
-    void removeLevel();   
+    void removeLevel();
     /// true if we are at a fixpoint
     bool atFixPoint() { return toProcess_.empty(); }
     /// return false if the domain is empty
@@ -89,19 +89,19 @@ public:
     std::vector<ReifiedLinearConstraint> removeConstraints() { return storage_.removeConstraints(); }
     void addLevel() { storage_.addLevel(); vs_.addLevel(); }
     void removeLevel() {storage_.removeLevel(); vs_.removeLevel();}
-  
+
     /// propagate all added constraints to a fixpoint
     /// return false if a domain gets empty
     /// propagates some literals using a creatingSolver
     bool propagate();
-    
+
     /// return true if last propagate call did add
     /// nogoods that imply a constraint literal
     bool propagated() const;
 
     const VariableStorage& getVariableStorage() const { return vs_; }
 private:
-    
+
     /// return false if the domain is empty
     /// iterator u points to the first element not in the domain
     bool constrainUpperBound(const ViewIterator &u);
@@ -140,14 +140,14 @@ public:
     using iter = Restrictor::ViewIterator;
     using itervec = std::vector<iter>;
     using LinearConstraintClause = std::pair<Literal,itervec>;
-        
+
 public:
     LinearLiteralPropagator(IncrementalSolver& s, const VariableCreator& vs, const Config& conf) :
         storage_(conf), s_(s), vs_(vs, s.trueLit()), conf_(conf) {}
 
     IncrementalSolver& getSolver() { return s_; }
-    VolatileVariableStorage& getVVS() { return vs_; } 
-    const VolatileVariableStorage& getVVS() const { return vs_; } 
+    VolatileVariableStorage& getVVS() { return vs_; }
+    const VolatileVariableStorage& getVVS() const { return vs_; }
 
 
     void addImp(ReifiedLinearConstraint&& l) { storage_.addImp(std::move(l)); }
@@ -168,20 +168,20 @@ public:
     /// propagate all added constraints to a fixpoint
     /// return false if a domain gets empty
     bool propagate();
-    
+
     /// return false if the domain is empty
     /// iterator points to element after the bound
     bool constrainUpperBound(const ViewIterator& u);
     /// return false if the domain is empty
     bool constrainLowerBound(const ViewIterator& l);
-    
+
     /// add a constraint (identified by id) to the propagation queue
     void queueConstraint(std::size_t id) { storage_.queueConstraint(id); }
-    
+
     //VariableStorage& getVariableStorage() { return vs_; }
 
 private:
-    
+
     /// computes the min/maximum of the lhs
     std::pair<int64,int64> computeMinMax(const LinearConstraint& l, itervec &clause);
     int64 computeMin(const LinearConstraint& l, itervec& clause);
@@ -196,7 +196,7 @@ private:
     /// propagates the truthvalue of the constraint if it can be directly inferred
     /// can only handle LE constraints
     void propagate_impl(ReifiedLinearConstraint &rl);
-    
+
 
 private:
     ConstraintStorage storage_;

@@ -64,13 +64,13 @@ private:
     unsigned int maxSize_;
 public:
     orderStorage() : store_(0), maxSize_(0) {}
-    
+
     void useVector() { store_ = store_ | hasvector; }
     void useMap() { store_ = store_ | hasmap; }
-    
+
     bool hasVector() const { return store_ & hasvector; }
     bool hasMap() const { return store_ & hasmap; }
-    
+
     /// returns the number of literals already created
     uint32 numLits() const
     {
@@ -80,10 +80,10 @@ public:
         l.flag();
         if (hasVector())
             return std::count_if(vector_.begin(),vector_.end(),[&l](const Literal& in){ return in.asUint()!=l.asUint();});
-            
-        return 0;        
+
+        return 0;
     }
-    
+
     bool isPrepared() const { return (hasMap() || hasVector()) && maxSize_>0 && store_>0; }
     //pre: hasVector
     vector& getVector() { assert(isPrepared()); return vector_; }
@@ -93,7 +93,7 @@ public:
     map& getMap() { assert(isPrepared()); return map_; }
     //pre: hasMap
     const map& getMap() const { assert(isPrepared()); return map_; }
-    
+
     // just increases/shrinks the vector
     // does not care for setting truthvalues !
     void setSize(unsigned int s)
@@ -106,7 +106,7 @@ public:
             vector_.resize(maxSize_,l);
         }
     }
-    
+
     bool hasNoLiteral(unsigned int index) const
     {
         assert(isPrepared());
@@ -116,7 +116,7 @@ public:
         else
             return map_.find(index) == map_.end();
     }
-    
+
     void setLiteral(unsigned int index, const Literal &l)
     {
         assert(isPrepared());
@@ -152,7 +152,7 @@ public:
             }
         }
     }
-    
+
     Literal getLiteral(unsigned int index) const
     {
         assert(isPrepared());
@@ -188,11 +188,11 @@ public:
     {
         assert(!it.view().reversed());
         assert(it.view().c==0); // not necessary, but does not make much sense ?
-        
+
         unsigned int realIndex = it.numElement();
         if (storage_.hasMap())
         {
-            
+
             mapit_ = storage_.getMap().lower_bound(realIndex);
             valid_ = mapit_ != storage_.getMap().end();
             if (!up)
@@ -201,7 +201,7 @@ public:
 
                 if (mapit_ == storage_.getMap().end())
                     --mapit_;
-                else 
+                else
                 if (mapit_->first!=realIndex)
                 {
                     if (mapit_==storage_.getMap().begin())
@@ -248,12 +248,12 @@ public:
     // please do only compare iterators of the same domain
     bool operator==(pure_LELiteral_iterator const &x) const { assert(storage_.hasMap() == x.storage_.hasMap()); assert(valid_); return (storage_.hasMap() ? mapit_ == x.mapit_ : vectorit_ == x.vectorit_); }
     bool operator!=(pure_LELiteral_iterator const &x) const { assert(storage_.hasMap() == x.storage_.hasMap()); assert(valid_); return (storage_.hasMap() ? mapit_ != x.mapit_ : vectorit_ != x.vectorit_); }
-    
+
     bool operator<(const pure_LELiteral_iterator& x) const { assert(storage_.hasMap() == x.storage_.hasMap()); assert(valid_);  return (storage_.hasMap() ? mapit_->first < x.mapit_->first : vectorit_ < x.vectorit_); }
     bool operator<=(const pure_LELiteral_iterator& x) const { assert(storage_.hasMap() == x.storage_.hasMap()); assert(valid_);  return (storage_.hasMap() ? mapit_->first <= x.mapit_->first : vectorit_ <= x.vectorit_); }
 
     pure_LELiteral_iterator& operator++()
-    {                
+    {
         assert(valid_);
         if (storage_.hasMap())
         {
@@ -401,13 +401,13 @@ public:
     /// restrict the values i of the domain of v
     /// to fullfill: (times*i + c)%div == 0
     bool constrainDomain(const Variable& v, int32 times, int32 c, int32 div);
-    
+
     const Domain& getDomain(const Variable& v) const
     {
         assert(isValid(v));
         return *domains_[v];
     }
-    
+
     unsigned int getDomainSize(const View& v) const
     {
         assert(isValid(v.v));
@@ -497,12 +497,12 @@ public:
     /// reification lit will be equal to the order literal afterwards
     /// will be equal to false, if used on end iterator
     bool setLELit(const Restrictor::ViewIterator &it, Literal l);
-    
+
     /// reification lit will be equal to the order literal afterwards
     /// /// will be equal to false, if used on end iterator
     bool setGELit(const Restrictor::ViewIterator &it, Literal l);
 
-   
+
     /// true if there exists an order literal
     bool hasLELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -513,7 +513,7 @@ public:
         /// its either the iterator just before end, which is true, or it has an order literal
         return (getDomainSize(it.view())-1 == it.numElement()) || (hasOrderLitMemory(it.view().v) && !isFlagged(it));
     }
-    
+
     /// true if there exists a literal =:= x>*it
     bool hasGELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -524,8 +524,8 @@ public:
         /// its either the iterator at begin, which is true, or it has an order literal
         return (0 == it.numElement()) || (hasOrderLitMemory(it.view().v) && !isFlagged(it-1));
     }
-    
-    
+
+
     /// can generate a literal
     Literal getLELiteral(Restrictor::ViewIterator it)
     {
@@ -541,10 +541,10 @@ public:
             orderLitMemory_[v].setLiteral(it.numElement(), s_.getNewLiteral(true));
         return orderLitMemory_[v].getLiteral(it.numElement());
     }
-    
+
     /// can't generate a literal
     /// literal must exist -> pre: hasLELiteral
-    Literal getLELiteral(const Restrictor::ViewIterator& it) const 
+    Literal getLELiteral(const Restrictor::ViewIterator& it) const
     {
         if (it.view().reversed())
                     return getGELiteral(ViewIterator::viewToVarIterator(it));
@@ -561,7 +561,7 @@ public:
             return s_.trueLit();
         }
     }
-    
+
     /// can generate a literal
     Literal getGELiteral(Restrictor::ViewIterator it)
     {
@@ -579,7 +579,7 @@ public:
             orderLitMemory_[v].setLiteral((it-1).numElement(), s_.getNewLiteral(true));
         return ~orderLitMemory_[v].getLiteral((it-1).numElement());
     }
-       
+
     /// cant create literal
     Literal getGELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -593,9 +593,9 @@ public:
         else
             return ~getLELiteral(it-1);
     }
-     
-    
-    
+
+
+
   /*  TODO, if view is reversed, then negate the literal!!!
     Literal getLELit(const View& v, int32 rhs)
     {
@@ -603,14 +603,14 @@ public:
         assert(c.getRelation()==LinearConstraint::Relation::LE);
         auto r = vc_.getRestrictor(view);
         auto found = std::upper_bound(r.begin(), r.end(), rhs);
-        
+
         Is this correct here ? should i have a -1 interface
         if (found!=r.begin())
             return vc_.getLiteral(view.first, found-1);
         else
             return ~trueLit_;
     }
-    */   
+    */
 
     /// restrict the domain of all variables according to the literals that are already set in the solver
     /// as orderliterals and equality literals
@@ -630,7 +630,7 @@ public:
         if (f.first) return f.second;
         return createEqualLit(it);
     }
-    
+
     Literal getEqualLit(const View& v, int32 i)
     {
         Restrictor r = getRestrictor(v);
@@ -638,7 +638,7 @@ public:
         it = (it==r.end() || *it != i) ? r.end() : it;
         return getEqualLit(it);
     }
-    
+
     unsigned int numEqualLits() const { return equalLits_.size(); }
 
     /// stores unary eq/ne constraints as literals for reuse
@@ -653,7 +653,7 @@ public:
     bool createEqualClauses();
 
     void prepareOrderLitMemory();
-    
+
     unsigned int numOrderLits(Variable v) const { return hasOrderLitMemory(v) ? getStorage(v).numLits()-1 : 0; }
 
     /// intern use only for pureLELiteralIterator's
@@ -664,8 +664,8 @@ public:
     }
 
 private:
-        
-    bool isFlagged(const Restrictor::ViewIterator& it) const 
+
+    bool isFlagged(const Restrictor::ViewIterator& it) const
     {
         /// ensure that this is called for LE literal requests
         assert(!it.view().reversed());
@@ -675,11 +675,11 @@ private:
         assert(domains_[v]->size() > it.numElement());
         return orderLitMemory_[v].hasNoLiteral(it.numElement());
     }
-    
+
     /// return a Literal l=:=(v=i)
     /// pre: hasEqualLit(it).first = false
     Literal createEqualLit(Restrictor::ViewIterator it);
-    
+
     bool hasOrderLitMemory(const Variable& var) const
     {
         if (!isValid(var)) return false;
@@ -706,7 +706,7 @@ private:
 
     CreatingSolver& s_;
     // have to use unique pointers, otherwise pointers to domains will get invalid on resize
-    std::vector<std::unique_ptr<Domain> > domains_;    
+    std::vector<std::unique_ptr<Domain> > domains_;
 
     mutable std::vector<orderStorage> orderLitMemory_; /// these unique pointers just manage the memory of the order literals
                                                        /// on very large domains > 1.000.000 and lazy_literals true we use a map instead
@@ -716,7 +716,7 @@ private:
                                                           // TODO: if equality lits are created on the fly, flag them ?
     Config conf_;
 
-};  
+};
 
 
 ///this class has read only access to orderLiterals and the equalLiterals and the domain
@@ -727,10 +727,10 @@ public:
     VariableStorage(const VariableCreator& vc, Literal trueLit);
     /// directly give them access
     VariableStorage(const std::vector<std::unique_ptr<Domain> >& domains,
-                    const std::vector<orderStorage>& orderLitMemory,            
+                    const std::vector<orderStorage>& orderLitMemory,
                     /*const std::map<std::pair<Variable,int>,Literal>& equalLits,*/
                     Literal trueLit);
-    
+
     //const VariableCreator& getVariableCreator() { return vc_; }
 
     /// interface for variableCreator
@@ -744,7 +744,7 @@ public:
 
     void addLevel() { levelSets_.push_back(VarSet()); }
     void removeLevel();
-    
+
     /// return false if the domain is empty
     /// the iterator points to the first element not in the domain (or end)
     bool constrainUpperBound(const Restrictor::ViewIterator& u) {
@@ -752,7 +752,7 @@ public:
         ViewIterator toVar = ViewIterator::viewToVarIterator(u);
         if(u.view().reversed())
             return constrainLowerBound(toVar+1); // since upper bound is the element after it, we have to take one before it
-        
+
         if (toVar.numElement()==domains_[v]->size()) // end iterator, should not change anything
             return true;
 
@@ -769,7 +769,7 @@ public:
         ViewIterator toVar = ViewIterator::viewToVarIterator(l);
         if(l.view().reversed())
             return constrainUpperBound(toVar);
-        
+
         if (toVar > rs_[v].back().end())
             constrainVariable(Restrictor(rs_[v].back().end(),rs_[v].back().end()));
         else
@@ -784,23 +784,23 @@ public:
         assert(isValid(v.v));
         return Restrictor(v,rs_[v.v].back());
     }
-    
+
     /// returns a restrictor for inspection, to change it, call constrainVariable
     const Restrictor& getCurrentRestrictor(const Variable& v) const
     {
         assert(isValid(v));
         return rs_[v].back();
     }
-    
+
     /// returns a restrictor for inspection, to change it, call constrainVariable
     Restrictor getRestrictor(const View& v) const
     {
         assert(isValid(v.v));
         return Restrictor(v,getDomain(v.v));
     }
-    
+
     const orderStorage& getOrderStorage(Variable v) const { assert(isValid(v)); return orderLitMemory_[v]; }
-    
+
     /// true if there exists an order literal
     bool hasLELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -811,8 +811,8 @@ public:
         /// its either the iterator just before end, which is true, or it has an order literal
         return (getDomainSize(it.view())-1 == it.numElement()) || (!isFlagged(it));
     }
-    
-    
+
+
     /// true if there exists a literal =:= x>*it
     bool hasGELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -823,23 +823,23 @@ public:
         /// its either the iterator at begin, which is true, or it has an order literal
         return ((0 == it.numElement()) || (!isFlagged(it-1)));
     }
-    
-    
+
+
     // can't generate a literal
     /// literal must exist -> pre: hasLELiteral
-    Literal getLELiteral(const Restrictor::ViewIterator& it) const 
+    Literal getLELiteral(const Restrictor::ViewIterator& it) const
     {
         if (it.view().reversed())
             return getGELiteral(ViewIterator::viewToVarIterator(it));
         assert(hasLELiteral(it));
         if (getDomainSize(it.view()) == it.numElement()) /// end element
             return trueLit_;
-        
+
         Variable v = it.view().v;
         return orderLitMemory_[v].getLiteral(it.numElement()); /// also has a last lit which is true
     }
-    
-    
+
+
     /// cant create literal
     Literal getGELiteral(const Restrictor::ViewIterator& it) const
     {
@@ -853,19 +853,19 @@ public:
         else
             return ~getLELiteral(it-1);
     }
-    
+
 
 private:
-    
+
     void init();
-    
+
     unsigned int getDomainSize(const View& v) const
     {
         assert(isValid(v.v));
         return domains_[v.v]->size();
     }
-    
-    bool isFlagged(const Restrictor::ViewIterator& it) const 
+
+    bool isFlagged(const Restrictor::ViewIterator& it) const
     {
         /// ensure that this is called for LE literal requests
         assert(!it.view().reversed());
@@ -874,14 +874,14 @@ private:
         assert(domains_[v]->size() > it.numElement());
         return orderLitMemory_[v].hasNoLiteral(it.numElement());
     }
-    
+
     /// constrains the view on the current level by r
     /// pre: the variable must be valid
     /// pre: the View must be simple, i.e. a=1 and c=0
     /// pre: r must be "setsmaller" than the previous r on the same level and
     /// the r on the level before
     void constrainVariable(const Restrictor& r);
-    
+
 
     Literal trueLit_;
     using ResVec = std::vector<Restrictor>;
@@ -893,8 +893,8 @@ private:
     const std::vector<std::unique_ptr<Domain> >& domains_; // this is just a reference to the global domains
     const std::vector<orderStorage>& orderLitMemory_;
     //const std::map<std::pair<Variable,int>,Literal>& equalLits_;
-                                                          
-    
+
+
 };
 
 class VolatileVariableStorage
@@ -903,10 +903,10 @@ public:
     VolatileVariableStorage(const VariableCreator& vc, Literal trueLit) : volOrderLitMemory_(vc.orderLitMemory_),
                                                                           vs_(vc.domains_, volOrderLitMemory_, trueLit)
     {}
-    
+
     VariableStorage& getVariableStorage() { return vs_; }
     const VariableStorage& getVariableStorage() const { return vs_; }
-    
+
     /// reification lit will be equal to the order literal afterwards
     /// pre: it isFlagged (not created before)
     /// pre: it != end

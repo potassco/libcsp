@@ -93,13 +93,13 @@ int LinearConstraint::normalize()
 {
     if (normalized_) return 1;
     normalized_ = true;
-    
+
     for (auto& i : views_)
     {
         constant_-=i.c;
         i.c=0;
     }
-    
+
     switch(getRelation())
     {
         case LinearConstraint::Relation::LT: setRelation(LinearConstraint::Relation::LE); --constant_; break;
@@ -117,9 +117,9 @@ int LinearConstraint::normalize()
         case LinearConstraint::Relation::NE:break;
         default: { assert(false); }
     }
-            
+
     if (views_.size()==0) return 1;
-    std::sort(views_.begin(), views_.end(), [](const View& x, const View& y) { return x.v < y.v; } ); 
+    std::sort(views_.begin(), views_.end(), [](const View& x, const View& y) { return x.v < y.v; } );
 
     /// had a look at reference implementation of unique
     auto result = views_.begin();
@@ -212,7 +212,7 @@ std::vector<LinearConstraint> LinearConstraint::split(const CreatingSolver& s, V
     ///TODO: converting std::size_t to int sucks, but erasing reverse iterator is also not "simple"
     for (int64 i = conf.splitsize_maxClauseSize.first-1; i >=0; --i)
     {
-        
+
         if (ret[i].views_.size()>=2)
         {
             int factor = ret[i].normalize();
@@ -276,7 +276,7 @@ std::vector<ReifiedLinearConstraint> ReifiedLinearConstraint::split(VariableCrea
     assert(splitted.size()>0);
     ret.reserve(splitted.size());
     ret.emplace_back(std::move(*splitted.begin()),v,impl);
-    
+
     Literal lit = s.trueLit();
     if (impl != Direction::EQ)       /// in the case of an implication, we also have an implication on the splitted constraints,
         lit = v;    /// disabling them if not needed

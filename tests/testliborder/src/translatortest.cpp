@@ -117,7 +117,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         f.solve();
         return f.summary().numEnum;
     }
-    
+
     TEST_CASE("testOutOfRange", "translatortest")
     {
 
@@ -126,7 +126,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             Normalizer norm(s,translateConfig);
             //Propagator t(s);
 
-            
+
             Domain d1;
             d1.remove(Domain::min, Domain::max-3);
             View v1 = norm.createView(d1);
@@ -144,23 +144,23 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
-          
+
             //Now every iterator on end can give back a literal (true for LE, false for GE,EQ)
             //s.printDimacs(std::cout); std::cout << std::endl; // expected 10 solutions
             //std::cout << "NumModels:"  << expectedModels(s) << std::endl;
             REQUIRE(expectedModels(s)==27);
         }
-        
+
         {
             MySolver s;
             Normalizer norm(s,translateConfig);
             //Propagator t(s);
 
-            
+
             Domain d1;
             d1.remove(Domain::min, Domain::max-12);
             View v1 = norm.createView(d1);
@@ -178,13 +178,13 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
-            
+
             try{
             norm.prepare();
             }
             catch(std::runtime_error)
             {
-                
+
                 return;
             }
             REQUIRE(false);
@@ -214,7 +214,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -260,7 +260,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -281,7 +281,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         2, -3, -7, 0,
                                         2, -3, -6, -8, 0,
                                         2, -3, -5, 0
-                                        
+
                                        });
             REQUIRE(s.clauses()==clauses);
 
@@ -310,7 +310,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -353,7 +353,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -394,7 +394,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -446,7 +446,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -511,9 +511,9 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             norm.addConstraint(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
 
             norm.prepare();
-            
+
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -573,7 +573,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -625,7 +625,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -676,7 +676,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -739,7 +739,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -800,7 +800,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -870,7 +870,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -958,7 +958,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -989,7 +989,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -1020,7 +1020,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             norm.prepare();
             //s.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -1050,7 +1050,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -1080,7 +1080,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -1130,7 +1130,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -1185,7 +1185,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -1269,7 +1269,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -1542,14 +1542,14 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         }
-        
+
         for (auto &i : linearConstraints)
             norm.addConstraint(std::move(i));
 
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -1636,7 +1636,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
@@ -1741,7 +1741,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
@@ -1755,7 +1755,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
         REQUIRE(expectedModels(solver)==724);
     }
-    
+
     TEST_CASE("nQueensDirectTranslate", "translatortest")
     {
         //std::cout << "sendMoreMoney2" << std::endl;
@@ -1831,7 +1831,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
         //solver.printDimacs(std::cout);std::cout << std::endl;
 
@@ -1845,7 +1845,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
         REQUIRE(expectedModels(solver)==724);
     }
-    
+
     void crypt112_aux(order::Config conf)
     {
         MySolver solver;
@@ -1895,7 +1895,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -1914,7 +1914,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
             crypt112_aux(i);
     }
 
-    
+
 
     TEST_CASE("Crypt224Translate", "translatortest")
     {
@@ -1971,7 +1971,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -2054,9 +2054,9 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         REQUIRE(norm.prepare());
         //solver.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
-        
+
 
         LitVec clauses = cnfToLits({});
         //assert(s.clauses()==clauses);
@@ -2091,7 +2091,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2114,7 +2114,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2148,7 +2148,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2188,7 +2188,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2220,7 +2220,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2265,7 +2265,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2328,7 +2328,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2356,7 +2356,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             REQUIRE(norm.prepare());
             //solver.createNewLiterals(norm.estimateVariables());
-            
+
             REQUIRE(norm.finalize());
 
 
@@ -2475,7 +2475,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
         norm.prepare();
         //s.createNewLiterals(norm.estimateVariables());
-        
+
         REQUIRE(norm.finalize());
 
 
@@ -2564,7 +2564,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
         }
 
     }
-    
+
     TEST_CASE("disjoint1DirectTranslate", "translatortest")
     {
         {
