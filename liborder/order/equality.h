@@ -48,6 +48,9 @@ public:
 
     bool add(LinearConstraint& l, VariableCreator& vc);
 
+    /// replace all variables in l with one of the tops
+    void replace(const EqualityClass& ec, LinearConstraint& l, VariableCreator&);
+
     ///pre: top() < ec.top();
     /// l has something from both classes
     /// l has at least 2 variables

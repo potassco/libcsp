@@ -80,7 +80,8 @@ namespace order
     ///pre: top() < ec.top();
     /// l has something from both classes
     /// l has at least 2 variables
-    bool EqualityClass::merge(const EqualityClass& ec, LinearConstraint& l, VariableCreator& )
+    /// replaces all occurences in l with one of the two tops
+    void EqualityClass::replace(const EqualityClass& ec, LinearConstraint& l, VariableCreator&)
     {
         assert(top() < ec.top());
         assert(l.getConstViews().size()>=2);
@@ -127,7 +128,27 @@ namespace order
             }
         }
         l.normalize();
-        assert(l.getViews().size()==2);
+    }
+
+    ///pre: top() < ec.top();
+    /// l has only these two top variables
+    /// l has at exactly 2 variables
+    bool EqualityClass::merge(const EqualityClass& ec, LinearConstraint& l, VariableCreator& )
+    {
+
+        assert(top() < ec.top());
+        assert(l.getConstViews().size()==2);
+        ///im top=A, ec is top=B,
+        /// convert l, s.t. l:= xA = yB + c
+        auto& views = l.getViews();
+
+        /// convert all variables to one of the two tops
+        for (auto it = views.begin(); it != views.end(); ++it)
+        {
+            assert (it->v==top_ || it->v==ec.top_);
+        }
+        l.normalize();
+        assert(l.getConstViews().size()==2);
         views = l.getViews();
 
 
@@ -343,21 +364,34 @@ namespace order
     bool EqualityProcessor::merge(EqualityProcessor::EqualityClassSet& ecv, LinearConstraint& l)
     {
         assert(ecv.size()<=2);
+
         if (ecv.size()==2)
         {
             auto first = (*ecv.begin());
             auto second = *(++ecv.begin());
             if (first->top() > second->top())
                 std::swap(first,second);
-            Variable top = second->top();
+            first->replace(*second,l,vc_);
+            ecv = getEqualityClasses(l);
+        }
+
+        if (ecv.size()==2)
+        {
+            auto first = (*ecv.begin());
+            auto second = *(++ecv.begin());
+            if (first->top() > second->top())
+                std::swap(first,second);
+
             if (!first->merge(*second,l,vc_))
                 return false;
+
+            Variable top = second->top();
             for (EqualityClass::Constraints::const_iterator i = second->getConstraints().begin(); i != second->getConstraints().end(); ++i)
                 equalityClasses_[i->first] = first;
             equalityClasses_[top] = first;
             return true;
         }
-        else
+
         if (ecv.size()==1)
         {
             auto first = (*ecv.begin());
