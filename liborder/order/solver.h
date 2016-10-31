@@ -182,9 +182,6 @@ public:
     /// create a simple cardinality constraint v =:= lb {lits}
     virtual bool createCardinality(Literal v, int lb, LitVec&& lits) = 0;
 
-    /// called if the domain of var was not restricted
-    virtual void unrestrictedDomainCallback(View var) const = 0;
-
     /// called if the domain of an intermediate var was not in Domain::min Domain::max (roughly int32)
     virtual void intermediateVariableOutOfRange() const = 0;
 

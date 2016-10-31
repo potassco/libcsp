@@ -52,11 +52,6 @@ public:
 
     void freeze(Literal ) {}
 
-    void unrestrictedDomainCallback(order::View) const
-    {
-        throw std::runtime_error("Variable was unrestricted");
-    }
-
     void intermediateVariableOutOfRange() const
     {
         throw std::runtime_error("Intermediate Variable out of bounds (32bit integer)");

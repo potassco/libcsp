@@ -129,10 +129,6 @@ public:
         return Clasp::WeightConstraint::create(s_,toClaspFormat(v),wvec,lb).ok();
     }
 
-    void unrestrictedDomainCallback(order::View) const
-    {
-        throw std::runtime_error("Variable was unrestricted");
-    }
 
     void intermediateVariableOutOfRange() const
     {

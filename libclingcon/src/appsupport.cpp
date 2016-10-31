@@ -42,7 +42,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("redundant-nogood-check", ProgramOptions::storeTo(conf.redundantClauseCheck = true), "Check translated nogoods for redundancies (default: true)")
             ("domain-size", ProgramOptions::storeTo(conf.domSize = 10000), "Restrict the number of ranges a domain can have when multiplied (-1=all) (default: 10000)")
             ("break-symmetries", ProgramOptions::storeTo(conf.break_symmetries = true), "Break symmetries (necessary for enumeration) (default: true)")
-            ("split-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.first = 3)->arg("<n>"), "Split constraints into size %A (minimum: 3, -1=all) (default: 3)")
+            ("split-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.first = 3)->arg("<n>"), "Split constraints into size %A (minimum: 3, -1=no splitting) (default: 3)")
             ("max-nogoods-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.second = 1024)->arg("<n>"), "Constraints are only split if they would produce more then %A nogoods (default: 1024)")
             ("pidgeon-optimization", ProgramOptions::storeTo(conf.pidgeon = true), "Add pidgeon-hole constraints for distinct (default: true)")
             ("permutation-optimization", ProgramOptions::storeTo(conf.permutation = false), "Add permutation constraints for distinct (default: false)")
