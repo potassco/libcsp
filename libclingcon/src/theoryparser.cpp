@@ -440,8 +440,20 @@ using namespace order;
         assert(termId2View_[id]==order::InvalidVar);
         order::View v = n_.createView(order::Domain(val,val));
         termId2View_[id]=v;
+        std::string s = toString(td_.getTerm(id));
+        string2view_.insert(std::make_pair(s,v));
         //string2Var_[s]=v;
         return v;
+    }
+
+
+    std::string TheoryParser::getName(order::Variable v)
+    {
+        auto x = find_if(string2view_.begin(),string2view_.end(),[&v](const std::pair<std::string,order::View>& vt)
+                                                         { return vt.second.v == v; });
+        if (x != string2view_.end())
+            return x->first;
+        return "__unknownVariable";
     }
 
     bool TheoryParser::check(Potassco::Id_t id)

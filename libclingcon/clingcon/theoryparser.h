@@ -67,6 +67,9 @@ public:
 
     void reset();
 
+    /// slow lookup, use with care
+    std::string getName(order::Variable v);
+
 private:
 
     void error(const std::string& s);

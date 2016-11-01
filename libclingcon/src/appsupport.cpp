@@ -367,6 +367,14 @@ bool Helper::postEnd()
         if (!conflict)
             conflict = !n_->finalize();
 
+        std::vector<order::Variable> lowerBounds, upperBounds;
+        n_->variablesWithoutBounds(lowerBounds,upperBounds);
+        for (auto i : lowerBounds)
+            std::cerr << "Variable " << tp_.getName(i) << " has unrestricted lower bound, set to " << order::Domain::min << std::endl;
+
+        for (auto i : upperBounds)
+            std::cerr << "Variable " << tp_.getName(i) << " has unrestricted upper bound, set to " << order::Domain::max << std::endl;
+
         if (conflict && !ctx_.master()->hasConflict())
             ctx_.master()->force(Clasp::Literal(0,true));
      }

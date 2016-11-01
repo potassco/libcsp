@@ -33,7 +33,8 @@ namespace order
 class Normalizer
 {
 public:
-    Normalizer(CreatingSolver& s, Config conf) : s_(s), vc_(s, conf), conf_(conf), ep_(s_,vc_), firstRun_(true) {}
+    Normalizer(CreatingSolver& s, Config conf) : s_(s), vc_(s, conf), conf_(conf), ep_(s_,vc_), firstRun_(true),
+    varsBefore_(0), varsAfter_(0), varsAfterFinalize_(0) {}
 
     /// can be made const, only changed for unit tests
     Config& getConfig()
@@ -65,6 +66,10 @@ public:
     bool atFixPoint() const;
 
     bool finalize();
+
+
+    /// returns two lists of variables that do not have lower or upper bounds
+    void variablesWithoutBounds(std::vector<order::Variable>& lb, std::vector<order::Variable>& ub);
 
     /// converts some of the aux literals in the VVS's into normal once
     /// numVars must be the biggest+1 boolean variable used in all order::Literals so far,
@@ -197,6 +202,9 @@ public:
 
     std::unique_ptr<LinearPropagator> propagator_;
     bool firstRun_;
+    unsigned int varsBefore_;   /// the number of variables that we had before this step (including splitting)
+    unsigned int varsAfter_; /// the highest problem specific variable in this step + 1
+    unsigned int varsAfterFinalize_; ///the highest variable we have after this step (including splitting)
 };
 
 }

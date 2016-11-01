@@ -812,7 +812,7 @@ uint64 Normalizer::estimateVariables()
             uint64 min = conf_.minLitsPerVar == -1 ? allLiterals(i,getVariableCreator()) : std::min((uint64)(conf_.minLitsPerVar),allLiterals(i,getVariableCreator()));
 
             min += estimateLE_[i]; /// estimation plus number added by minLitsPerVar
-            min = std::min(min,uint64(getVariableCreator().getDomainSize(View(i))-1-getVariableCreator().numOrderLits(i))); // either min or less if i cant add so many
+            min = std::min(min,uint64(getVariableCreator().getDomainSize(View(i))-getVariableCreator().numOrderLits(i))); // either min or less if i cant add so many
             sum += min;
             sum += estimateEQ_[i];
             /// ???
@@ -1022,6 +1022,16 @@ uint64 Normalizer::estimateVariables(const ReifiedDisjoint& d)
 
 bool Normalizer::prepare()
 {
+    if (firstRun_)
+    {
+        varsBefore_ = 0;
+        varsAfter_ = vc_.numVariables();
+    }
+    else
+    {
+        varsBefore_ = varsAfterFinalize_;
+        varsAfter_ = vc_.numVariables();
+    }
     if (conf_.equalityProcessing && firstRun_)
         if (!equalityPreprocessing())
             return false;
@@ -1249,7 +1259,6 @@ bool Normalizer::finalize()
 //    for (auto& i : linearConstraints_)
 //        std::cout << "Constraint " << i.l << " with rep " << i.v.asUint() << " is " << s_.isFalse(i.v) << " " << s_.isTrue(i.v) << std::endl;
 
-
     vc_.prepareOrderLitMemory();
 
     if (!createEqualClauses())
@@ -1277,7 +1286,21 @@ bool Normalizer::finalize()
     assert(domainConstraints_.size()==0);
     assert(minimize_.size()==0);
 
+    varsAfterFinalize_ = vc_.numVariables();
+
     return true;
+}
+
+
+void Normalizer::variablesWithoutBounds(std::vector<order::Variable>& lb, std::vector<order::Variable>& ub)
+{
+    for (unsigned int i = varsBefore_; i < varsAfter_;++i)
+    {
+        if (vc_.getDomain(i).lower()==order::Domain::min)
+            lb.push_back(i);
+        if (vc_.getDomain(i).upper()==order::Domain::max)
+            ub.push_back(i);
+    }
 }
 
 
