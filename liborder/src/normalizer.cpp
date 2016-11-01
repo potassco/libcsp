@@ -812,7 +812,7 @@ uint64 Normalizer::estimateVariables()
             uint64 min = conf_.minLitsPerVar == -1 ? allLiterals(i,getVariableCreator()) : std::min((uint64)(conf_.minLitsPerVar),allLiterals(i,getVariableCreator()));
 
             min += estimateLE_[i]; /// estimation plus number added by minLitsPerVar
-            min = std::min(min,uint64(getVariableCreator().getDomainSize(View(i))-1-getVariableCreator().numOrderLits(i))); // either min or less if i cant add so many
+            min = std::min(min,uint64(getVariableCreator().getDomainSize(View(i))-getVariableCreator().numOrderLits(i))); // either min or less if i cant add so many
             sum += min;
             sum += estimateEQ_[i];
             /// ???
@@ -1248,7 +1248,6 @@ bool Normalizer::finalize()
 //    std::cout << "finalize" << std::endl;
 //    for (auto& i : linearConstraints_)
 //        std::cout << "Constraint " << i.l << " with rep " << i.v.asUint() << " is " << s_.isFalse(i.v) << " " << s_.isTrue(i.v) << std::endl;
-
 
     vc_.prepareOrderLitMemory();
 

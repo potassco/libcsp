@@ -66,6 +66,7 @@ public:
         c_.popVars(maxVar_ - currentVar_);
         c_.startAddConstraints();
         maxVar_ = currentVar_;
+        growth = 8096;
     }
 
 
@@ -74,12 +75,12 @@ public:
 
     Literal getNewLiteral(bool frozen)
     {
-        assert(freeLiterals());
-//        if (!freeLiterals())
-//        {
-//            createNewLiterals(growth); /// magic constant
-//            growth*=2;
-//        }
+        //assert(freeLiterals());
+        if (!freeLiterals())
+        {
+            createNewLiterals(growth); /// magic constant
+            growth*=2;
+        }
         //std::cout << "create static literal " << currentVar_ << std::endl;
 
         assert(currentVar_!=0);
