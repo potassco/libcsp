@@ -1296,10 +1296,13 @@ void Normalizer::variablesWithoutBounds(std::vector<order::Variable>& lb, std::v
 {
     for (unsigned int i = varsBefore_; i < varsAfter_;++i)
     {
+        if (vc_.isValid(i))
+        {
         if (vc_.getDomain(i).lower()==order::Domain::min)
             lb.push_back(i);
         if (vc_.getDomain(i).upper()==order::Domain::max)
             ub.push_back(i);
+        }
     }
 }
 
