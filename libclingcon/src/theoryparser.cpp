@@ -841,7 +841,7 @@ bool TheoryParser::readConstraint(Potassco::TheoryData::atom_iterator& i, Direct
                 }
             }
 
-            if (getView(*single_elem,v) )
+            if (!done && getView(*single_elem,v) )
             {
                 level=0;
                 done = true;
