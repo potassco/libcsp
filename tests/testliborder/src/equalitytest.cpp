@@ -273,15 +273,10 @@ using namespace order;
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==0);
 
-        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
-        REQUIRE(p.getEqualities(a.v)->top()==a.v);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
-
-        REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
-        REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
-
+        REQUIRE(p.isUnary(a.v));
+        REQUIRE(p.isUnary(b.v));
+        REQUIRE(p.getUnary(a.v)==0);
+        REQUIRE(p.getUnary(b.v)==0);
     }
 
             // 7*a = 18*b
@@ -329,15 +324,10 @@ using namespace order;
         REQUIRE(p.process(lc));
         REQUIRE(lc.size()==0);
 
-        REQUIRE(p.getEqualities(a.v)==p.getEqualities(b.v));
-        REQUIRE(p.getEqualities(a.v)->top()==a.v);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).constant==0);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).firstCoef==2);
-        REQUIRE(p.getEqualities(a.v)->getConstraints().at(b.v).secondCoef==0);
-
-        REQUIRE(n.getVariableCreator().getDomain(a.v) == Domain(0,0));
-        REQUIRE(n.getVariableCreator().getDomain(b.v) == Domain(0,0));
-
+        REQUIRE(p.isUnary(a.v));
+        REQUIRE(p.isUnary(b.v));
+        REQUIRE(p.getUnary(a.v)==0);
+        REQUIRE(p.getUnary(b.v)==0);
     }
 
 
@@ -475,6 +465,74 @@ using namespace order;
         ReifiedAllDistinct rd({a*3,b+7,c,d,e,f,g},Literal(0,false),Direction::EQ);
         p.substitute(rd);
     }
+
+
+    TEST_CASE("EqualityProcessor11", "11")
+    {
+        // 3*a = 2*b
+        // 8*c = 4*b +20
+        // b = 15
+        // d = 2*c+13
+        MySolver s;
+        Normalizer n(s,lazySolveConfigProp4);
+        EqualityProcessor p(s,n.getVariableCreator());
+
+        View a = n.createView();
+        View b = n.createView();
+        View c = n.createView();
+        View d = n.createView();
+
+        std::vector<ReifiedLinearConstraint> lc;
+        {
+            LinearConstraint l(LinearConstraint::Relation::EQ);
+            l.add(a*3);
+            l.add(b*-2);
+            l.addRhs(0);
+            l.normalize();
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
+        }
+
+        {
+            LinearConstraint l(LinearConstraint::Relation::EQ);
+            l.add(c*8);
+            l.add(b*-4);
+            l.addRhs(20);
+            l.normalize();
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
+        }
+
+
+        {
+            LinearConstraint l(LinearConstraint::Relation::EQ);
+            l.add(b*1);
+            l.addRhs(15);
+            l.normalize();
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
+        }
+
+        {
+            LinearConstraint l(LinearConstraint::Relation::EQ);
+            l.add(View(c.v,2,13));
+            l.add(d*-1);
+            l.addRhs(0);
+            l.normalize();
+            lc.emplace_back(ReifiedLinearConstraint(std::move(l),s.trueLit(),Direction::EQ));
+        }
+
+        REQUIRE(p.process(lc));
+        REQUIRE(lc.size()==0);
+
+        REQUIRE(p.isUnary(a.v));
+        REQUIRE(p.isUnary(b.v));
+        REQUIRE(p.isUnary(c.v));
+        REQUIRE(p.isUnary(d.v));
+
+        REQUIRE(p.getUnary(a.v)==10);
+        REQUIRE(p.getUnary(b.v)==15);
+        REQUIRE(p.getUnary(c.v)==10);
+        REQUIRE(p.getUnary(d.v)==33);
+    }
+
 
 
 

@@ -387,7 +387,6 @@ public:
     ViewDomain getViewDomain(const View& v) const
     {
         assert(isValid(v.v));
-        assert(v.a!=0);
         /*Domain d = *domains_[v.v];
         d.inplace_times(v.a,d.getRanges().size()); /// view domains must be correct,
                                                    /// otherwise getDomainSize() is incorrect

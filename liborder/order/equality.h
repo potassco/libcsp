@@ -46,15 +46,14 @@ public:
 
     Variable top() const { return top_; }
 
-    bool add(LinearConstraint& l, VariableCreator& vc);
-
-    /// replace all variables in l with one of the tops
-    void replace(const EqualityClass& ec, LinearConstraint& l, VariableCreator&);
-
     ///pre: top() < ec.top();
     /// l has something from both classes
-    /// l has at least 2 variables
-    bool merge(const EqualityClass& ec, LinearConstraint& l, VariableCreator& vc);
+    /// l has exactly 2 variables
+    bool merge(const EqualityClass& ec, const LinearConstraint &l);
+    /// simply remove constraint handling v
+    /// has a constraint handling v
+    /// v != top
+    void remove(Variable v);
 
     const Constraints& getConstraints() const { return constraints_; }
 
@@ -68,6 +67,7 @@ private:
     Variable top_; /// the variable all other elements are equal to
 };
 
+/// it is important that no domain is set yet
 class EqualityProcessor
 {
 private:
@@ -80,13 +80,20 @@ public:
 
     bool process(std::vector<ReifiedLinearConstraint>& linearConstraints);
 
-    EqualityClassSet getEqualityClasses(const LinearConstraint& l);
+    EqualityClassSet getEqualityClasses(const LinearConstraint &l);
 
-    bool merge(EqualityClassSet& ecv, LinearConstraint& l);
+    /// replace all variables in l with one of the tops
+    void replace(LinearConstraint& l);
+    bool unary(const LinearConstraint& l);
+    bool unary(Variable v, int32 value);
+    bool merge(EqualityClassSet ecv, LinearConstraint& l);
 
     bool hasEquality(Variable v) const { return equalityClasses_.find(v) != equalityClasses_.end(); }
+    bool isUnary(Variable v) const { return unary_.find(v) != unary_.end(); }
     bool isValid(Variable v) const { return (!hasEquality(v)) || getEqualities(v)->top()==v; }
     std::shared_ptr<EqualityClass> getEqualities(Variable v) const { assert(hasEquality(v)); return equalityClasses_.find(v)->second; }
+    const std::unordered_map<Variable,int32> getUnaries() const { return unary_; }
+    int32 getUnary(Variable v) const { return unary_.at(v); }
 
     bool substitute(LinearConstraint& l) const;
     bool substitute(ReifiedAllDistinct& l) const;
@@ -96,6 +103,7 @@ public:
 
 private:
     EqualityClassMap equalityClasses_;
+    std::unordered_map<Variable,int32> unary_; // Variable = int32
     CreatingSolver& s_;
     VariableCreator& vc_;
 

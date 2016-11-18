@@ -25,106 +25,108 @@
 namespace order
 {
 
+    void EqualityClass::remove(Variable v)
+    {
+        assert(constraints_.find(v)!=constraints_.end());
+        assert(top_ != v);
+        constraints_.erase(v);
+    }
 
-    bool EqualityClass::add(LinearConstraint& l, VariableCreator& vc)
+    /// pre: l is unary equality
+    /// sets the value for l and removes all equality classes containing this variable
+    /// recursively set value for equal variables
+    bool EqualityProcessor::unary(const LinearConstraint& l)
     {
         assert(l.normalized());
-        for (auto& i : l.getConstViews())
-        {
-            (void)(i);
-            assert(constraints_.find(i.v)!=constraints_.end() || i.v==top_);
-        }
-        //for each variable != top, replace it in the linear constraint with top
-        //.... this can result in returning false, if we have a = b, a = b + 1 (a=b,a=2b works for a=0 :) )
-        for (auto& i : l.getViews())
-            if (i.v != top_)
-            {
-                int32 myfactor = i.a;
-                auto it = constraints_.find(i.v);
-                assert(it != constraints_.end());
-                int32 oldfactor = it->second.firstCoef;
-                int32 g = gcd(oldfactor,myfactor);
-                Edge e = it->second * (myfactor/g);
-                l.times(oldfactor/g);
-                assert(e.firstCoef==i.a);
-                /// now replace variable in l with top
-                i.v = top_;
-                i.a = e.secondCoef;
-                l.addRhs(-e.constant);
-                //l.normalize();/// destroys the views iterator, factorize is not ok, as some coefficients could be 0
-            }
-        l.normalize();
-        assert(l.getConstViews().size()<=1);
-        if (l.getConstViews().size()==0)
-            return l.getRhs()==0;
         assert(l.getConstViews().size()==1);
-        /// variable has either 1 or 0 values
-        /// degenerate equality class
-        if (!vc.constrainView(l.getViews().front(),l.getRhs(),l.getRhs()))
+        View v = l.getConstViews().front();
+        if (((int64)(l.getRhs())-(int64)(v.c))%v.a != 0)
             return false;
-        /// top variable has exactly one value
-        assert(vc.getDomainSize(top_)==1);
-        int32 val = *(vc.getRestrictor(View(top_)).begin());
-        /// all other variables have also at most one value
-        for (auto e = constraints_.begin(); e != constraints_.end(); ++e)
+        int32 value = v.divide(l.getRhs());
+        return unary(v.v,value);
+    }
+
+    /// pre: l is unary equality
+    /// sets the value for l and removes all equality classes containing this variable
+    /// recursively set value for equal variables
+    bool EqualityProcessor::unary(Variable v, int32 value)
+    {
+        assert (unary_.find(v)==unary_.end()); // if it woudl already exist, it would have been already replaced
+        unary_[v] = value;
+        //std::cout << "Set v" << v << " to " << value << std::endl;
+
+        if (hasEquality(v))
         {
-            int64 res = e->second.secondCoef*val + e->second.constant;
-            if (!vc.constrainView(View(e->first,e->second.firstCoef), res,res))
-                return false;
-            e->second.secondCoef=0;
-            e->second.constant=res;
+            auto ec = getEqualities(v);
+            if (ec->top() == v)
+            {
+                // we are top ourselfs, so add values for all other variables
+                auto constraints = ec->getConstraints();
+                for (auto i : constraints)
+                {
+                    Variable var = i.first;
+                    assert(unary_.find(var)==unary_.end()); // i should not have a value AND an equality
+                    EqualityClass::Edge e = i.second;
+
+                    /// e.first*var = e.second*ec->top() +  e.constant
+                    if ( ((int64(e.secondCoef) * int64(value)) + int64(e.constant)) % e.firstCoef != 0)
+                        return false;
+                    unary_[var] = ((int64(e.secondCoef) * int64(value)) + int64(e.constant)) / e.firstCoef;
+                    //std::cout << "Set v" << var << " to " << unary_[var] << std::endl;
+                }
+                equalityClasses_.erase(ec->top());
+            }
+            else
+            {
+                auto constraint = ec->getConstraints().find(v);
+                assert(constraint!= ec->getConstraints().end());
+                EqualityClass::Edge e = constraint->second;
+                /// e.first*v.v = e.second*ec->top() + e.constant
+                if ( ((int64(e.firstCoef)*int64(value) - int64(e.constant)) % e.secondCoef)  != 0)
+                    return false;
+                int32 newval = ((int64(e.firstCoef)*int64(value) - int64(e.constant)) / e.secondCoef);
+                ec->remove(v);
+                return unary(ec->top(),newval);
+            }
         }
         return true;
     }
 
-    ///pre: top() < ec.top();
-    /// l has something from both classes
-    /// l has at least 2 variables
     /// replaces all occurences in l with one of the two tops
-    void EqualityClass::replace(const EqualityClass& ec, LinearConstraint& l, VariableCreator&)
+    void EqualityProcessor::replace(LinearConstraint& l)
     {
-        assert(top() < ec.top());
-        assert(l.getConstViews().size()>=2);
-        ///im top=A, ec is top=B,
-        /// convert l, s.t. l:= xA = yB + c
         auto& views = l.getViews();
 
         /// convert all variables to one of the two tops
         for (auto it = views.begin(); it != views.end(); ++it)
         {
-            if (it->v==top_ || it->v==ec.top_)
-                continue;
-
-            std::unordered_map<Variable,Edge>::const_iterator edgeit = constraints_.find(it->v);
-            if (edgeit != constraints_.end())
+            auto ass = unary_.find(it->v);
+            if (ass != unary_.end())
             {
+                /// if we have an assignment for this variable, replace the value and shift it to the right hand side
+                l.addRhs(-((ass->second*it->a)+it->c));
+                it->c=0;
+                it->a=0;
+                continue;
+            }
+            if (hasEquality(it->v))
+            {
+                auto ec = getEqualities(it->v);
+                if (it->v==ec->top())
+                    continue;
+                auto constraint = ec->getConstraints().find(it->v);
+                assert(constraint != ec->getConstraints().end()); /// should always exist has we have hasEquality
                 /// convert to top
                 int32 myfactor = it->a;
-                Edge e = edgeit->second;
+                EqualityClass::Edge e = constraint->second;
                 int32 oldfactor = e.firstCoef;
                 int32 g = gcd(oldfactor,myfactor);
                 e *= (myfactor/g);
                 l.times(oldfactor/g);
-                it->v = top_;
+                it->v = ec->top();
                 it->a = e.secondCoef;
                 l.addRhs(-e.constant);
-                //l.normalize();/// destroys the views iterator, factorize is not ok, as some coefficients could be 0
-            }
-            else
-            {
-                edgeit = ec.constraints_.find(it->v);
-                assert(edgeit != ec.constraints_.end());
-                /// convert to ec.top
-                int32 myfactor = it->a;
-                Edge e = edgeit->second;
-                int32 oldfactor = e.firstCoef;
-                int32 g = gcd(oldfactor,myfactor);
-                e *= (myfactor/g);
-                l.times(oldfactor/g);
-                it->v = ec.top_;
-                it->a = e.secondCoef;
-                l.addRhs(-e.constant);
-                //l.normalize();
+
             }
         }
         l.normalize();
@@ -132,42 +134,51 @@ namespace order
 
     ///pre: top() < ec.top();
     /// l has only these two top variables
-    /// l has at exactly 2 variables
-    bool EqualityClass::merge(const EqualityClass& ec, LinearConstraint& l, VariableCreator& )
+    /// l has exactly 2 variables
+    bool EqualityClass::merge(const EqualityClass& ec, const LinearConstraint& l)
     {
-
         assert(top() < ec.top());
         assert(l.getConstViews().size()==2);
+        assert(l.normalized());
         ///im top=A, ec is top=B,
         /// convert l, s.t. l:= xA = yB + c
-        auto& views = l.getViews();
+        auto& views = l.getConstViews();
+        assert(views.size()==2);
 
         /// convert all variables to one of the two tops
         for (auto it = views.begin(); it != views.end(); ++it)
         {
             assert (it->v==top_ || it->v==ec.top_);
         }
-        l.normalize();
-        assert(l.getConstViews().size()==2);
-        views = l.getViews();
+        //l.normalize();
+        //assert(l.getConstViews().size()==2);
+        //views = l.getViews();
+        View myviews[2];
+        if (views.front().v == top_)
+        {
+            myviews[0] = views.front();
+            myviews[1] = views.back();
+        }
+        else
+        {
+            myviews[1] = views.front();
+            myviews[0] = views.back();
+        }
 
 
-        if (views.front().v != top_)
-            std::swap(views.front(),views.back());
-
-        assert(views.front().v==top_);
-        assert(views.back().v==ec.top_);
+        assert(myviews[0].v==top_);
+        assert(myviews[1].v==ec.top_);
 
         /// also add the relation in the constraint to our equivalence class
-        //std::cout << "added equality " << -views.back().a << " * v" << views.back().v << " = " <<
-        //              views.front().a << " * v" << top_ << " + " << -l.getRhs() << std::endl;
-        constraints_[views.back().v] = Edge(-views.back().a,views.front().a,-l.getRhs());
+        //std::cout << "added equality " << -myviews[1].a << " * v" << myviews[1].v << " = " <<
+        //              myviews[0].a << " * v" << top_ << " + " << -l.getRhs() << std::endl;
+        constraints_[views.back().v] = Edge(-myviews[1].a,myviews[0].a,-l.getRhs());
 
-        int32 myfactor = views.back().a * -1;
+        int32 myfactor = myviews[1].a * -1;
         /// add all constraints from ec and convert the top variable
         for (auto e : ec.constraints_)
         {
-            Edge convert(views.front().a, myfactor, l.getRhs());
+            Edge convert(myviews[0].a, myfactor, l.getRhs());
             int oldfactor = e.second.secondCoef;
             int32 g = gcd(oldfactor,myfactor);
             convert *= (oldfactor/g);
@@ -208,11 +219,37 @@ namespace order
         {
             LinearConstraint& l = equals[current];
             l.normalize();
-            EqualityClassSet ecv = getEqualityClasses(l);
-            if (ecv.size()<=2)
+
+            replace(l);
+            /*if (l.size()==2)
             {
-                if (!merge(ecv,l))
-                    return false;
+                auto first = (*ecv.begin());
+                auto second = *(++ecv.begin());
+                if (first->top() > second->top())
+                    std::swap(first,second);
+                first->replace(*second,l,vc_);
+                ecv = getEqualityClasses(l);
+            }*/
+
+            auto size =  l.getConstViews().size();
+            if (size<=2)
+            {
+                if (size==2)
+                {
+                    if (!merge(getEqualityClasses(l),l))
+                        return false;
+                }
+                else if (size==1)
+                {
+                    if (!unary(l))
+                        return false;
+                }
+                else if (size==0)
+                {
+                    if (l.getRhs()!=0)
+                        return false;
+                }
+                /// remove this constraint and reiterate
                 std::swap(equals[current],equals.back());
                 equals.pop_back();
                 last = current;
@@ -246,7 +283,17 @@ namespace order
         for (auto& i : l.getViews())
         {
             auto it = equalityClasses_.find(i.v);
-            if (it != equalityClasses_.end() && it->second->top()!=i.v)
+            if (it==equalityClasses_.end())
+            {
+                auto found = unary_.find(i.v);
+                if (found != unary_.end())
+                {
+                    l.addRhs(-(i.a*found->second-i.c));
+                    i.a=0;
+                    i.c=0;
+                }
+            }
+            else if (it->second->top()!=i.v)
             {
                 EqualityClass::Edge e = it->second->getConstraints().find(i.v)->second;
                 /// i.v * e.firstCoef = it->second->top() * e.secondCoef + e.constant
@@ -267,7 +314,16 @@ namespace order
         for (auto& i : l.getViews())
         {
             auto it = equalityClasses_.find(i.v);
-            if (it != equalityClasses_.end() && it->second->top()!=i.v)
+            if (it==equalityClasses_.end())
+            {
+                auto found = unary_.find(i.v);
+                if (found != unary_.end())
+                {
+                    i.c+=i.a*found->second;
+                    i.a=0;
+                }
+            }
+            else if (it->second->top()!=i.v)
             {
                 EqualityClass::Edge e = it->second->getConstraints().find(i.v)->second;
                 /// i.v * e.firstCoef = it->second->top() * e.secondCoef + e.constant
@@ -286,7 +342,16 @@ namespace order
     {
         auto& i = l.getView();
         auto it = equalityClasses_.find(i.v);
-        if (it != equalityClasses_.end() && it->second->top()!=i.v)
+        if (it==equalityClasses_.end())
+        {
+            auto found = unary_.find(i.v);
+            if (found != unary_.end())
+            {
+                i.c+=i.a*found->second;
+                i.a=0;
+            }
+        }
+        else if (it->second->top()!=i.v)
         {
             EqualityClass::Edge e = it->second->getConstraints().find(i.v)->second;
             /// i.v * e.firstCoef = it->second->top() * e.secondCoef + e.constant
@@ -309,7 +374,16 @@ namespace order
             {
                 auto& i = k.first;
                 auto it = equalityClasses_.find(i.v);
-                if (it != equalityClasses_.end() && it->second->top()!=i.v)
+                if (it==equalityClasses_.end())
+                {
+                    auto found = unary_.find(i.v);
+                    if (found != unary_.end())
+                    {
+                        i.c+=i.a*found->second;
+                        i.a=0;
+                    }
+                }
+                else if (it->second->top()!=i.v)
                 {
                     EqualityClass::Edge e = it->second->getConstraints().find(i.v)->second;
                     /// i.v * e.firstCoef = it->second->top() * e.secondCoef + e.constant
@@ -328,7 +402,16 @@ namespace order
     bool EqualityProcessor::substitute(View& v) const
     {
         auto it = equalityClasses_.find(v.v);
-        if (it != equalityClasses_.end() && it->second->top()!=v.v)
+        if (it==equalityClasses_.end())
+        {
+            auto found = unary_.find(v.v);
+            if (found != unary_.end())
+            {
+                v.c+=v.a*found->second;
+                v.a=0;
+            }
+        }
+        else if (it->second->top()!=v.v)
         {
             EqualityClass::Edge e = it->second->getConstraints().find(v.v)->second;
             /// i.v * e.firstCoef = it->second->top() * e.secondCoef + e.constant
@@ -361,28 +444,16 @@ namespace order
         return ecv;
     }
 
-    bool EqualityProcessor::merge(EqualityProcessor::EqualityClassSet& ecv, LinearConstraint& l)
+    bool EqualityProcessor::merge(EqualityProcessor::EqualityClassSet ecv, LinearConstraint& l)
     {
-        assert(ecv.size()<=2);
+        assert(ecv.size()==2);
 
-        if (ecv.size()==2)
-        {
-            auto first = (*ecv.begin());
-            auto second = *(++ecv.begin());
-            if (first->top() > second->top())
-                std::swap(first,second);
-            first->replace(*second,l,vc_);
-            ecv = getEqualityClasses(l);
-        }
-
-        if (ecv.size()==2)
-        {
             auto first = (*ecv.begin());
             auto second = *(++ecv.begin());
             if (first->top() > second->top())
                 std::swap(first,second);
 
-            if (!first->merge(*second,l,vc_))
+            if (!first->merge(*second,l))
                 return false;
 
             Variable top = second->top();
@@ -390,15 +461,6 @@ namespace order
                 equalityClasses_[i->first] = first;
             equalityClasses_[top] = first;
             return true;
-        }
-
-        if (ecv.size()==1)
-        {
-            auto first = (*ecv.begin());
-            return first->add(l,vc_);
-        }
-        /// special case, no variables
-        return l.getRhs()==0;
     }
 
 }

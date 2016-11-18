@@ -159,6 +159,7 @@ public:
     /// return false if domain gets empty
     bool intersect(int32 lower, int32 upper);
 
+
     /// remove the Domain(lower, upper) (can be empty) from the Domain
     /// pre: domain is not empty
     /// TODO: can be optimized
@@ -341,7 +342,13 @@ public:
     {
         int64 n = v.a;
         int64 c = v.c;
-        assert (n!=0);
+
+        if (n==0)
+        {
+            ranges_.emplace_back(c,c);
+            return;
+        }
+
         if (n<0)
         {
             d.reverse();

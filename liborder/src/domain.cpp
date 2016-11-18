@@ -205,6 +205,7 @@ bool Domain::intersect(const Domain& d)
     return !empty();
 }
 
+
 bool Domain::remove(int32 x)
 {
     auto found = std::lower_bound(ranges_.begin(),ranges_.end(), x, [](const Range& r, int x){ return r.u < x; });

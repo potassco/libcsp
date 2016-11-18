@@ -1450,6 +1450,12 @@ bool Normalizer::equalityPreprocessing()
 {
     if (!ep_.process(linearConstraints_))
         return false;
+    auto unary = ep_.getUnaries();
+    for (auto i : unary)
+    {
+        if (!vc_.constrainView(View(i.first,1,0),i.second,i.second))
+            return false;
+    }
     for (auto& i : linearConstraints_)
         if (!ep_.substitute(i.l))
             return false;

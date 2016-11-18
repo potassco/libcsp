@@ -35,7 +35,7 @@ using Variable = unsigned int;
 const Variable InvalidVar = 4294967295;
 
 
-/// represents a View on a Variable  which is equal to  (a*v)/b  + c
+/// represents a View on a Variable  which is equal to  (a*v) + c
 struct View
 {
     View(Variable v=0, int32 a=1, int32 c = 0) : v(v), a(a), c(c) {}
@@ -44,7 +44,7 @@ struct View
     int32 c;
 
     /// a*x + c = rhs
-    /// returns a given rhs
+    /// returns x given rhs
     int64 divide(int64 rhs) const
     {
         return reversed() ? std::ceil((double)(rhs-c)/a) : std::floor((double)(rhs-c)/a);

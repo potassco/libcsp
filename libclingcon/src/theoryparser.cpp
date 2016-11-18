@@ -429,6 +429,7 @@ using namespace order;
             v = n_.createView();
             string2view_.insert(std::make_pair(s,v));
         }
+        //std::cout << "Variable v" << v.v << " is named " << s << std::endl;
         termId2View_[id]=v;
         //string2View_[s]=v;
         return v;
