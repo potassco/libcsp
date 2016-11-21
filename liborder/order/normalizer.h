@@ -94,11 +94,33 @@ public:
 
 
     /// pre: l.normalized()
-    /// pre: l.getViews().size()==1
+    /// pre: l.getViews().size()<=1
     Literal getLitFromUnary(const LinearConstraint& l)
     {
-        assert(l.getViews().size()==1);
+        assert(l.getViews().size()<=1);
         assert(l.normalized());
+        if (l.getConstViews().size()==0)
+        {
+            switch(l.getRelation())
+            {
+                case LinearConstraint::Relation::EQ:
+                    return 0==l.getRhs() ? s_.trueLit() : s_.falseLit();
+                case LinearConstraint::Relation::NE:
+                    return 0==l.getRhs() ? s_.trueLit() : s_.falseLit();
+                case LinearConstraint::Relation::LE:
+                    return 0<=l.getRhs() ? s_.trueLit() : s_.falseLit();
+                case LinearConstraint::Relation::LT:
+                    return 0< l.getRhs() ? s_.trueLit() : s_.falseLit();
+                case LinearConstraint::Relation::GT:
+                    return 0> l.getRhs() ? s_.trueLit() : s_.falseLit();
+                case LinearConstraint::Relation::GE:
+                    return 0>=l.getRhs() ? s_.trueLit() : s_.falseLit();
+                default: assert(false);
+            }
+        }
+
+
+
         View v = *l.getViews().begin();
         Restrictor r = vc_.getRestrictor(v);
 

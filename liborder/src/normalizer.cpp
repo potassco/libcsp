@@ -1193,6 +1193,38 @@ bool Normalizer::auxprepare()
             return false;
     allDistincts_.clear();
 
+    /// remove 0sized linear constraints
+    auto size = linearConstraints_.size();
+    for (unsigned int i = 0; i < size;)
+    {
+        auto& l = linearConstraints_[i];
+        l.normalize();
+        if (l.l.getConstViews().size()==0)
+        {
+            if (0 <= l.l.getRhs()) /// linear constraint  is satisfied
+            {
+                if (l.impl & Direction::BACK)
+                    if (!s_.setEqual(l.v,s_.trueLit()))
+                        return false;
+            }
+            else  /// linear constraint cant be satisfied
+            {
+                if (l.impl & Direction::FWD)
+                {
+                    if (!s_.setEqual(l.v,s_.falseLit()))
+                        return false;
+                }
+            }
+            /// always remove
+            --size;
+            std::swap(l,linearConstraints_[size]);
+        }
+        else
+            ++i;
+    }
+
+    linearConstraints_.erase(linearConstraints_.end()-(linearConstraints_.size()-size), linearConstraints_.end());
+
     /// remove duplicates
     sort( linearConstraints_.begin(), linearConstraints_.end(), ReifiedLinearConstraint::compareless );
     linearConstraints_.erase( unique( linearConstraints_.begin(), linearConstraints_.end(), ReifiedLinearConstraint::compareequal ), linearConstraints_.end() );

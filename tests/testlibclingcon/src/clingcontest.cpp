@@ -5219,3 +5219,121 @@ using namespace order;
         }
 
     }
+
+    void equalDistinct(order::Config c)
+    {
+
+        Clasp::ClaspFacade f;
+        c.equalityProcessing = true;
+        ClingconConfig conf(f.ctx, c);
+        conf.solve.numModels = 0;
+
+        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+        //lp.start(f.ctx);
+
+        std::vector<order::ReifiedLinearConstraint> linearConstraints;
+
+
+
+        REQUIRE(lp.end()); /// UNSAT
+
+
+        MySharedContext& solver = conf.creator_;
+
+
+        {
+
+            View a = conf.n_.createView(Domain(0,50));
+            View b = conf.n_.createView(Domain(0,50));
+            View c = conf.n_.createView(Domain(0,50));
+            View d = conf.n_.createView(Domain(0,50));
+
+
+
+            {
+                LinearConstraint l(LinearConstraint::Relation::EQ);
+                l.add(a*5);
+                l.addRhs(25);
+                //std::cout << std::endl << l << std::endl;
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
+            }
+
+            {
+                LinearConstraint l(LinearConstraint::Relation::EQ);
+                l.add(a*3);
+                l.add(b*-1);
+                l.addRhs(-3);
+                //std::cout << std::endl << l << std::endl;
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
+            }
+
+            conf.n_.addConstraint(ReifiedAllDistinct({a,b,c*0,d},solver.trueLit(),Direction::EQ));
+
+        }
+
+
+        for (auto &i : linearConstraints)
+            conf.n_.addConstraint(std::move(i));
+
+        REQUIRE(conf.n_.prepare());
+
+        REQUIRE(conf.n_.finalize());
+
+
+        if (conf.n_.getConfig().minLitsPerVar == -1)
+        {
+            ///name the order lits
+            /// i just use free id's for this.
+            /// in the next incremental step these id's need to be
+            /// made false variables
+
+            Clasp::OutputTable& st = f.ctx.output;
+
+            for (std::size_t i = 0; i < conf.n_.getVariableCreator().numVariables(); ++i)
+            {
+                std::string varname;
+                switch(i)
+                {
+                case 0: varname="q[0]"; break;
+                case 1: varname="q[1]"; break;
+                case 2: varname="q[2]"; break;
+                case 3: varname="q[3]"; break;
+                case 4: varname="q[4]"; break;
+                case 5: varname="q[5]"; break;
+                case 6: varname="q[6]"; break;
+                case 7: varname="q[7]"; break;
+                case 8: varname="q[8]"; break;
+                case 9: varname="q[9]"; break;
+                }
+
+                auto lr = conf.n_.getVariableCreator().getRestrictor(View(i));
+                for (auto litresit = lr.begin(); litresit != lr.end(); ++litresit )
+                {
+                    std::stringstream ss;
+                    ss << varname << "<=" << *litresit;
+                    st.add(ss.str().c_str(),toClaspFormat(conf.n_.getVariableCreator().getLELiteral(litresit)));
+                }
+            }
+
+
+        }
+        //f.ctx.startAddConstraints(1000);
+        //REQUIRE(conf.n_.createClauses()); /// UNSAT
+        f.prepare();
+
+        //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+        //f.solve(&to);
+        f.solve();
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==2448);
+
+    }
+
+
+    TEST_CASE("EqualDistinct", "1")
+    {
+        for (auto i : conf1)
+            equalDistinct(i);
+        //crypt112aux(nonlazySolveConfig);
+    }
+

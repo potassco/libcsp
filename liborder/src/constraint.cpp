@@ -64,7 +64,7 @@ Domain LinearConstraint::lhsDomain(const CreatingSolver& s, const VariableCreato
 
 bool LinearConstraint::productOfDomainsExceptLastLEx(const VariableCreator& vc, int64 x) const
 {
-    assert(views_.size()!=0);
+    //assert(views_.size()!=0);
     assert(normalized_);
     if (x<0)
         return true;
