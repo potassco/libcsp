@@ -5337,3 +5337,72 @@ using namespace order;
         //crypt112aux(nonlazySolveConfig);
     }
 
+
+
+    void distinctDom(order::Config c)
+    {
+        Clasp::ClaspFacade f;
+        c.equalityProcessing = true;
+        ClingconConfig conf(f.ctx, c);
+        conf.solve.numModels = 0;
+
+        Clasp::Asp::LogicProgram& lp = f.startAsp(conf);
+        //lp.start(f.ctx);
+
+        std::vector<order::ReifiedLinearConstraint> linearConstraints;
+
+
+
+        REQUIRE(lp.end()); /// UNSAT
+
+
+        MySharedContext& solver = conf.creator_;
+
+
+        {
+
+            View a = conf.n_.createView();
+            View b = conf.n_.createView();
+
+            {
+                ReifiedDomainConstraint d(b,Domain(10,11),solver.trueLit(),Direction::EQ);
+                conf.n_.addConstraint(std::move(d));
+            }
+
+            {
+                LinearConstraint l(LinearConstraint::Relation::EQ);
+                l.add(a*1);
+                l.add(b*-5);
+                l.addRhs(5);
+                //std::cout << std::endl << l << std::endl;
+                linearConstraints.emplace_back(ReifiedLinearConstraint(std::move(l),solver.trueLit(),Direction::EQ));
+            }
+
+
+        }
+
+
+        for (auto &i : linearConstraints)
+            conf.n_.addConstraint(std::move(i));
+
+        REQUIRE(conf.n_.prepare());
+
+        REQUIRE(conf.n_.finalize());
+
+        f.prepare();
+
+        //Clasp::Cli::TextOutput to(0,Clasp::Cli::TextOutput::format_asp);
+        //f.solve(&to);
+        f.solve();
+        //std::cout << "This was " << f.summary().numEnum << " models" << std::endl;
+        REQUIRE(f.summary().numEnum==2);
+
+    }
+
+
+    TEST_CASE("DistinctDom", "1")
+    {
+        for (auto i : conf1)
+            distinctDom(i);
+    }
+

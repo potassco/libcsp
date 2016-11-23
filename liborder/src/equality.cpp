@@ -361,7 +361,7 @@ namespace order
             i.v = it->second->top();
             i.a = (old/g)*e.secondCoef;
             i.c += (old/g)*e.constant;
-            l.getDomain().times(e.firstCoef/g,Domain::max-Domain::min);
+            l.getDomain().inplace_times(e.firstCoef/g,Domain::max-Domain::min);
         }
         return true;
     }
