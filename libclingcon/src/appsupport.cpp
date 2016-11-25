@@ -412,7 +412,7 @@ void Helper::simplifyMinimize()
                     {
                         auto& views = rlin->l.getConstViews();
                         bool hit = false;
-                        for (unsigned int j = 0; j <= views.size(); ++j)
+                        for (unsigned int j = 0; j < views.size(); ++j)
                         {
                             if (views[j].v == i.second.v && views[j].a == -1)
                             {
