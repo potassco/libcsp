@@ -49,7 +49,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("distinct-to-card", ProgramOptions::storeTo(conf.alldistinctCard = false), "Translate distinct constraint using cardinality constraints (default: false)")
             ("explicit-binary-order", ProgramOptions::storeTo(conf.explicitBinaryOrderClausesIfPossible = false), "Create binary order nogoods if possible (default: false)")
             ("learn-nogoods", ProgramOptions::storeTo(conf.learnClauses = true), "Learn nogoods while propagating (default: true)")
-            ("translate-constraints", ProgramOptions::storeTo(conf.translateConstraints = 10000)->arg("<n>"), "Translate constraints with an estimated number of nogoods less than %A (-1=all) (default: 1000)")
+            ("translate-constraints", ProgramOptions::storeTo(conf.translateConstraints = 10000)->arg("<n>"), "Translate constraints with an estimated number of nogoods less than %A (-1=all) (default: 10000)")
             ("min-lits-per-var", ProgramOptions::storeTo(conf.minLitsPerVar = 1000)->arg("<n>"), "Creates at least %A literals per variable (-1=all) (default: 1000)")
             ("equality-processing", ProgramOptions::storeTo(conf.equalityProcessing = true), "Replace equal variable views (default: true)")
             ("flatten-optimization", ProgramOptions::storeTo(conf.optimizeOptimize = true), "Flatten the optimization statement (default: true)")
