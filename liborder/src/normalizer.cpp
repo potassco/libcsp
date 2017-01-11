@@ -255,7 +255,7 @@ std::pair<bool,bool> Normalizer::deriveSimpleDomain(const ReifiedLinearConstrain
         else
             if (s_.isFalse(l.v) && l.impl & Direction::BACK)
             {
-                return std::make_pair(true, vc_.constrainLowerBound(view,(-l.l.getRhs())+1));
+                return std::make_pair(true, vc_.constrainLowerBound(view,l.l.getRhs()+1));
             }
     }
     else

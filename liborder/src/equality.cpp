@@ -288,7 +288,7 @@ namespace order
                 auto found = unary_.find(i.v);
                 if (found != unary_.end())
                 {
-                    l.addRhs(-(i.a*found->second-i.c));
+                    l.addRhs(-(i.a*found->second)-i.c);
                     i.a=0;
                     i.c=0;
                 }
