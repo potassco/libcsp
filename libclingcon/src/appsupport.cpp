@@ -19,12 +19,11 @@
 // }}}
 
 #include <clingcon/appsupport.h>
-#include <program_opts/program_options.h>
-#include <program_opts/typed_value.h>
 
 
 namespace clingcon
 {
+using namespace Potassco;
 
 Helper::Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfig, Clasp::Asp::LogicProgram* lp, order::Config& conf) : ctx_(ctx), td_(lp->theoryData()),
                                                                           lp_(lp), mctx_(ctx), n_(new order::Normalizer(mctx_,conf)),
@@ -319,7 +318,7 @@ bool Helper::occursInBody(Clasp::Asp::LogicProgram& p, Potassco::Atom_t aId)
     if (!aId || !p.validAtom(aId)) { return false; }
     Clasp::Asp::PrgAtom* a = p.getRootAtom(aId);
     return a->hasDep(Clasp::Asp::PrgAtom::dep_all);
-} 
+}
 
 
 bool Helper::postEnd()

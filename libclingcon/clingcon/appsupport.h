@@ -31,6 +31,8 @@
 #include <clingcon/theoryparser.h>
 #include <clasp/enumerator.h>
 #include <clasp/cli/clasp_options.h>
+#include <potassco/program_opts/program_options.h>
+#include <potassco/program_opts/typed_value.h>
 
 #include <memory>
 #include <cstdint>
@@ -179,7 +181,7 @@ class Helper
 {
 public:
     Helper(Clasp::SharedContext& ctx, Clasp::Cli::ClaspCliConfig& claspConfig, Clasp::Asp::LogicProgram* lp, order::Config& conf);
-    static void addOptions(ProgramOptions::OptionContext& root, order::Config& conf);
+    static void addOptions(Potassco::ProgramOptions::OptionContext& root, order::Config& conf);
 
     void postRead();
     bool postEnd();
