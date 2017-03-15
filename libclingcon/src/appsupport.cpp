@@ -140,20 +140,25 @@ void Helper::postRead()
     if (!lp_->ok()) // UNSAT, not all atoms are created
         return;
 
-    lp_->setMaxInputAtom(lp_->numAtoms());
+    auto maxUnusedTheoryAtoms = lp_->numAtoms();
+    for (auto i = td_.currBegin(); i != td_.end(); ++i)
+        maxUnusedTheoryAtoms = std::max((*i)->atom(),maxUnusedTheoryAtoms);
+    lp_->setMaxInputAtom(maxUnusedTheoryAtoms);
     tdinfo_.clear();
     std::unordered_map<Potassco::Id_t,bool> atoms; // i know i know
     for (auto i = td_.currBegin(); i != td_.end(); ++i)
     {
         auto atom = (*i)->atom();
         bool isClingcon = tp_.isClingconConstraint(i);
-        atom = lp_->getAtom(atom)->id();
-        assert(lp_->validAtom(atom));
-        assert(lp_->getAtom(atom)->relevant());
-        Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
+
         order::Direction info = order::Direction::NONE;
-        if (isClingcon)
+        if (isClingcon && lp_->validAtom(atom))
         {
+            atom = lp_->getAtom(atom)->id();
+            assert(lp_->validAtom(atom));
+            assert(lp_->getAtom(atom)->relevant());
+            Clasp::Asp::PrgAtom* a = lp_->getAtom(atom);
+
             transformHeadConstraints(a);
             //a = lp_->getAtom(atom);
 
@@ -228,16 +233,16 @@ void Helper::postRead()
                 atoms[atom]=true;
             }else
             {
-               /*
-                /// already found
-                info = order::Direction::EQ;
-                // this theory atom maybe does not occur in any rule,
-                // it is simply equivalent to an atom which occurs somewhere
-                Potassco::RuleBuilder rb;
-                rb.start(Potassco::Head_t::Choice);// warning, this makes it a defined atom
-                rb.addHead((*i)->atom());
-                rb.end();
-                lp_->addRule(rb.rule());*/
+
+//                /// already found
+//                info = order::Direction::EQ;
+//                // this theory atom maybe does not occur in any rule,
+//                // it is simply equivalent to an atom which occurs somewhere
+//                Potassco::RuleBuilder rb;
+//                rb.start(Potassco::Head_t::Choice);// warning, this makes it a defined atom
+//                rb.addHead((*i)->atom());
+//                rb.end();
+//                lp_->addRule(rb.rule());
 
                 info = order::Direction::EQ;
                 if (!lp_->isFact(atom))
@@ -304,11 +309,13 @@ void Helper::postRead()
                 lp_->addRule(rb.rule());
             }
 
+
         }
         if (info==order::Direction::NONE)
             info=order::Direction::EQ; /// special case,  can't occur with gringo, but with manually created files (flatzinc)
 
         tdinfo_.emplace_back(info);
+
     }
 }
 
