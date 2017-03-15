@@ -18,10 +18,10 @@
 
 // }}}
 
-#include "catch.hpp"
-#include "order/constraint.h"
-#include "test/mysolver.h"
-#include "order/configs.h"
+#include <catch.hpp>
+#include <order/constraint.h>
+#include <test/mysolver.h>
+#include <order/configs.h>
 #include <iostream>
 
 using namespace order;
