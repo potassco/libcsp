@@ -24,7 +24,7 @@
 
 // {{{ GPL License
 
-#ifndef _LIBCLIGNCON_VERSION_H
+#ifndef _LIBCLINGCON_VERSION_H
 #define _LIBCLINGCON_VERSION_H
 
 #define LIBCSP_VERSION "1.1.1"

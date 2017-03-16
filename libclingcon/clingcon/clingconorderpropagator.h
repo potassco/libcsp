@@ -86,9 +86,9 @@ public:
         /// Solution: Register several of them, same literal with different vars
         ///
         /// Restricting a certain variable is always exactly one literal (which can be equal to others but we dont care)
-        /// 
-        /// 
-        
+        ///
+        ///
+
         watched_.resize(p_.getVVS().getVariableStorage().numVariables(),false);
 
         /// add watches for undecided reification literals
@@ -167,35 +167,35 @@ public:
     }
 
     /// propagator interface
-    virtual uint32 priority() const { return Clasp::PostPropagator::priority_reserved_ufs+1; } // we schedule after the ufs checker
+    virtual uint32 priority() const override { return Clasp::PostPropagator::priority_reserved_ufs+1; } // we schedule after the ufs checker
     virtual bool   init(Clasp::Solver &s) override;
-    virtual bool   propagateFixpoint(Clasp::Solver& , Clasp::PostPropagator* );
-    virtual void   reset();
-    virtual bool   isModel(Clasp::Solver& s);
+    virtual bool   propagateFixpoint(Clasp::Solver& , Clasp::PostPropagator* ) override;
+    virtual void   reset() override;
+    virtual bool   isModel(Clasp::Solver& s) override;
 
     /// constraint interface
-    virtual PropResult propagate(Clasp::Solver& s, Clasp::Literal p, uint32& data);
-    virtual void reason(Clasp::Solver& s, Clasp::Literal p, Clasp::LitVec& lits);
+    virtual PropResult propagate(Clasp::Solver& s, Clasp::Literal p, uint32& data) override;
+    virtual void reason(Clasp::Solver& s, Clasp::Literal p, Clasp::LitVec& lits) override;
     virtual void undoLevel(Clasp::Solver& s) override;
-    virtual bool simplify(Clasp::Solver& , bool ) { return false; }
+    virtual bool simplify(Clasp::Solver& , bool ) override { return false; }
 
     ///TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DESTROY MUSS ÜBERLADEN WERDEN, und watches removed
-    /// 
-    /// 
+    ///
+    ///
     void addLazyShow(order::Variable v, const std::string& s) { show_.resize(std::max((unsigned int)(show_.size()),v+1)); show_[v]=s; }
 
     //! Returns an estimate of the constraint's complexity relative to a clause (complexity = 1).
     /// currently not used in clasp propagators
     ///virtual uint32 estimateComplexity(const Clasp::Solver& s) const { return 42; /* do some rought guessing by the number of constraints/size*/}
 
-    
+
     const char* printModel(order::Variable v, const std::string& name);
     /// only to be used of a model has been found
     bool getValue(order::Variable v, int32& value);
 
     Clasp::Solver& solver() { return s_; }
-    
-    
+
+
     const order::VolatileVariableStorage& getVVS() const { return p_.getVVS(); }
 
 private:
@@ -209,9 +209,9 @@ private:
     std::unique_ptr<order::IncrementalSolver> ms_;
     order::LinearLiteralPropagator p_;
     const order::EqualityProcessor::EqualityClassMap& eqs_; /// equalities of variables for printing
-    
-    
-    
+
+
+
     /// force a new literal l, associated with it to be true,
     /// where l==x>it because x>it+eps
     /// where eps is the next valid literal
