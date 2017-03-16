@@ -52,10 +52,8 @@ bool clausesEqual(const LitVec& l1, const LitVec& l2)
 
 bool compareClauses(const LitVec& l1, const LitVec& l2)
 {
-    std::cout << "kuckuck" << std::endl;
     if (l1.size()!=l2.size())
     {
-        std::cout << "different size" << std::endl;
         return false;
     }
 //    auto it1 = l1.begin();
@@ -87,26 +85,12 @@ bool compareClauses(const LitVec& l1, const LitVec& l2)
 
       if (s1.size()!=s2.size())
       {
-          std::cout << "different size2" << std::endl;
           return false;
       }
       std::sort(s1.begin(),s1.end());
       std::sort(s2.begin(),s2.end());
       auto it1 = s1.begin();
       auto it2 = s2.begin();
-
-      for (auto i : s1)
-      {
-          for (auto j : i)
-              std::cout << j << ",";
-          std::cout << std::endl;
-      }
-      for (auto i : s2)
-      {
-          for (auto j : i)
-              std::cout << j << ",";
-          std::cout << std::endl;
-      }
 
       while (it1!=s1.end())
       {
@@ -239,7 +223,6 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
     {
 
         {
-            std::cout << "This one" << std::endl;
             MySolver s;
             Normalizer norm(s,translateConfig);
             //Propagator t(s);
