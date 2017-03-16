@@ -88,6 +88,13 @@ bool operator==(const LitVec& l1, const LitVec& l2)
       auto it1 = s1.begin();
       auto it2 = s2.begin();
 
+      for (auto i : s1)
+      {
+          for (auto j : i)
+              std::cout << j << ",";
+          std::cout << std::endl;
+      }
+
       while (it1!=s1.end())
       {
           if (!clausesEqual(*it1,*it2))
@@ -219,6 +226,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
     {
 
         {
+            std::cout << "This one" << std::endl;
             MySolver s;
             Normalizer norm(s,translateConfig);
             //Propagator t(s);
