@@ -50,10 +50,14 @@ bool clausesEqual(const LitVec& l1, const LitVec& l2)
     return true;
 }
 
-bool operator==(const LitVec& l1, const LitVec& l2)
+bool compareClauses(const LitVec& l1, const LitVec& l2)
 {
+    std::cout << "kuckuck" << std::endl;
     if (l1.size()!=l2.size())
+    {
+        std::cout << "different size" << std::endl;
         return false;
+    }
 //    auto it1 = l1.begin();
 //    auto it2 = l1.begin();
       std::vector<LitVec> s1;
@@ -82,13 +86,22 @@ bool operator==(const LitVec& l1, const LitVec& l2)
       }
 
       if (s1.size()!=s2.size())
+      {
+          std::cout << "different size2" << std::endl;
           return false;
+      }
       std::sort(s1.begin(),s1.end());
       std::sort(s2.begin(),s2.end());
       auto it1 = s1.begin();
       auto it2 = s2.begin();
 
       for (auto i : s1)
+      {
+          for (auto j : i)
+              std::cout << j << ",";
+          std::cout << std::endl;
+      }
+      for (auto i : s2)
       {
           for (auto j : i)
               std::cout << j << ",";
@@ -261,7 +274,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                                 3, 6, 0,
                                                 3, 4, 0});
 
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //std::cout << s.clauses() << std::endl;
             //s.printDimacs(std::cout); std::cout << std::endl; // expected 10 solutions
             //std::cout << "NumModels:"  << expectedModels(s) << std::endl;
@@ -315,7 +328,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         2, -3, -5, 0
 
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
 
         }
 
@@ -359,7 +372,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                            2, 5,     0,
                                            3, 6, 0,
                                            3, 4, 0});
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             REQUIRE(expectedModels(s)==10);
 
         }
@@ -397,7 +410,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         -6, 7, 0,
                                         3, 7, 0,
                                         5, 6, 0});
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout); // 11 solutions
             REQUIRE(expectedModels(s)==11);
 
@@ -448,7 +461,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         6, 9, -12, 0,
                                         6, 10, -13, 0,
                                         6, 11, -14, 0});
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout); // 206 solutions
             REQUIRE(expectedModels(s)==206);
 
@@ -512,7 +525,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         2, 7, 11, -14, 0,
                                         2, 7, 12, -15, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
 
 
             //s.printDimacs(std::cout); // 216 solutions
@@ -575,7 +588,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
 
             REQUIRE(expectedModels(s)==10);
 
@@ -628,7 +641,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         6, 10, -13, 0,
                                         6, 11, -14, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout); // 206
             REQUIRE(expectedModels(s)==206);
 
@@ -680,7 +693,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout);//20
             REQUIRE(expectedModels(s)==20);
         }
@@ -737,7 +750,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         -2, 8, 0,
                                         -2, -7, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
 
             //s.printDimacs(std::cout);//10
             REQUIRE(expectedModels(s)==10);
@@ -804,7 +817,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         2, -6, -12, 0,
                                         2, -5, 0,
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout); // 216, 206, 10
             REQUIRE(expectedModels(s)==216);
         }
@@ -874,7 +887,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         2, 7, 11, -15, 0,
                                         2, 7, 12, -16, 0
                                        });
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
             //s.printDimacs(std::cout);//216, 20, 196
             REQUIRE(expectedModels(s)==216);
         }
@@ -964,7 +977,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
                                         -4, -8, 15, 0,
                                         -4, -8, -14, 0,
                                         -4, -7, 0});
-            REQUIRE(s.clauses()==clauses);
+            REQUIRE(compareClauses(s.clauses(),clauses));
 
             //s.printDimacs(std::cout); // 216 solutions, 10, 206
             //std::cout << std::endl;
@@ -996,7 +1009,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //s.printDimacs(std::cout); std::cout << std::endl;//24 solutions (low=0, high=3)
             //std::cout << "NumModels: " << expectedModels(s) << std::endl;
@@ -1027,7 +1040,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //s.printDimacs(std::cout); //21 solutions
             //std::cout << expectedModels(s) << std::endl;
@@ -1058,7 +1071,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //s.printDimacs(std::cout);  // 27 (6+21)
             REQUIRE(expectedModels(s)==27);
@@ -1087,7 +1100,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1117,7 +1130,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1168,7 +1181,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1223,7 +1236,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1307,7 +1320,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1587,7 +1600,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << std::count(solver.clauses().begin(), solver.clauses().end(),Literal::fromRep(0)) << std::endl;
@@ -1676,7 +1689,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1781,7 +1794,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1871,7 +1884,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -1933,7 +1946,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2009,7 +2022,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2091,7 +2104,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //solver.printDimacs(std::cout);std::cout << std::endl;
         REQUIRE(expectedModels(solver)==24);
@@ -2128,7 +2141,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2151,7 +2164,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2185,7 +2198,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2225,7 +2238,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2257,7 +2270,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2393,7 +2406,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2513,7 +2526,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
 
         //LitVec clauses = cnfToLits({});
-        //assert(s.clauses()==clauses);
+        //assert(compareClauses(s.clauses(),clauses));
 
         //s.printDimacs(std::cout); //21 solutions
         //assert(expectedModels(s)==21);
@@ -2588,7 +2601,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             translate(solver, norm.getVariableCreator(), norm.removeConstraints(), norm.getConfig());
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;
@@ -2665,7 +2678,7 @@ std::vector<order::Config> stdconfs = {translateConfig,test1,test2};
 
             translate(solver, norm.getVariableCreator(), norm.removeConstraints(), norm.getConfig());
             LitVec clauses = cnfToLits({});
-            //assert(s.clauses()==clauses);
+            //assert(compareClauses(s.clauses(),clauses));
 
             //solver.printDimacs(std::cout);std::cout << std::endl;
             //std::cout << "numModels: " << expectedModels(solver) << std::endl;

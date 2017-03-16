@@ -51,7 +51,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("translate-constraints", ProgramOptions::storeTo(conf.translateConstraints = 10000)->arg("<n>"), "Translate constraints with an estimated number of nogoods less than %A (-1=all) (default: 10000)")
             ("min-lits-per-var", ProgramOptions::storeTo(conf.minLitsPerVar = 1000)->arg("<n>"), "Creates at least %A literals per variable (-1=all) (default: 1000)")
             ("equality-processing", ProgramOptions::storeTo(conf.equalityProcessing = true), "Replace equal variable views (default: true)")
-            ("flatten-optimization", ProgramOptions::storeTo(conf.optimizeOptimize = true), "Flatten the optimization statement (default: true)")
+            ("flatten-optimization", ProgramOptions::storeTo(conf.optimizeOptimize = false), "Flatten the optimization statement (default: true)")
             ("sort-coefficient", ProgramOptions::storeTo(conf.coefFirst = false), "Sort constraints by coefficient first (otherwise domain size) (default: false)")
             ("sort-descend-coef", ProgramOptions::storeTo(conf.descendCoef = true), "Sort constraints by descending coefficients (otherwise ascending) (default: true)")
             ("sort-descend-dom", ProgramOptions::storeTo(conf.descendDom = false), "Sort constraints by descending domain size (otherwise ascending) (default: false)")
