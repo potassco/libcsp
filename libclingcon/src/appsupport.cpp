@@ -43,7 +43,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("break-symmetries", ProgramOptions::storeTo(conf.break_symmetries = true), "Break symmetries (necessary for enumeration) (default: true)")
             ("split-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.first = -1)->arg("<n>"), "Split constraints into size %A (minimum: 3, -1=no splitting) (default: -1)")
             ("max-nogoods-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.second = 1024)->arg("<n>"), "Constraints are only split if they would produce more then %A nogoods (default: 1024)")
-            ("pidgeon-optimization", ProgramOptions::storeTo(conf.pidgeon = true), "Add pidgeon-hole constraints for distinct (default: true)")
+            ("pigeon-optimization", ProgramOptions::storeTo(conf.pidgeon = true), "Add pigeon-hole constraints for distinct (default: true)")
             ("permutation-optimization", ProgramOptions::storeTo(conf.permutation = false), "Add permutation constraints for distinct (default: false)")
             ("distinct-to-card", ProgramOptions::storeTo(conf.alldistinctCard = false), "Translate distinct constraint using cardinality constraints (default: false)")
             ("explicit-binary-order", ProgramOptions::storeTo(conf.explicitBinaryOrderClausesIfPossible = false), "Create binary order nogoods if possible (default: false)")
