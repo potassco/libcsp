@@ -1032,8 +1032,8 @@ bool Normalizer::prepare()
         varsBefore_ = varsAfterFinalize_;
         varsAfter_ = vc_.numVariables();
     }
-    if (conf_.equalityProcessing && firstRun_)
-        if (!equalityPreprocessing())
+    if (conf_.equalityProcessing)
+        if (!equalityPreprocessing(firstRun_))
             return false;
 
     /// calculate very first domains for easy constraints and remove them
@@ -1478,15 +1478,18 @@ bool Normalizer::createEqualClauses()
 }
 
 
-bool Normalizer::equalityPreprocessing()
+bool Normalizer::equalityPreprocessing(bool firstRun)
 {
-    if (!ep_.process(linearConstraints_))
-        return false;
-    auto unary = ep_.getUnaries();
-    for (auto i : unary)
+    if (firstRun)
     {
-        if (!vc_.constrainView(View(i.first,1,0),i.second,i.second))
+        if (!ep_.process(linearConstraints_))
             return false;
+        auto unary = ep_.getUnaries();
+        for (auto i : unary)
+        {
+            if (!vc_.constrainView(View(i.first,1,0),i.second,i.second))
+                return false;
+        }
     }
     for (auto& i : linearConstraints_)
         if (!ep_.substitute(i.l))
@@ -1503,9 +1506,12 @@ bool Normalizer::equalityPreprocessing()
     for (auto& i : minimize_)
         if (!ep_.substitute(i.first))
             return false;
-    for (Variable v = 0; v != getVariableCreator().numVariables(); ++v)
-        if (!ep_.isValid(v))
-            getVariableCreator().removeVar(v);
+    if (firstRun)
+    {
+        for (Variable v = 0; v != getVariableCreator().numVariables(); ++v)
+            if (!ep_.isValid(v))
+                getVariableCreator().removeVar(v);
+    }
     return true;
 }
 

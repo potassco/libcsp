@@ -207,7 +207,9 @@ public:
     bool createEqualClauses();
     /// do replace equalities on variables
     /// and introduce "views", so that they share literals
-    bool equalityPreprocessing();
+    /// find equalities only on first run
+    /// all further calls will still replace old found equalities in new constraints
+    bool equalityPreprocessing(bool firstRun);
 
     /// a list of all constraints
     //std::vector<ReifiedLinearConstraint> linearImplications_;  /// normalized LE implications

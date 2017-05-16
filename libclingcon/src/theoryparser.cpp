@@ -975,6 +975,7 @@ void TheoryParser::error(const std::string& s, Potassco::Id_t id)
 
 void TheoryParser::reset()
 {
+    termId2View_.clear();
     termId2constraint_.clear();
     termId2guard_.clear();
     shown_.clear();
