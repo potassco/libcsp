@@ -39,7 +39,7 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
     ProgramOptions::OptionGroup cspconf("Constraint Processing Options", ProgramOptions::desc_level_e1);
     cspconf.addOptions()
             ("redundant-nogood-check", ProgramOptions::storeTo(conf.redundantClauseCheck = true), "Check translated nogoods for redundancies (default: true)")
-            ("domain-size", ProgramOptions::storeTo(conf.domSize = 10000), "Restrict the number of ranges a domain can have when multiplied (-1=all) (default: 10000)")
+            ("domain-propagation", ProgramOptions::storeTo(conf.domSize = 10000), "Restrict the exponential runtime behaviour of domain propagation (-1=full propagation) (default: 10000)")
             ("break-symmetries", ProgramOptions::storeTo(conf.break_symmetries = true), "Break symmetries (necessary for enumeration) (default: true)")
             ("split-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.first = -1)->arg("<n>"), "Split constraints into size %A (minimum: 3, -1=no splitting) (default: -1)")
             ("max-nogoods-size", ProgramOptions::storeTo(conf.splitsize_maxClauseSize.second = 1024)->arg("<n>"), "Constraints are only split if they would produce more then %A nogoods (default: 1024)")
@@ -53,12 +53,12 @@ void Helper::addOptions(ProgramOptions::OptionContext& root, order::Config& conf
             ("equality-processing", ProgramOptions::storeTo(conf.equalityProcessing = true), "Replace equal variable views (default: true)")
             ("flatten-optimization", ProgramOptions::storeTo(conf.optimizeOptimize = false), "Flatten the optimization statement (default: true)")
             ("sort-coefficient", ProgramOptions::storeTo(conf.coefFirst = false), "Sort constraints by coefficient first (otherwise domain size) (default: false)")
-            ("sort-descend-coef", ProgramOptions::storeTo(conf.descendCoef = true), "Sort constraints by descending coefficients (otherwise ascending) (default: true)")
-            ("sort-descend-dom", ProgramOptions::storeTo(conf.descendDom = false), "Sort constraints by descending domain size (otherwise ascending) (default: false)")
+            ("sort-descend-coefficient", ProgramOptions::storeTo(conf.descendCoef = true), "Sort constraints by descending coefficients (otherwise ascending) (default: true)")
+            ("sort-descend-domain", ProgramOptions::storeTo(conf.descendDom = false), "Sort constraints by descending domain size (otherwise ascending) (default: false)")
             ("prop-strength", ProgramOptions::storeTo(conf.propStrength = 4)->arg("<n>"), "Propagation strength %A {1=weak .. 4=strong} (default: 4)")
             ("sort-queue", ProgramOptions::storeTo(conf.sortQueue = false), "Sort lazy propagation queue by constraint size (default: false)")
             ("convert-lazy-variables", ProgramOptions::storeTo(conf.convertLazy = std::make_pair(0,false))->arg("<n,b>"), "Add the union(b=true)/intersection(b=false) of the lazy variables of the first n threads (default: 0,false)")
-            ("strict", ProgramOptions::storeTo(conf.strict = false), "Add strict (redundant) constraints (default: false)")
+            ("dont-care-propagation", ProgramOptions::storeTo(conf.dontcare = true), "Use don't care propagation' (default: true)")
             ;
     root.add(cspconf);
 
@@ -179,7 +179,7 @@ void Helper::postRead()
             {
                 info |= order::Direction::BACK;
             }
-            else if (!conf_.strict)
+            else if (conf_.dontcare)
             {
 
 
@@ -257,7 +257,7 @@ void Helper::postRead()
 
             }
 
-            if (conf_.strict)
+            if (!conf_.dontcare)
                 info = order::Direction::EQ;
 
             if (tp_.isUnarySum(i))

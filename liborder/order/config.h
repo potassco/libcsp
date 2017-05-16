@@ -44,7 +44,7 @@ public:
            bool equalityProcessing, bool optimizeOptimize,
            bool coefFirst, bool descendCoef, bool descendDom,
            unsigned int propStrength, bool sortQueue,
-           std::pair<unsigned int,bool> convertLazy, bool strict) :
+           std::pair<unsigned int,bool> convertLazy, bool dontcare) :
         redundantClauseCheck(redundantClauseCheck),
         domSize(domSize), break_symmetries(break_symmetries),
         splitsize_maxClauseSize(splitsize_maxClauseSize),
@@ -56,7 +56,7 @@ public:
         optimizeOptimize(optimizeOptimize),
         coefFirst(coefFirst), descendCoef(descendCoef), descendDom(descendDom),
         propStrength(propStrength), sortQueue(sortQueue),
-        convertLazy(convertLazy), strict(strict)
+        convertLazy(convertLazy), dontcare(dontcare)
     {
         if (this->splitsize_maxClauseSize.first>=0)
             this->splitsize_maxClauseSize.first = std::max((int64)(3),this->splitsize_maxClauseSize.first);
@@ -90,7 +90,7 @@ public:
     unsigned int propStrength; /// propagation strength for lazy constraints 1..4
     bool sortQueue; /// sort the lazy propagation queue by constraint size (makes sense without splitting)
     std::pair<unsigned int,bool> convertLazy;
-    bool strict; /// hidde option for testing strict/vs fwd/back inferences only
+    bool dontcare; /// option for testing strict/vs fwd/back inferences only
 };
 
 
