@@ -24,7 +24,8 @@ target_include_directories(test_libclingcon
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
 
 target_link_libraries(test_libclingcon PUBLIC liborder libclasp libclingcon)
-set_target_properties(test_libclingcon PROPERTIES FOLDER exe)
+set_target_properties(test_libclingcon PROPERTIES FOLDER test)
 
 install(TARGETS test_libclingcon RUNTIME DESTINATION bin)
 
+add_test(NAME test_libclingcon COMMAND test_libclingcon)

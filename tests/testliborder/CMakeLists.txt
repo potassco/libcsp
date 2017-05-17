@@ -34,7 +34,8 @@ target_include_directories(test_liborder
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
 
 target_link_libraries(test_liborder PUBLIC liborder libclasp)
-set_target_properties(test_liborder PROPERTIES FOLDER exe)
+set_target_properties(test_liborder PROPERTIES FOLDER test)
 
 install(TARGETS test_liborder RUNTIME DESTINATION bin)
 
+add_test(NAME test_liborder COMMAND test_liborder)
